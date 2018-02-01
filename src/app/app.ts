@@ -19,6 +19,7 @@ import notFoundHandler from './middlewares/notFoundHandler';
 import accountsRouter from './routes/accounts';
 import devRouter from './routes/dev';
 import healthRouter from './routes/health';
+import depositTransactionsRouter from './routes/transactions/deposit';
 import payTransactionsRouter from './routes/transactions/pay';
 
 const debug = createDebug('pecorino-api:*');
@@ -93,6 +94,7 @@ pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, mongooseConnectionOp
 // routers
 app.use('/health', healthRouter);
 app.use('/accounts', accountsRouter);
+app.use('/transactions/deposit', depositTransactionsRouter);
 app.use('/transactions/pay', payTransactionsRouter);
 
 // tslint:disable-next-line:no-single-line-block-comment

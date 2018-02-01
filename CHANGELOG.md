@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 - 口座照会エンドポイントを追加。
 - 支払取引エンドポイントを追加。
+- 入金取引エンドポイントを追加。
 
 ### Changed
 
