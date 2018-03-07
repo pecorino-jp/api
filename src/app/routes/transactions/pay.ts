@@ -33,7 +33,6 @@ payTransactionsRouter.post(
         req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
         req.checkBody('price', 'invalid price').notEmpty().withMessage('price is required').isInt();
 
-        req.checkBody('fromAccountId', 'invalid fromAccountId').notEmpty().withMessage('fromAccountId is required');
         req.checkBody('toAccountId', 'invalid toAccountId').notEmpty().withMessage('toAccountId is required');
 
         next();
@@ -61,7 +60,7 @@ payTransactionsRouter.post(
                 object: {
                     clientUser: req.user,
                     price: req.body.price,
-                    fromAccountId: req.body.fromAccountId,
+                    fromAccountId: req.accountId,
                     toAccountId: req.body.toAccountId,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
