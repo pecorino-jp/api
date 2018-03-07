@@ -42,14 +42,14 @@ accountsRouter.get('/me', permitScopes_1.default(['accounts', 'accounts.read-onl
 /**
  * 取引履歴検索
  */
-accountsRouter.get('/me/actions/trade', permitScopes_1.default(['accounts.actions', 'accounts.actions.read-only']), (_1, _2, next) => {
+accountsRouter.get('/me/actions/moneyTransfer', permitScopes_1.default(['accounts.actions', 'accounts.actions.read-only']), (_1, _2, next) => {
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         debug('searching trade actions...', req.accountId);
-        const actions = yield pecorino.service.account.searchTradeActionsById({
+        const actions = yield pecorino.service.account.searchTransferActions({
             accountId: req.accountId
-        })(actionRepo);
+        })({ action: actionRepo });
         res.json(actions);
     }
     catch (error) {

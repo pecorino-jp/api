@@ -20,7 +20,7 @@ const debug = createDebug('pecorino-api:depositTransactionsRouter');
 depositTransactionsRouter.use(authentication);
 
 const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
-const depositTransactionRepo = new pecorino.repository.transaction.Deposit(pecorino.mongoose.connection);
+const transactionRepo = new pecorino.repository.Transaction(pecorino.mongoose.connection);
 
 depositTransactionsRouter.post(
     '/start',
@@ -62,11 +62,12 @@ depositTransactionsRouter.post(
                 object: {
                     clientUser: req.user,
                     price: req.body.price,
+                    fromAccountId: req.body.fromAccountId,
                     toAccountId: req.body.toAccountId,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
                 expires: moment(req.body.expires).toDate()
-            })(accountRepo, depositTransactionRepo);
+            })({ account: accountRepo, transaction: transactionRepo });
 
             // tslint:disable-next-line:no-string-literal
             // const host = req.headers['host'];
@@ -86,7 +87,7 @@ depositTransactionsRouter.post(
         try {
             const transactionResult = await pecorino.service.transaction.deposit.confirm(
                 req.params.transactionId
-            )(depositTransactionRepo);
+            )({ transaction: transactionRepo });
             debug('transaction confirmed', transactionResult);
 
             res.status(CREATED).json(transactionResult);

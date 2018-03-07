@@ -32,6 +32,8 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['transactions']), (
     req.checkBody('recipient.id', 'invalid recipient.id').notEmpty().withMessage('recipient.id is required');
     req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
     req.checkBody('price', 'invalid price').notEmpty().withMessage('price is required').isInt();
+    req.checkBody('fromAccountId', 'invalid fromAccountId').notEmpty().withMessage('fromAccountId is required');
+    req.checkBody('toAccountId', 'invalid toAccountId').notEmpty().withMessage('toAccountId is required');
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
@@ -54,11 +56,12 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['transactions']), (
             object: {
                 clientUser: req.user,
                 price: req.body.price,
-                accountId: req.accountId,
+                fromAccountId: req.body.fromAccountId,
+                toAccountId: req.body.toAccountId,
                 notes: (req.body.notes !== undefined) ? req.body.notes : ''
             },
             expires: moment(req.body.expires).toDate()
-        })(accountRepo, transactionRepo);
+        })({ account: accountRepo, transaction: transactionRepo });
         // tslint:disable-next-line:no-string-literal
         // const host = req.headers['host'];
         // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
@@ -70,7 +73,7 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['transactions']), (
 }));
 payTransactionsRouter.post('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const transactionResult = yield pecorino.service.transaction.pay.confirm(req.params.transactionId)(transactionRepo);
+        const transactionResult = yield pecorino.service.transaction.pay.confirm(req.params.transactionId)({ transaction: transactionRepo });
         debug('transaction confirmed', transactionResult);
         res.status(http_status_1.CREATED).json(transactionResult);
     }

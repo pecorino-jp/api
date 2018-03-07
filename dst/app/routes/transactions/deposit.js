@@ -24,7 +24,7 @@ const validator_1 = require("../../middlewares/validator");
 const debug = createDebug('pecorino-api:depositTransactionsRouter');
 depositTransactionsRouter.use(authentication_1.default);
 const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
-const depositTransactionRepo = new pecorino.repository.transaction.Deposit(pecorino.mongoose.connection);
+const transactionRepo = new pecorino.repository.Transaction(pecorino.mongoose.connection);
 depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _, next) => {
     req.checkBody('expires', 'invalid expires').notEmpty().withMessage('expires is required').isISO8601();
     req.checkBody('agent', 'invalid agent').notEmpty().withMessage('agent is required');
@@ -56,11 +56,12 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req
             object: {
                 clientUser: req.user,
                 price: req.body.price,
+                fromAccountId: req.body.fromAccountId,
                 toAccountId: req.body.toAccountId,
                 notes: (req.body.notes !== undefined) ? req.body.notes : ''
             },
             expires: moment(req.body.expires).toDate()
-        })(accountRepo, depositTransactionRepo);
+        })({ account: accountRepo, transaction: transactionRepo });
         // tslint:disable-next-line:no-string-literal
         // const host = req.headers['host'];
         // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
@@ -72,7 +73,7 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req
 }));
 depositTransactionsRouter.post('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const transactionResult = yield pecorino.service.transaction.deposit.confirm(req.params.transactionId)(depositTransactionRepo);
+        const transactionResult = yield pecorino.service.transaction.deposit.confirm(req.params.transactionId)({ transaction: transactionRepo });
         debug('transaction confirmed', transactionResult);
         res.status(http_status_1.CREATED).json(transactionResult);
     }

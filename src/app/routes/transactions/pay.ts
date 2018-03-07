@@ -33,6 +33,9 @@ payTransactionsRouter.post(
         req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
         req.checkBody('price', 'invalid price').notEmpty().withMessage('price is required').isInt();
 
+        req.checkBody('fromAccountId', 'invalid fromAccountId').notEmpty().withMessage('fromAccountId is required');
+        req.checkBody('toAccountId', 'invalid toAccountId').notEmpty().withMessage('toAccountId is required');
+
         next();
     },
     validator,
@@ -58,11 +61,12 @@ payTransactionsRouter.post(
                 object: {
                     clientUser: req.user,
                     price: req.body.price,
-                    accountId: req.accountId,
+                    fromAccountId: req.body.fromAccountId,
+                    toAccountId: req.body.toAccountId,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
                 expires: moment(req.body.expires).toDate()
-            })(accountRepo, transactionRepo);
+            })({ account: accountRepo, transaction: transactionRepo });
 
             // tslint:disable-next-line:no-string-literal
             // const host = req.headers['host'];
@@ -82,7 +86,7 @@ payTransactionsRouter.post(
         try {
             const transactionResult = await pecorino.service.transaction.pay.confirm(
                 req.params.transactionId
-            )(transactionRepo);
+            )({ transaction: transactionRepo });
             debug('transaction confirmed', transactionResult);
 
             res.status(CREATED).json(transactionResult);
