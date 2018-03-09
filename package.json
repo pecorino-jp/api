@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@motionpicture/express-middleware": "0.1.0-alpha.1",
-    "@motionpicture/pecorino-domain": "0.0.0-alpha.2",
+    "@motionpicture/pecorino-domain": "0.0.0-alpha.10",
     "aws-sdk": "^2.188.0",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",

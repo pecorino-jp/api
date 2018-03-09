@@ -21,6 +21,7 @@ import devRouter from './routes/dev';
 import healthRouter from './routes/health';
 import depositTransactionsRouter from './routes/transactions/deposit';
 import payTransactionsRouter from './routes/transactions/pay';
+import transferTransactionsRouter from './routes/transactions/transfer';
 
 const debug = createDebug('pecorino-api:*');
 
@@ -96,6 +97,7 @@ app.use('/health', healthRouter);
 app.use('/accounts', accountsRouter);
 app.use('/transactions/deposit', depositTransactionsRouter);
 app.use('/transactions/pay', payTransactionsRouter);
+app.use('/transactions/transfer', transferTransactionsRouter);
 
 // tslint:disable-next-line:no-single-line-block-comment
 /* istanbul ignore next */

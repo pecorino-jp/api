@@ -19,6 +19,7 @@ const dev_1 = require("./routes/dev");
 const health_1 = require("./routes/health");
 const deposit_1 = require("./routes/transactions/deposit");
 const pay_1 = require("./routes/transactions/pay");
+const transfer_1 = require("./routes/transactions/transfer");
 const debug = createDebug('pecorino-api:*');
 const app = express();
 app.use(middlewares.basicAuth({
@@ -83,6 +84,7 @@ app.use('/health', health_1.default);
 app.use('/accounts', accounts_1.default);
 app.use('/transactions/deposit', deposit_1.default);
 app.use('/transactions/pay', pay_1.default);
+app.use('/transactions/transfer', transfer_1.default);
 // tslint:disable-next-line:no-single-line-block-comment
 /* istanbul ignore next */
 if (process.env.NODE_ENV !== 'production') {

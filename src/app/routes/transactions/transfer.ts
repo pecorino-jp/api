@@ -1,6 +1,6 @@
 /**
- * 支払取引ルーター
- * @namespace routes.transaction.pay
+ * 転送取引ルーター
+ * @namespace routes.transaction.transfer
  */
 
 import * as pecorino from '@motionpicture/pecorino-domain';
@@ -9,20 +9,20 @@ import { Router } from 'express';
 import { NO_CONTENT } from 'http-status';
 import * as moment from 'moment';
 
-const payTransactionsRouter = Router();
+const transferTransactionsRouter = Router();
 
 import authentication from '../../middlewares/authentication';
 import permitScopes from '../../middlewares/permitScopes';
 import validator from '../../middlewares/validator';
 
-const debug = createDebug('pecorino-api:payTransactionsRouter');
+const debug = createDebug('pecorino-api:transferTransactionsRouter');
 
-payTransactionsRouter.use(authentication);
+transferTransactionsRouter.use(authentication);
 
 const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
 const transactionRepo = new pecorino.repository.Transaction(pecorino.mongoose.connection);
 
-payTransactionsRouter.post(
+transferTransactionsRouter.post(
     '/start',
     permitScopes(['transactions']),
     (req, _, next) => {
@@ -33,6 +33,8 @@ payTransactionsRouter.post(
         req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
         req.checkBody('price', 'invalid price').notEmpty().withMessage('price is required').isInt();
 
+        req.checkBody('toAccountId', 'invalid toAccountId').notEmpty().withMessage('toAccountId is required');
+
         next();
     },
     validator,
@@ -42,7 +44,7 @@ payTransactionsRouter.post(
                 throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
             }
 
-            const transaction = await pecorino.service.transaction.pay.start({
+            const transaction = await pecorino.service.transaction.transfer.start({
                 agent: {
                     typeOf: pecorino.factory.personType.Person,
                     id: req.user.sub,
@@ -56,9 +58,10 @@ payTransactionsRouter.post(
                     url: (req.body.recipient.url !== undefined) ? req.body.recipient.url : ''
                 },
                 object: {
-                    clientUser: <any>{ ...req.user, scopes: undefined },
+                    clientUser: req.user,
                     price: req.body.price,
                     fromAccountId: req.accountId,
+                    toAccountId: req.body.toAccountId,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
                 expires: moment(req.body.expires).toDate()
@@ -74,13 +77,13 @@ payTransactionsRouter.post(
     }
 );
 
-payTransactionsRouter.post(
+transferTransactionsRouter.post(
     '/:transactionId/confirm',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
         try {
-            await pecorino.service.transaction.pay.confirm(
+            await pecorino.service.transaction.transfer.confirm(
                 req.params.transactionId
             )({ transaction: transactionRepo });
             debug('transaction confirmed.');
@@ -92,4 +95,4 @@ payTransactionsRouter.post(
     }
 );
 
-export default payTransactionsRouter;
+export default transferTransactionsRouter;

@@ -6,7 +6,7 @@
 import * as pecorino from '@motionpicture/pecorino-domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
-import { CREATED } from 'http-status';
+import { NO_CONTENT } from 'http-status';
 import * as moment from 'moment';
 
 const depositTransactionsRouter = Router();
@@ -60,9 +60,9 @@ depositTransactionsRouter.post(
                     url: (req.body.recipient.url !== undefined) ? req.body.recipient.url : ''
                 },
                 object: {
+                    // clientUser: <any>{ ...req.user, scopes: undefined },
                     clientUser: req.user,
                     price: req.body.price,
-                    fromAccountId: req.body.fromAccountId,
                     toAccountId: req.body.toAccountId,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
@@ -85,12 +85,12 @@ depositTransactionsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            const transactionResult = await pecorino.service.transaction.deposit.confirm(
+            await pecorino.service.transaction.deposit.confirm(
                 req.params.transactionId
             )({ transaction: transactionRepo });
-            debug('transaction confirmed', transactionResult);
+            debug('transaction confirmed.');
 
-            res.status(CREATED).json(transactionResult);
+            res.status(NO_CONTENT).end();
         } catch (error) {
             next(error);
         }
