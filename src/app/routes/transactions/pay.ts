@@ -43,6 +43,7 @@ payTransactionsRouter.post(
             }
 
             const transaction = await pecorino.service.transaction.pay.start({
+                typeOf: pecorino.factory.transactionType.Pay,
                 agent: {
                     typeOf: pecorino.factory.personType.Person,
                     id: req.user.sub,

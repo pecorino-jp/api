@@ -40,6 +40,7 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['transactions'
             throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
         }
         const transaction = yield pecorino.service.transaction.transfer.start({
+            typeOf: pecorino.factory.transactionType.Transfer,
             agent: {
                 typeOf: pecorino.factory.personType.Person,
                 id: req.user.sub,

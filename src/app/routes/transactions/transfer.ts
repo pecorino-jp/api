@@ -45,6 +45,7 @@ transferTransactionsRouter.post(
             }
 
             const transaction = await pecorino.service.transaction.transfer.start({
+                typeOf: pecorino.factory.transactionType.Transfer,
                 agent: {
                     typeOf: pecorino.factory.personType.Person,
                     id: req.user.sub,

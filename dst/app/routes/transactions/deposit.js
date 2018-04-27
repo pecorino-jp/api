@@ -41,6 +41,7 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         const transaction = yield pecorino.service.transaction.deposit.start({
+            typeOf: pecorino.factory.transactionType.Deposit,
             agent: {
                 typeOf: req.body.agent.typeOf,
                 id: req.body.agent.id,

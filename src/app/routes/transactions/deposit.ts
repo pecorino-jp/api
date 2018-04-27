@@ -47,6 +47,7 @@ depositTransactionsRouter.post(
     async (req, res, next) => {
         try {
             const transaction = await pecorino.service.transaction.deposit.start({
+                typeOf: pecorino.factory.transactionType.Deposit,
                 agent: {
                     typeOf: req.body.agent.typeOf,
                     id: req.body.agent.id,
