@@ -8,17 +8,17 @@ import * as createDebug from 'debug';
 import { Router } from 'express';
 import { CREATED } from 'http-status';
 
-import authentication from '../middlewares/authentication';
-import permitScopes from '../middlewares/permitScopes';
-import requireMember from '../middlewares/requireMember';
-import validator from '../middlewares/validator';
+import authentication from '../../middlewares/authentication';
+import permitScopes from '../../middlewares/permitScopes';
+import requireMember from '../../middlewares/requireMember';
+import validator from '../../middlewares/validator';
 
-const accountsRouter = Router();
+const myAccountsRouter = Router();
 
 const debug = createDebug('pecorino-api:routes:accounts');
 
-accountsRouter.use(authentication);
-accountsRouter.use(requireMember);
+myAccountsRouter.use(authentication);
+myAccountsRouter.use(requireMember);
 
 const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
 const actionRepo = new pecorino.repository.Action(pecorino.mongoose.connection);
@@ -38,8 +38,8 @@ const CUSTOM_ATTRIBUTE_NAME = <string>process.env.COGNITO_ATTRIBUTE_NAME_ACCOUNT
  * 口座開設
  * DBに口座を新規開設し、口座情報をCognitoに連携する
  */
-accountsRouter.post(
-    '/me',
+myAccountsRouter.post(
+    '',
     permitScopes(['accounts']),
     (__1, __2, next) => {
         next();
@@ -81,6 +81,11 @@ accountsRouter.post(
 );
 
 async function addPecorinoAccountId(username: string, accountId: string) {
+    const accountIds = await getAccountIds(username);
+    debug('currently accountIds are', accountIds);
+
+    accountIds.push(accountId);
+
     await new Promise((resolve, reject) => {
         cognitoIdentityServiceProvider.adminUpdateUserAttributes(
             {
@@ -89,7 +94,7 @@ async function addPecorinoAccountId(username: string, accountId: string) {
                 UserAttributes: [
                     {
                         Name: `custom:${CUSTOM_ATTRIBUTE_NAME}`,
-                        Value: accountId
+                        Value: JSON.stringify(accountIds)
                     }
                 ]
             },
@@ -98,6 +103,29 @@ async function addPecorinoAccountId(username: string, accountId: string) {
                     reject(err);
                 } else {
                     resolve();
+                }
+            });
+    });
+    debug('accountIds adde.', accountIds);
+}
+
+async function getAccountIds(username: string) {
+    return new Promise<string[]>((resolve, reject) => {
+        cognitoIdentityServiceProvider.adminGetUser(
+            {
+                UserPoolId: <string>process.env.COGNITO_USER_POOL_ID,
+                Username: username
+            },
+            (err, data) => {
+                if (err instanceof Error) {
+                    reject(err);
+                } else {
+                    if (data.UserAttributes === undefined) {
+                        reject(new Error('UserAttributes not found.'));
+                    } else {
+                        const attribute = data.UserAttributes.find((a) => a.Name === `custom:${CUSTOM_ATTRIBUTE_NAME}`);
+                        resolve((attribute !== undefined && attribute.Value !== undefined) ? JSON.parse(attribute.Value) : []);
+                    }
                 }
             });
     });
@@ -135,10 +163,10 @@ async function addPecorinoAccountAttribute() {
 }
 
 /**
- * 口座情報取得
+ * 自分の口座情報を取得する
  */
-accountsRouter.get(
-    '/me',
+myAccountsRouter.get(
+    '',
     permitScopes(['accounts', 'accounts.read-only']),
     (__1, __2, next) => {
         next();
@@ -146,12 +174,11 @@ accountsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            if (req.accountId === undefined) {
-                throw new pecorino.factory.errors.NotFound('Account');
-            }
+            const accounts = await accountRepo.accountModel.find({
+                _id: { $in: req.accountIds }
+            }).exec().then((docs) => docs.map((doc) => doc.toObject()));
 
-            const account = await accountRepo.accountModel.findById(req.accountId).exec();
-            res.json(account);
+            res.json(accounts);
         } catch (error) {
             next(error);
         }
@@ -161,8 +188,8 @@ accountsRouter.get(
 /**
  * 取引履歴検索
  */
-accountsRouter.get(
-    '/me/actions/moneyTransfer',
+myAccountsRouter.get(
+    '/:accountId/actions/moneyTransfer',
     permitScopes(['accounts.actions', 'accounts.actions.read-only']),
     (_1, _2, next) => {
         next();
@@ -170,13 +197,13 @@ accountsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            if (req.accountId === undefined) {
+            if (req.accountIds.indexOf(req.params.accountId) < 0) {
                 throw new pecorino.factory.errors.NotFound('Account');
             }
 
-            debug('searching trade actions...', req.accountId);
+            debug('searching trade actions...', req.params.accountId);
             const actions = await pecorino.service.account.searchTransferActions({
-                accountId: req.accountId
+                accountId: req.params.accountId
             })({ action: actionRepo });
 
             res.json(actions);
@@ -186,4 +213,4 @@ accountsRouter.get(
     }
 );
 
-export default accountsRouter;
+export default myAccountsRouter;

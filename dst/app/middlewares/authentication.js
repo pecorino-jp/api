@@ -16,6 +16,11 @@ const pecorino = require("@motionpicture/pecorino-domain");
 const AWS = require("aws-sdk");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:authentication');
+const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider({
+    apiVersion: 'latest',
+    region: 'ap-northeast-1'
+});
+const CUSTOM_ATTRIBUTE_NAME = process.env.COGNITO_ATTRIBUTE_NAME_ACCOUNT_ID;
 // 許可発行者リスト
 const ISSUERS = process.env.TOKEN_ISSUERS.split(',');
 const authentication = express_middleware_1.cognitoAuth({
@@ -24,19 +29,15 @@ const authentication = express_middleware_1.cognitoAuth({
         try {
             req.user = user;
             req.accessToken = token;
+            req.accountIds = [];
             // Cognitoから口座IDを取得する
             if (req.user.username !== undefined) {
                 const cognitoUser = yield getCognitoUser(token);
                 debug('cognitoUser:', cognitoUser);
-                const attribute = cognitoUser.find((attr) => attr.Name === 'custom:pecorinoAccountId');
-                if (attribute !== undefined) {
-                    req.accountId = attribute.Value;
+                const attribute = cognitoUser.find((attr) => attr.Name === `custom:${CUSTOM_ATTRIBUTE_NAME}`);
+                if (attribute !== undefined && attribute.Value !== undefined) {
+                    req.accountIds = JSON.parse(attribute.Value);
                 }
-                // if (attribute === undefined || attribute.Value === undefined) {
-                //     // Cognitoユーザー属性に口座ID情報が見つからなければNotFound
-                //     next(new pecorino.factory.errors.NotFound('Account'));
-                //     return;
-                // }
             }
             next();
         }
@@ -52,10 +53,6 @@ const authentication = express_middleware_1.cognitoAuth({
 function getCognitoUser(accesssToken) {
     return __awaiter(this, void 0, void 0, function* () {
         return new Promise((resolve, reject) => {
-            const cognitoIdentityServiceProvider = new AWS.CognitoIdentityServiceProvider({
-                apiVersion: 'latest',
-                region: 'ap-northeast-1'
-            });
             cognitoIdentityServiceProvider.getUser({
                 AccessToken: accesssToken
             }, (err, data) => {
@@ -70,4 +67,25 @@ function getCognitoUser(accesssToken) {
         });
     });
 }
+// async function getAccountIds(username: string) {
+//     return new Promise<string[]>((resolve, reject) => {
+//         cognitoIdentityServiceProvider.adminGetUser(
+//             {
+//                 UserPoolId: <string>process.env.COGNITO_USER_POOL_ID,
+//                 Username: username
+//             },
+//             (err, data) => {
+//                 if (err instanceof Error) {
+//                     reject(err);
+//                 } else {
+//                     if (data.UserAttributes === undefined) {
+//                         reject(new Error('UserAttributes not found.'));
+//                     } else {
+//                         const attribute = data.UserAttributes.find((a) => a.Name === `custom:${CUSTOM_ATTRIBUTE_NAME}`);
+//                         resolve((attribute !== undefined && attribute.Value !== undefined) ? JSON.parse(attribute.Value) : []);
+//                     }
+//                 }
+//             });
+//     });
+// }
 exports.default = authentication;

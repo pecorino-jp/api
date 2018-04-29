@@ -16,9 +16,9 @@ import mongooseConnectionOptions from '../mongooseConnectionOptions';
 
 import errorHandler from './middlewares/errorHandler';
 import notFoundHandler from './middlewares/notFoundHandler';
-import accountsRouter from './routes/accounts';
 import devRouter from './routes/dev';
 import healthRouter from './routes/health';
+import myAccountsRouter from './routes/me/accounts';
 import depositTransactionsRouter from './routes/transactions/deposit';
 import payTransactionsRouter from './routes/transactions/pay';
 import transferTransactionsRouter from './routes/transactions/transfer';
@@ -94,7 +94,7 @@ pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, mongooseConnectionOp
 
 // routers
 app.use('/health', healthRouter);
-app.use('/accounts', accountsRouter);
+app.use('/me/accounts', myAccountsRouter);
 app.use('/transactions/deposit', depositTransactionsRouter);
 app.use('/transactions/pay', payTransactionsRouter);
 app.use('/transactions/transfer', transferTransactionsRouter);

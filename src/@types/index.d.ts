@@ -17,7 +17,7 @@ declare global {
             /**
              * 口座ID
              */
-            accountId?: string;
+            accountIds: string[];
         }
     }
 }

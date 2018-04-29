@@ -1,6 +1,5 @@
 /**
  * 支払取引ルーター
- * @namespace routes.transaction.pay
  */
 
 import * as pecorino from '@motionpicture/pecorino-domain';
@@ -32,6 +31,7 @@ payTransactionsRouter.post(
         req.checkBody('recipient.id', 'invalid recipient.id').notEmpty().withMessage('recipient.id is required');
         req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
         req.checkBody('price', 'invalid price').notEmpty().withMessage('price is required').isInt();
+        req.checkBody('fromAccountId', 'invalid fromAccountId').notEmpty().withMessage('fromAccountId is required');
 
         next();
     },
@@ -41,7 +41,7 @@ payTransactionsRouter.post(
             if (req.user.username === undefined) {
                 throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
             }
-            if (req.accountId === undefined) {
+            if (req.accountIds.indexOf(req.body.fromAccountId) < 0) {
                 throw new pecorino.factory.errors.NotFound('Account');
             }
 
@@ -62,7 +62,7 @@ payTransactionsRouter.post(
                 object: {
                     clientUser: <any>{ ...req.user, scopes: undefined },
                     price: req.body.price,
-                    fromAccountId: req.accountId,
+                    fromAccountId: req.body.fromAccountId,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
                 expires: moment(req.body.expires).toDate()

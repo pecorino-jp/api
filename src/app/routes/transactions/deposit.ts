@@ -1,6 +1,5 @@
 /**
  * 入金取引ルーター
- * @namespace routes.transaction.deposit
  */
 
 import * as pecorino from '@motionpicture/pecorino-domain';

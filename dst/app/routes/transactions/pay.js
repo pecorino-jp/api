@@ -1,7 +1,6 @@
 "use strict";
 /**
  * 支払取引ルーター
- * @namespace routes.transaction.pay
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -32,13 +31,14 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['transactions']), (
     req.checkBody('recipient.id', 'invalid recipient.id').notEmpty().withMessage('recipient.id is required');
     req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
     req.checkBody('price', 'invalid price').notEmpty().withMessage('price is required').isInt();
+    req.checkBody('fromAccountId', 'invalid fromAccountId').notEmpty().withMessage('fromAccountId is required');
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         if (req.user.username === undefined) {
             throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
         }
-        if (req.accountId === undefined) {
+        if (req.accountIds.indexOf(req.body.fromAccountId) < 0) {
             throw new pecorino.factory.errors.NotFound('Account');
         }
         const transaction = yield pecorino.service.transaction.pay.start({
@@ -58,7 +58,7 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['transactions']), (
             object: {
                 clientUser: Object.assign({}, req.user, { scopes: undefined }),
                 price: req.body.price,
-                fromAccountId: req.accountId,
+                fromAccountId: req.body.fromAccountId,
                 notes: (req.body.notes !== undefined) ? req.body.notes : ''
             },
             expires: moment(req.body.expires).toDate()
