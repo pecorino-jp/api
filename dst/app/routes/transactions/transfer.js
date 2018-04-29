@@ -39,6 +39,9 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['transactions'
         if (req.user.username === undefined) {
             throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
         }
+        if (req.accountId === undefined) {
+            throw new pecorino.factory.errors.NotFound('Account');
+        }
         const transaction = yield pecorino.service.transaction.transfer.start({
             typeOf: pecorino.factory.transactionType.Transfer,
             agent: {

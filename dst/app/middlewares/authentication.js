@@ -1,7 +1,6 @@
 "use strict";
 /**
  * oauthミドルウェア
- * @module middlewares.authentication
  */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -30,12 +29,14 @@ const authentication = express_middleware_1.cognitoAuth({
                 const cognitoUser = yield getCognitoUser(token);
                 debug('cognitoUser:', cognitoUser);
                 const attribute = cognitoUser.find((attr) => attr.Name === 'custom:pecorinoAccountId');
-                if (attribute === undefined || attribute.Value === undefined) {
-                    // Cognitoユーザー属性に口座ID情報が見つからなければNotFound
-                    next(new pecorino.factory.errors.NotFound('Account'));
-                    return;
+                if (attribute !== undefined) {
+                    req.accountId = attribute.Value;
                 }
-                req.accountId = attribute.Value;
+                // if (attribute === undefined || attribute.Value === undefined) {
+                //     // Cognitoユーザー属性に口座ID情報が見つからなければNotFound
+                //     next(new pecorino.factory.errors.NotFound('Account'));
+                //     return;
+                // }
             }
             next();
         }

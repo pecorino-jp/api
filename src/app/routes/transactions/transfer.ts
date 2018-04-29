@@ -43,6 +43,9 @@ transferTransactionsRouter.post(
             if (req.user.username === undefined) {
                 throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
             }
+            if (req.accountId === undefined) {
+                throw new pecorino.factory.errors.NotFound('Account');
+            }
 
             const transaction = await pecorino.service.transaction.transfer.start({
                 typeOf: pecorino.factory.transactionType.Transfer,

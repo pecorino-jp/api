@@ -1,6 +1,5 @@
 /**
  * oauthミドルウェア
- * @module middlewares.authentication
  */
 
 import { cognitoAuth } from '@motionpicture/express-middleware';
@@ -25,14 +24,15 @@ const authentication = cognitoAuth({
                 const cognitoUser = await getCognitoUser(token);
                 debug('cognitoUser:', cognitoUser);
                 const attribute = cognitoUser.find((attr) => attr.Name === 'custom:pecorinoAccountId');
-                if (attribute === undefined || attribute.Value === undefined) {
-                    // Cognitoユーザー属性に口座ID情報が見つからなければNotFound
-                    next(new pecorino.factory.errors.NotFound('Account'));
-
-                    return;
+                if (attribute !== undefined) {
+                    req.accountId = attribute.Value;
                 }
+                // if (attribute === undefined || attribute.Value === undefined) {
+                //     // Cognitoユーザー属性に口座ID情報が見つからなければNotFound
+                //     next(new pecorino.factory.errors.NotFound('Account'));
 
-                req.accountId = attribute.Value;
+                //     return;
+                // }
             }
 
             next();
