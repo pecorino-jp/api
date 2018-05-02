@@ -96,4 +96,20 @@ payTransactionsRouter.post(
     }
 );
 
+payTransactionsRouter.post(
+    '/:transactionId/cancel',
+    permitScopes(['admin', 'transactions']),
+    validator,
+    async (req, res, next) => {
+        try {
+            await transactionRepo.cancel(pecorino.factory.transactionType.Pay, req.params.transactionId);
+            debug('transaction canceled.');
+
+            res.status(NO_CONTENT).end();
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 export default payTransactionsRouter;

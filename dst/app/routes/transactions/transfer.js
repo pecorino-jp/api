@@ -84,4 +84,14 @@ transferTransactionsRouter.post('/:transactionId/confirm', permitScopes_1.defaul
         next(error);
     }
 }));
+transferTransactionsRouter.post('/:transactionId/cancel', permitScopes_1.default(['admin', 'transactions']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+    try {
+        yield transactionRepo.cancel(pecorino.factory.transactionType.Transfer, req.params.transactionId);
+        debug('transaction canceled.');
+        res.status(http_status_1.NO_CONTENT).end();
+    }
+    catch (error) {
+        next(error);
+    }
+}));
 exports.default = transferTransactionsRouter;
