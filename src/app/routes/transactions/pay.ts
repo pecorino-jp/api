@@ -60,7 +60,7 @@ payTransactionsRouter.post(
                     url: (req.body.recipient.url !== undefined) ? req.body.recipient.url : ''
                 },
                 object: {
-                    clientUser: <any>{ ...req.user, scopes: undefined },
+                    clientUser: req.user,
                     price: req.body.price,
                     fromAccountId: req.body.fromAccountId,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''

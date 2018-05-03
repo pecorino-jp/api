@@ -60,7 +60,6 @@ depositTransactionsRouter.post(
                     url: (req.body.recipient.url !== undefined) ? req.body.recipient.url : ''
                 },
                 object: {
-                    // clientUser: <any>{ ...req.user, scopes: undefined },
                     clientUser: req.user,
                     price: req.body.price,
                     toAccountId: req.body.toAccountId,
