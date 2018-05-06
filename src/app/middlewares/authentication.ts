@@ -39,7 +39,12 @@ const authentication = cognitoAuth({
 
             next();
         } catch (error) {
-            next(new pecorino.factory.errors.Unauthorized(error.message));
+            // AmazonCognitoAPIのレート制限をハンドリング
+            if (error.name === 'TooManyRequestsException') {
+                next(new pecorino.factory.errors.RateLimitExceeded(`getUser ${error.message}`));
+            } else {
+                next(new pecorino.factory.errors.Unauthorized(`${error.name}:${error.message}`));
+            }
         }
     },
     unauthorizedHandler: (err, __1, __2, next) => {
