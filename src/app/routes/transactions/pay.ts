@@ -1,7 +1,6 @@
 /**
  * 支払取引ルーター
  */
-
 import * as pecorino from '@motionpicture/pecorino-domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
@@ -23,9 +22,10 @@ const transactionRepo = new pecorino.repository.Transaction(pecorino.mongoose.co
 
 payTransactionsRouter.post(
     '/start',
-    permitScopes(['transactions']),
+    permitScopes(['admin']),
     (req, _, next) => {
         req.checkBody('expires', 'invalid expires').notEmpty().withMessage('expires is required').isISO8601();
+        req.checkBody('agent.name', 'invalid agent.name').notEmpty().withMessage('agent.name is required');
         req.checkBody('recipient', 'invalid recipient').notEmpty().withMessage('recipient is required');
         req.checkBody('recipient.typeOf', 'invalid recipient.typeOf').notEmpty().withMessage('recipient.typeOf is required');
         req.checkBody('recipient.id', 'invalid recipient.id').notEmpty().withMessage('recipient.id is required');
@@ -38,19 +38,19 @@ payTransactionsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            if (req.user.username === undefined) {
-                throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
-            }
-            if (req.accountIds.indexOf(req.body.fromAccountId) < 0) {
-                throw new pecorino.factory.errors.NotFound('Account');
-            }
+            // if (req.user.username === undefined) {
+            //     throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
+            // }
+            // if (req.accountIds.indexOf(req.body.fromAccountId) < 0) {
+            //     throw new pecorino.factory.errors.NotFound('Account');
+            // }
 
             const transaction = await pecorino.service.transaction.pay.start({
                 typeOf: pecorino.factory.transactionType.Pay,
                 agent: {
                     typeOf: pecorino.factory.personType.Person,
                     id: req.user.sub,
-                    name: req.user.username,
+                    name: req.body.agent.name,
                     url: ''
                 },
                 recipient: {
@@ -98,7 +98,7 @@ payTransactionsRouter.post(
 
 payTransactionsRouter.post(
     '/:transactionId/cancel',
-    permitScopes(['admin', 'transactions']),
+    permitScopes(['admin']),
     validator,
     async (req, res, next) => {
         try {

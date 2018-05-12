@@ -1,7 +1,6 @@
 /**
  * 入金取引ルーター
  */
-
 import * as pecorino from '@motionpicture/pecorino-domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';

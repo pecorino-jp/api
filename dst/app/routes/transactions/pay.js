@@ -1,7 +1,4 @@
 "use strict";
-/**
- * 支払取引ルーター
- */
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
@@ -11,6 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * 支払取引ルーター
+ */
 const pecorino = require("@motionpicture/pecorino-domain");
 const createDebug = require("debug");
 const express_1 = require("express");
@@ -24,8 +24,9 @@ const debug = createDebug('pecorino-api:payTransactionsRouter');
 payTransactionsRouter.use(authentication_1.default);
 const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
 const transactionRepo = new pecorino.repository.Transaction(pecorino.mongoose.connection);
-payTransactionsRouter.post('/start', permitScopes_1.default(['transactions']), (req, _, next) => {
+payTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _, next) => {
     req.checkBody('expires', 'invalid expires').notEmpty().withMessage('expires is required').isISO8601();
+    req.checkBody('agent.name', 'invalid agent.name').notEmpty().withMessage('agent.name is required');
     req.checkBody('recipient', 'invalid recipient').notEmpty().withMessage('recipient is required');
     req.checkBody('recipient.typeOf', 'invalid recipient.typeOf').notEmpty().withMessage('recipient.typeOf is required');
     req.checkBody('recipient.id', 'invalid recipient.id').notEmpty().withMessage('recipient.id is required');
@@ -35,18 +36,18 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['transactions']), (
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        if (req.user.username === undefined) {
-            throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
-        }
-        if (req.accountIds.indexOf(req.body.fromAccountId) < 0) {
-            throw new pecorino.factory.errors.NotFound('Account');
-        }
+        // if (req.user.username === undefined) {
+        //     throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
+        // }
+        // if (req.accountIds.indexOf(req.body.fromAccountId) < 0) {
+        //     throw new pecorino.factory.errors.NotFound('Account');
+        // }
         const transaction = yield pecorino.service.transaction.pay.start({
             typeOf: pecorino.factory.transactionType.Pay,
             agent: {
                 typeOf: pecorino.factory.personType.Person,
                 id: req.user.sub,
-                name: req.user.username,
+                name: req.body.agent.name,
                 url: ''
             },
             recipient: {
@@ -82,7 +83,7 @@ payTransactionsRouter.post('/:transactionId/confirm', permitScopes_1.default(['a
         next(error);
     }
 }));
-payTransactionsRouter.post('/:transactionId/cancel', permitScopes_1.default(['admin', 'transactions']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+payTransactionsRouter.post('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         yield transactionRepo.cancel(pecorino.factory.transactionType.Pay, req.params.transactionId);
         debug('transaction canceled.');
