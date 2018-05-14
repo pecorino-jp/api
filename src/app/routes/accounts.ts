@@ -31,10 +31,10 @@ accountsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            const account = await pecorino.service.account.open({
+            const account = await accountRepo.open({
                 name: req.body.name,
                 initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
-            })({ account: accountRepo });
+            });
             res.status(CREATED).json(account);
         } catch (error) {
             next(error);
@@ -54,10 +54,13 @@ accountsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            const accounts = await accountRepo.accountModel.find({
-                _id: { $in: req.query.accountIds }
-            }).exec().then((docs) => docs.map((doc) => doc.toObject()));
-
+            const accounts = await accountRepo.search({
+                ids: req.query.ids,
+                statuses: req.query.statuses,
+                name: req.query.name,
+                // tslint:disable-next-line:no-magic-numbers
+                limit: (Number.isInteger(req.query.limit)) ? req.query.limit : 100
+            });
             res.json(accounts);
         } catch (error) {
             next(error);
@@ -78,9 +81,9 @@ accountsRouter.get(
     async (req, res, next) => {
         try {
             debug('searching trade actions...', req.params.accountId);
-            const actions = await pecorino.service.account.searchTransferActions({
+            const actions = await actionRepo.searchTransferActions({
                 accountId: req.params.accountId
-            })({ action: actionRepo });
+            });
 
             res.json(actions);
         } catch (error) {

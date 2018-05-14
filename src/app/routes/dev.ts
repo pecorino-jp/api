@@ -1,6 +1,5 @@
 /**
  * devルーター
- *
  * @ignore
  */
 
@@ -33,10 +32,9 @@ devRouter.get(
 
 devRouter.get(
     '/mongoose/connect',
-    (__, res) => {
-        pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, mongooseConnectionOptions, () => {
-            res.status(NO_CONTENT).end();
-        });
+    async (__, res) => {
+        await pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, mongooseConnectionOptions);
+        res.status(NO_CONTENT).end();
     });
 
 export default devRouter;

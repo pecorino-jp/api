@@ -14,10 +14,6 @@ declare global {
         export interface Request {
             user: IUser;
             accessToken: string;
-            /**
-             * 口座ID
-             */
-            // accountIds: string[];
         }
     }
 }

@@ -30,10 +30,10 @@ accountsRouter.post('', permitScopes_1.default(['admin']), (__1, __2, next) => {
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const account = yield pecorino.service.account.open({
+        const account = yield accountRepo.open({
             name: req.body.name,
             initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
-        })({ account: accountRepo });
+        });
         res.status(http_status_1.CREATED).json(account);
     }
     catch (error) {
@@ -47,9 +47,13 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (__1, __2, next) => {
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const accounts = yield accountRepo.accountModel.find({
-            _id: { $in: req.query.accountIds }
-        }).exec().then((docs) => docs.map((doc) => doc.toObject()));
+        const accounts = yield accountRepo.search({
+            ids: req.query.ids,
+            statuses: req.query.statuses,
+            name: req.query.name,
+            // tslint:disable-next-line:no-magic-numbers
+            limit: (Number.isInteger(req.query.limit)) ? req.query.limit : 100
+        });
         res.json(accounts);
     }
     catch (error) {
@@ -64,9 +68,9 @@ accountsRouter.get('/:accountId/actions/moneyTransfer', permitScopes_1.default([
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         debug('searching trade actions...', req.params.accountId);
-        const actions = yield pecorino.service.account.searchTransferActions({
+        const actions = yield actionRepo.searchTransferActions({
             accountId: req.params.accountId
-        })({ action: actionRepo });
+        });
         res.json(actions);
     }
     catch (error) {

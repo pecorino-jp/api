@@ -15,9 +15,9 @@ const mongooseConnectionOptions_1 = require("../mongooseConnectionOptions");
 const errorHandler_1 = require("./middlewares/errorHandler");
 const notFoundHandler_1 = require("./middlewares/notFoundHandler");
 const accounts_1 = require("./routes/accounts");
+const actions_1 = require("./routes/actions");
 const dev_1 = require("./routes/dev");
 const health_1 = require("./routes/health");
-// import myAccountsRouter from './routes/me/accounts';
 const deposit_1 = require("./routes/transactions/deposit");
 const pay_1 = require("./routes/transactions/pay");
 const transfer_1 = require("./routes/transactions/transfer");
@@ -82,6 +82,7 @@ pecorino.mongoose.connect(process.env.MONGOLAB_URI, mongooseConnectionOptions_1.
     .catch(console.error);
 // routers
 app.use('/accounts', accounts_1.default);
+app.use('/actions', actions_1.default);
 app.use('/health', health_1.default);
 app.use('/transactions/deposit', deposit_1.default);
 app.use('/transactions/pay', pay_1.default);

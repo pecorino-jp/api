@@ -2,7 +2,6 @@
  * Expressアプリケーション
  * @ignore
  */
-
 import * as middlewares from '@motionpicture/express-middleware';
 import * as pecorino from '@motionpicture/pecorino-domain';
 import * as bodyParser from 'body-parser';
@@ -18,9 +17,9 @@ import errorHandler from './middlewares/errorHandler';
 import notFoundHandler from './middlewares/notFoundHandler';
 
 import accountsRouter from './routes/accounts';
+import actionsRouter from './routes/actions';
 import devRouter from './routes/dev';
 import healthRouter from './routes/health';
-// import myAccountsRouter from './routes/me/accounts';
 import depositTransactionsRouter from './routes/transactions/deposit';
 import payTransactionsRouter from './routes/transactions/pay';
 import transferTransactionsRouter from './routes/transactions/transfer';
@@ -96,6 +95,7 @@ pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, mongooseConnectionOp
 
 // routers
 app.use('/accounts', accountsRouter);
+app.use('/actions', actionsRouter);
 app.use('/health', healthRouter);
 app.use('/transactions/deposit', depositTransactionsRouter);
 app.use('/transactions/pay', payTransactionsRouter);
