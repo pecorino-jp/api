@@ -16,7 +16,16 @@ const debug = createDebug('pecorino-api:routes:accounts');
 
 accountsRouter.use(authentication);
 
+const redisClient = new pecorino.ioredis({
+    host: <string>process.env.REDIS_HOST,
+    // tslint:disable-next-line:no-magic-numbers
+    port: parseInt(<string>process.env.REDIS_PORT, 10),
+    password: <string>process.env.REDIS_KEY,
+    tls: <any>{ servername: <string>process.env.REDIS_HOST }
+});
+
 const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
+const accountNumberRepo = new pecorino.repository.AccountNumber(redisClient);
 const actionRepo = new pecorino.repository.Action(pecorino.mongoose.connection);
 
 /**
@@ -31,9 +40,12 @@ accountsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            const account = await accountRepo.open({
+            const account = await pecorino.service.account.open({
                 name: req.body.name,
                 initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
+            })({
+                account: accountRepo,
+                accountNumber: accountNumberRepo
             });
             res.status(CREATED).json(account);
         } catch (error) {
