@@ -32,8 +32,8 @@ actionsRouter.get('', permitScopes_1.default(['admin']), (__1, __2, next) => {
             startDateFrom: req.query.startDateFrom,
             startDateThrough: req.query.startDateThrough,
             purposeTypeOfs: req.query.purposeTypeOfs,
-            fromLocationIds: req.query.fromLocationIds,
-            toLocationIds: req.query.toLocationIds,
+            fromLocationAccountNumbers: req.query.fromLocationAccountNumbers,
+            toLocationAccountNumbers: req.query.toLocationAccountNumbers,
             // tslint:disable-next-line:no-magic-numbers
             limit: (Number.isInteger(req.query.limit)) ? req.query.limit : 100
         });

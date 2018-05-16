@@ -67,7 +67,7 @@ accountsRouter.get(
     async (req, res, next) => {
         try {
             const accounts = await accountRepo.search({
-                ids: req.query.ids,
+                accountNumbers: req.query.accountNumbers,
                 statuses: req.query.statuses,
                 name: req.query.name,
                 // tslint:disable-next-line:no-magic-numbers
@@ -84,7 +84,7 @@ accountsRouter.get(
  * 取引履歴検索
  */
 accountsRouter.get(
-    '/:accountId/actions/moneyTransfer',
+    '/:accountNumber/actions/moneyTransfer',
     permitScopes(['admin']),
     (_1, _2, next) => {
         next();
@@ -92,9 +92,9 @@ accountsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            debug('searching trade actions...', req.params.accountId);
+            debug('searching trade actions...', req.params.accountNumber);
             const actions = await actionRepo.searchTransferActions({
-                accountId: req.params.accountId
+                accountNumber: req.params.accountNumber
             });
 
             res.json(actions);

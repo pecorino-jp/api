@@ -30,9 +30,9 @@ transferTransactionsRouter.post(
         req.checkBody('recipient.typeOf', 'invalid recipient.typeOf').notEmpty().withMessage('recipient.typeOf is required');
         req.checkBody('recipient.id', 'invalid recipient.id').notEmpty().withMessage('recipient.id is required');
         req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
-        req.checkBody('price', 'invalid price').notEmpty().withMessage('price is required').isInt();
-        req.checkBody('fromAccountId', 'invalid fromAccountId').notEmpty().withMessage('fromAccountId is required');
-        req.checkBody('toAccountId', 'invalid toAccountId').notEmpty().withMessage('toAccountId is required');
+        req.checkBody('amount', 'invalid amount').notEmpty().withMessage('amount is required').isInt();
+        req.checkBody('fromAccountNumber', 'invalid fromAccountNumber').notEmpty().withMessage('fromAccountNumber is required');
+        req.checkBody('toAccountNumber', 'invalid toAccountNumber').notEmpty().withMessage('toAccountNumber is required');
 
         next();
     },
@@ -41,9 +41,6 @@ transferTransactionsRouter.post(
         try {
             // if (req.user.username === undefined) {
             //     throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
-            // }
-            // if (req.accountIds.indexOf(req.body.fromAccountId) < 0) {
-            //     throw new pecorino.factory.errors.NotFound('Account');
             // }
 
             const transaction = await pecorino.service.transaction.transfer.start({
@@ -62,9 +59,9 @@ transferTransactionsRouter.post(
                 },
                 object: {
                     clientUser: req.user,
-                    price: req.body.price,
-                    fromAccountId: req.body.fromAccountId,
-                    toAccountId: req.body.toAccountId,
+                    amount: req.body.amount,
+                    fromAccountNumber: req.body.fromAccountNumber,
+                    toAccountNumber: req.body.toAccountNumber,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
                 expires: moment(req.body.expires).toDate()

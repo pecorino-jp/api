@@ -34,8 +34,8 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req
     req.checkBody('recipient.typeOf', 'invalid recipient.typeOf').notEmpty().withMessage('recipient.typeOf is required');
     req.checkBody('recipient.id', 'invalid recipient.id').notEmpty().withMessage('recipient.id is required');
     req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
-    req.checkBody('price', 'invalid price').notEmpty().withMessage('price is required').isInt();
-    req.checkBody('toAccountId', 'invalid toAccountId').notEmpty().withMessage('toAccountId is required');
+    req.checkBody('amount', 'invalid amount').notEmpty().withMessage('amount is required').isInt();
+    req.checkBody('toAccountNumber', 'invalid toAccountNumber').notEmpty().withMessage('toAccountNumber is required');
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
@@ -55,8 +55,8 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req
             },
             object: {
                 clientUser: req.user,
-                price: req.body.price,
-                toAccountId: req.body.toAccountId,
+                amount: req.body.amount,
+                toAccountNumber: req.body.toAccountNumber,
                 notes: (req.body.notes !== undefined) ? req.body.notes : ''
             },
             expires: moment(req.body.expires).toDate()

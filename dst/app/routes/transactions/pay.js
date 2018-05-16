@@ -31,16 +31,13 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _,
     req.checkBody('recipient.typeOf', 'invalid recipient.typeOf').notEmpty().withMessage('recipient.typeOf is required');
     req.checkBody('recipient.id', 'invalid recipient.id').notEmpty().withMessage('recipient.id is required');
     req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
-    req.checkBody('price', 'invalid price').notEmpty().withMessage('price is required').isInt();
-    req.checkBody('fromAccountId', 'invalid fromAccountId').notEmpty().withMessage('fromAccountId is required');
+    req.checkBody('amount', 'invalid amount').notEmpty().withMessage('amount is required').isInt();
+    req.checkBody('fromAccountNumber', 'invalid fromAccountNumber').notEmpty().withMessage('fromAccountNumber is required');
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         // if (req.user.username === undefined) {
         //     throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
-        // }
-        // if (req.accountIds.indexOf(req.body.fromAccountId) < 0) {
-        //     throw new pecorino.factory.errors.NotFound('Account');
         // }
         const transaction = yield pecorino.service.transaction.pay.start({
             typeOf: pecorino.factory.transactionType.Pay,
@@ -58,8 +55,8 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _,
             },
             object: {
                 clientUser: req.user,
-                price: req.body.price,
-                fromAccountId: req.body.fromAccountId,
+                amount: req.body.amount,
+                fromAccountNumber: req.body.fromAccountNumber,
                 notes: (req.body.notes !== undefined) ? req.body.notes : ''
             },
             expires: moment(req.body.expires).toDate()

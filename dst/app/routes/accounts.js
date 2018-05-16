@@ -59,7 +59,7 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (__1, __2, next) => {
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         const accounts = yield accountRepo.search({
-            ids: req.query.ids,
+            accountNumbers: req.query.accountNumbers,
             statuses: req.query.statuses,
             name: req.query.name,
             // tslint:disable-next-line:no-magic-numbers
@@ -74,13 +74,13 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (__1, __2, next) => {
 /**
  * 取引履歴検索
  */
-accountsRouter.get('/:accountId/actions/moneyTransfer', permitScopes_1.default(['admin']), (_1, _2, next) => {
+accountsRouter.get('/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), (_1, _2, next) => {
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        debug('searching trade actions...', req.params.accountId);
+        debug('searching trade actions...', req.params.accountNumber);
         const actions = yield actionRepo.searchTransferActions({
-            accountId: req.params.accountId
+            accountNumber: req.params.accountNumber
         });
         res.json(actions);
     }
