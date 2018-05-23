@@ -28,9 +28,6 @@ const redisClient = new pecorino.ioredis({
     password: process.env.REDIS_KEY,
     tls: { servername: process.env.REDIS_HOST }
 });
-const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
-const accountNumberRepo = new pecorino.repository.AccountNumber(redisClient);
-const actionRepo = new pecorino.repository.Action(pecorino.mongoose.connection);
 /**
  * 口座開設
  */
@@ -42,10 +39,27 @@ accountsRouter.post('', permitScopes_1.default(['admin']), (__1, __2, next) => {
             name: req.body.name,
             initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
         })({
-            account: accountRepo,
-            accountNumber: accountNumberRepo
+            account: new pecorino.repository.Account(pecorino.mongoose.connection),
+            accountNumber: new pecorino.repository.AccountNumber(redisClient)
         });
         res.status(http_status_1.CREATED).json(account);
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+/**
+ * 口座解約
+ * 冪等性の担保された処理となります。
+ */
+accountsRouter.put('/:accountNumber/close', permitScopes_1.default(['admin']), (_1, _2, next) => {
+    next();
+}, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+    try {
+        yield pecorino.service.account.close({ accountNumber: req.params.accountNumber })({
+            account: new pecorino.repository.Account(pecorino.mongoose.connection)
+        });
+        res.status(http_status_1.NO_CONTENT).end();
     }
     catch (error) {
         next(error);
@@ -58,6 +72,7 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (__1, __2, next) => {
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
+        const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
         const accounts = yield accountRepo.search({
             accountNumbers: req.query.accountNumbers,
             statuses: req.query.statuses,
@@ -79,6 +94,7 @@ accountsRouter.get('/:accountNumber/actions/moneyTransfer', permitScopes_1.defau
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         debug('searching trade actions...', req.params.accountNumber);
+        const actionRepo = new pecorino.repository.Action(pecorino.mongoose.connection);
         const actions = yield actionRepo.searchTransferActions({
             accountNumber: req.params.accountNumber
         });
