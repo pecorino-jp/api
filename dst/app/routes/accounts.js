@@ -31,7 +31,8 @@ const redisClient = new pecorino.ioredis({
 /**
  * 口座開設
  */
-accountsRouter.post('', permitScopes_1.default(['admin']), (__1, __2, next) => {
+accountsRouter.post('', permitScopes_1.default(['admin']), (req, __2, next) => {
+    req.checkBody('name', 'invalid name').notEmpty().withMessage('name is required');
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {

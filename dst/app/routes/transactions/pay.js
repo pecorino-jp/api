@@ -36,9 +36,6 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _,
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        // if (req.user.username === undefined) {
-        //     throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
-        // }
         const transaction = yield pecorino.service.transaction.pay.start({
             typeOf: pecorino.factory.transactionType.Pay,
             agent: {
@@ -55,7 +52,7 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _,
             },
             object: {
                 clientUser: req.user,
-                amount: req.body.amount,
+                amount: parseInt(req.body.amount, 10),
                 fromAccountNumber: req.body.fromAccountNumber,
                 notes: (req.body.notes !== undefined) ? req.body.notes : ''
             },
@@ -70,9 +67,11 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _,
         next(error);
     }
 }));
-payTransactionsRouter.post('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+payTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        yield pecorino.service.transaction.pay.confirm(req.params.transactionId)({ transaction: transactionRepo });
+        yield pecorino.service.transaction.pay.confirm({
+            transactionId: req.params.transactionId
+        })({ transaction: transactionRepo });
         debug('transaction confirmed.');
         res.status(http_status_1.NO_CONTENT).end();
     }
@@ -80,7 +79,7 @@ payTransactionsRouter.post('/:transactionId/confirm', permitScopes_1.default(['a
         next(error);
     }
 }));
-payTransactionsRouter.post('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+payTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         yield transactionRepo.cancel(pecorino.factory.transactionType.Pay, req.params.transactionId);
         debug('transaction canceled.');

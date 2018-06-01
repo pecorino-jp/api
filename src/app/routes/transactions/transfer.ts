@@ -39,10 +39,6 @@ transferTransactionsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            // if (req.user.username === undefined) {
-            //     throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
-            // }
-
             const transaction = await pecorino.service.transaction.transfer.start({
                 typeOf: pecorino.factory.transactionType.Transfer,
                 agent: {
@@ -59,7 +55,7 @@ transferTransactionsRouter.post(
                 },
                 object: {
                     clientUser: req.user,
-                    amount: req.body.amount,
+                    amount: parseInt(req.body.amount, 10),
                     fromAccountNumber: req.body.fromAccountNumber,
                     toAccountNumber: req.body.toAccountNumber,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
@@ -77,17 +73,16 @@ transferTransactionsRouter.post(
     }
 );
 
-transferTransactionsRouter.post(
+transferTransactionsRouter.put(
     '/:transactionId/confirm',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
         try {
-            await pecorino.service.transaction.transfer.confirm(
-                req.params.transactionId
-            )({ transaction: transactionRepo });
+            await pecorino.service.transaction.transfer.confirm({
+                transactionId: req.params.transactionId
+            })({ transaction: transactionRepo });
             debug('transaction confirmed.');
-
             res.status(NO_CONTENT).end();
         } catch (error) {
             next(error);
@@ -95,7 +90,7 @@ transferTransactionsRouter.post(
     }
 );
 
-transferTransactionsRouter.post(
+transferTransactionsRouter.put(
     '/:transactionId/cancel',
     permitScopes(['admin']),
     validator,
@@ -103,7 +98,6 @@ transferTransactionsRouter.post(
         try {
             await transactionRepo.cancel(pecorino.factory.transactionType.Transfer, req.params.transactionId);
             debug('transaction canceled.');
-
             res.status(NO_CONTENT).end();
         } catch (error) {
             next(error);

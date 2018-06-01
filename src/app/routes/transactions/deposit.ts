@@ -60,7 +60,7 @@ depositTransactionsRouter.post(
                 },
                 object: {
                     clientUser: req.user,
-                    amount: req.body.amount,
+                    amount: parseInt(req.body.amount, 10),
                     toAccountNumber: req.body.toAccountNumber,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
@@ -77,17 +77,16 @@ depositTransactionsRouter.post(
     }
 );
 
-depositTransactionsRouter.post(
+depositTransactionsRouter.put(
     '/:transactionId/confirm',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
         try {
-            await pecorino.service.transaction.deposit.confirm(
-                req.params.transactionId
-            )({ transaction: transactionRepo });
+            await pecorino.service.transaction.deposit.confirm({
+                transactionId: req.params.transactionId
+            })({ transaction: transactionRepo });
             debug('transaction confirmed.');
-
             res.status(NO_CONTENT).end();
         } catch (error) {
             next(error);
@@ -95,7 +94,7 @@ depositTransactionsRouter.post(
     }
 );
 
-depositTransactionsRouter.post(
+depositTransactionsRouter.put(
     '/:transactionId/cancel',
     permitScopes(['admin']),
     validator,
@@ -103,7 +102,6 @@ depositTransactionsRouter.post(
         try {
             await transactionRepo.cancel(pecorino.factory.transactionType.Deposit, req.params.transactionId);
             debug('transaction canceled.');
-
             res.status(NO_CONTENT).end();
         } catch (error) {
             next(error);

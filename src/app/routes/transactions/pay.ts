@@ -38,10 +38,6 @@ payTransactionsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            // if (req.user.username === undefined) {
-            //     throw new pecorino.factory.errors.Forbidden('Undefined username forbidden.');
-            // }
-
             const transaction = await pecorino.service.transaction.pay.start({
                 typeOf: pecorino.factory.transactionType.Pay,
                 agent: {
@@ -58,7 +54,7 @@ payTransactionsRouter.post(
                 },
                 object: {
                     clientUser: req.user,
-                    amount: req.body.amount,
+                    amount: parseInt(req.body.amount, 10),
                     fromAccountNumber: req.body.fromAccountNumber,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
@@ -75,17 +71,16 @@ payTransactionsRouter.post(
     }
 );
 
-payTransactionsRouter.post(
+payTransactionsRouter.put(
     '/:transactionId/confirm',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
         try {
-            await pecorino.service.transaction.pay.confirm(
-                req.params.transactionId
-            )({ transaction: transactionRepo });
+            await pecorino.service.transaction.pay.confirm({
+                transactionId: req.params.transactionId
+            })({ transaction: transactionRepo });
             debug('transaction confirmed.');
-
             res.status(NO_CONTENT).end();
         } catch (error) {
             next(error);
@@ -93,7 +88,7 @@ payTransactionsRouter.post(
     }
 );
 
-payTransactionsRouter.post(
+payTransactionsRouter.put(
     '/:transactionId/cancel',
     permitScopes(['admin']),
     validator,
@@ -101,7 +96,6 @@ payTransactionsRouter.post(
         try {
             await transactionRepo.cancel(pecorino.factory.transactionType.Pay, req.params.transactionId);
             debug('transaction canceled.');
-
             res.status(NO_CONTENT).end();
         } catch (error) {
             next(error);

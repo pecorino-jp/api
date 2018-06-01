@@ -1,8 +1,6 @@
 /**
  * devルーター
- * @ignore
  */
-
 import * as pecorino from '@motionpicture/pecorino-domain';
 import * as express from 'express';
 const devRouter = express.Router();

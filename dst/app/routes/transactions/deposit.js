@@ -55,7 +55,7 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req
             },
             object: {
                 clientUser: req.user,
-                amount: req.body.amount,
+                amount: parseInt(req.body.amount, 10),
                 toAccountNumber: req.body.toAccountNumber,
                 notes: (req.body.notes !== undefined) ? req.body.notes : ''
             },
@@ -70,9 +70,11 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req
         next(error);
     }
 }));
-depositTransactionsRouter.post('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+depositTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        yield pecorino.service.transaction.deposit.confirm(req.params.transactionId)({ transaction: transactionRepo });
+        yield pecorino.service.transaction.deposit.confirm({
+            transactionId: req.params.transactionId
+        })({ transaction: transactionRepo });
         debug('transaction confirmed.');
         res.status(http_status_1.NO_CONTENT).end();
     }
@@ -80,7 +82,7 @@ depositTransactionsRouter.post('/:transactionId/confirm', permitScopes_1.default
         next(error);
     }
 }));
-depositTransactionsRouter.post('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+depositTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         yield transactionRepo.cancel(pecorino.factory.transactionType.Deposit, req.params.transactionId);
         debug('transaction canceled.');

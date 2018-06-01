@@ -30,7 +30,8 @@ const redisClient = new pecorino.ioredis({
 accountsRouter.post(
     '',
     permitScopes(['admin']),
-    (__1, __2, next) => {
+    (req, __2, next) => {
+        req.checkBody('name', 'invalid name').notEmpty().withMessage('name is required');
         next();
     },
     validator,
@@ -117,7 +118,6 @@ accountsRouter.get(
             const actions = await actionRepo.searchTransferActions({
                 accountNumber: req.params.accountNumber
             });
-
             res.json(actions);
         } catch (error) {
             next(error);
