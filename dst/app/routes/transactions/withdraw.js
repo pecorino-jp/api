@@ -16,15 +16,15 @@ const createDebug = require("debug");
 const express_1 = require("express");
 const http_status_1 = require("http-status");
 const moment = require("moment");
-const payTransactionsRouter = express_1.Router();
+const withdrawTransactionsRouter = express_1.Router();
 const authentication_1 = require("../../middlewares/authentication");
 const permitScopes_1 = require("../../middlewares/permitScopes");
 const validator_1 = require("../../middlewares/validator");
-const debug = createDebug('pecorino-api:payTransactionsRouter');
-payTransactionsRouter.use(authentication_1.default);
+const debug = createDebug('pecorino-api:withdrawTransactionsRouter');
+withdrawTransactionsRouter.use(authentication_1.default);
 const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
 const transactionRepo = new pecorino.repository.Transaction(pecorino.mongoose.connection);
-payTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _, next) => {
+withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _, next) => {
     req.checkBody('expires', 'invalid expires').notEmpty().withMessage('expires is required').isISO8601();
     req.checkBody('agent.name', 'invalid agent.name').notEmpty().withMessage('agent.name is required');
     req.checkBody('recipient', 'invalid recipient').notEmpty().withMessage('recipient is required');
@@ -36,8 +36,8 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _,
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const transaction = yield pecorino.service.transaction.pay.start({
-            typeOf: pecorino.factory.transactionType.Pay,
+        const transaction = yield pecorino.service.transaction.withdraw.start({
+            typeOf: pecorino.factory.transactionType.Withdraw,
             agent: {
                 typeOf: pecorino.factory.personType.Person,
                 id: req.user.sub,
@@ -67,9 +67,9 @@ payTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _,
         next(error);
     }
 }));
-payTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+withdrawTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        yield pecorino.service.transaction.pay.confirm({
+        yield pecorino.service.transaction.withdraw.confirm({
             transactionId: req.params.transactionId
         })({ transaction: transactionRepo });
         debug('transaction confirmed.');
@@ -79,9 +79,9 @@ payTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['ad
         next(error);
     }
 }));
-payTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+withdrawTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        yield transactionRepo.cancel(pecorino.factory.transactionType.Pay, req.params.transactionId);
+        yield transactionRepo.cancel(pecorino.factory.transactionType.Withdraw, req.params.transactionId);
         debug('transaction canceled.');
         res.status(http_status_1.NO_CONTENT).end();
     }
@@ -89,4 +89,4 @@ payTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['adm
         next(error);
     }
 }));
-exports.default = payTransactionsRouter;
+exports.default = withdrawTransactionsRouter;

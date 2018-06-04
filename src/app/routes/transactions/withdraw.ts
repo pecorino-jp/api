@@ -7,20 +7,20 @@ import { Router } from 'express';
 import { NO_CONTENT } from 'http-status';
 import * as moment from 'moment';
 
-const payTransactionsRouter = Router();
+const withdrawTransactionsRouter = Router();
 
 import authentication from '../../middlewares/authentication';
 import permitScopes from '../../middlewares/permitScopes';
 import validator from '../../middlewares/validator';
 
-const debug = createDebug('pecorino-api:payTransactionsRouter');
+const debug = createDebug('pecorino-api:withdrawTransactionsRouter');
 
-payTransactionsRouter.use(authentication);
+withdrawTransactionsRouter.use(authentication);
 
 const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
 const transactionRepo = new pecorino.repository.Transaction(pecorino.mongoose.connection);
 
-payTransactionsRouter.post(
+withdrawTransactionsRouter.post(
     '/start',
     permitScopes(['admin']),
     (req, _, next) => {
@@ -38,8 +38,8 @@ payTransactionsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            const transaction = await pecorino.service.transaction.pay.start({
-                typeOf: pecorino.factory.transactionType.Pay,
+            const transaction = await pecorino.service.transaction.withdraw.start({
+                typeOf: pecorino.factory.transactionType.Withdraw,
                 agent: {
                     typeOf: pecorino.factory.personType.Person,
                     id: req.user.sub,
@@ -71,13 +71,13 @@ payTransactionsRouter.post(
     }
 );
 
-payTransactionsRouter.put(
+withdrawTransactionsRouter.put(
     '/:transactionId/confirm',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
         try {
-            await pecorino.service.transaction.pay.confirm({
+            await pecorino.service.transaction.withdraw.confirm({
                 transactionId: req.params.transactionId
             })({ transaction: transactionRepo });
             debug('transaction confirmed.');
@@ -88,13 +88,13 @@ payTransactionsRouter.put(
     }
 );
 
-payTransactionsRouter.put(
+withdrawTransactionsRouter.put(
     '/:transactionId/cancel',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
         try {
-            await transactionRepo.cancel(pecorino.factory.transactionType.Pay, req.params.transactionId);
+            await transactionRepo.cancel(pecorino.factory.transactionType.Withdraw, req.params.transactionId);
             debug('transaction canceled.');
             res.status(NO_CONTENT).end();
         } catch (error) {
@@ -103,4 +103,4 @@ payTransactionsRouter.put(
     }
 );
 
-export default payTransactionsRouter;
+export default withdrawTransactionsRouter;

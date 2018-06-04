@@ -15,14 +15,7 @@ import mongooseConnectionOptions from '../mongooseConnectionOptions';
 
 import errorHandler from './middlewares/errorHandler';
 import notFoundHandler from './middlewares/notFoundHandler';
-
-import accountsRouter from './routes/accounts';
-import actionsRouter from './routes/actions';
-import devRouter from './routes/dev';
-import healthRouter from './routes/health';
-import depositTransactionsRouter from './routes/transactions/deposit';
-import payTransactionsRouter from './routes/transactions/pay';
-import transferTransactionsRouter from './routes/transactions/transfer';
+import router from './routes/router';
 
 const debug = createDebug('pecorino-api:*');
 
@@ -94,18 +87,7 @@ pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, mongooseConnectionOp
     .catch(console.error);
 
 // routers
-app.use('/accounts', accountsRouter);
-app.use('/actions', actionsRouter);
-app.use('/health', healthRouter);
-app.use('/transactions/deposit', depositTransactionsRouter);
-app.use('/transactions/pay', payTransactionsRouter);
-app.use('/transactions/transfer', transferTransactionsRouter);
-
-// tslint:disable-next-line:no-single-line-block-comment
-/* istanbul ignore next */
-if (process.env.NODE_ENV !== 'production') {
-    app.use('/dev', devRouter);
-}
+app.use('/', router);
 
 // 404
 app.use(notFoundHandler);

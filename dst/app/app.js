@@ -14,13 +14,7 @@ const helmet = require("helmet");
 const mongooseConnectionOptions_1 = require("../mongooseConnectionOptions");
 const errorHandler_1 = require("./middlewares/errorHandler");
 const notFoundHandler_1 = require("./middlewares/notFoundHandler");
-const accounts_1 = require("./routes/accounts");
-const actions_1 = require("./routes/actions");
-const dev_1 = require("./routes/dev");
-const health_1 = require("./routes/health");
-const deposit_1 = require("./routes/transactions/deposit");
-const pay_1 = require("./routes/transactions/pay");
-const transfer_1 = require("./routes/transactions/transfer");
+const router_1 = require("./routes/router");
 const debug = createDebug('pecorino-api:*');
 const app = express();
 app.use(middlewares.basicAuth({
@@ -81,17 +75,7 @@ pecorino.mongoose.connect(process.env.MONGOLAB_URI, mongooseConnectionOptions_1.
 })
     .catch(console.error);
 // routers
-app.use('/accounts', accounts_1.default);
-app.use('/actions', actions_1.default);
-app.use('/health', health_1.default);
-app.use('/transactions/deposit', deposit_1.default);
-app.use('/transactions/pay', pay_1.default);
-app.use('/transactions/transfer', transfer_1.default);
-// tslint:disable-next-line:no-single-line-block-comment
-/* istanbul ignore next */
-if (process.env.NODE_ENV !== 'production') {
-    app.use('/dev', dev_1.default);
-}
+app.use('/', router_1.default);
 // 404
 app.use(notFoundHandler_1.default);
 // error handlers
