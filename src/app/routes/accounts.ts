@@ -16,14 +16,6 @@ const debug = createDebug('pecorino-api:routes:accounts');
 
 accountsRouter.use(authentication);
 
-const redisClient = new pecorino.ioredis({
-    host: <string>process.env.REDIS_HOST,
-    // tslint:disable-next-line:no-magic-numbers
-    port: parseInt(<string>process.env.REDIS_PORT, 10),
-    password: <string>process.env.REDIS_KEY,
-    tls: <any>{ servername: <string>process.env.REDIS_HOST }
-});
-
 /**
  * 口座開設
  */
@@ -42,8 +34,7 @@ accountsRouter.post(
                 name: req.body.name,
                 initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
             })({
-                account: new pecorino.repository.Account(pecorino.mongoose.connection),
-                accountNumber: new pecorino.repository.AccountNumber(redisClient)
+                account: new pecorino.repository.Account(pecorino.mongoose.connection)
             });
             res.status(CREATED).json(account);
         } catch (error) {

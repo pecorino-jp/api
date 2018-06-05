@@ -21,13 +21,6 @@ const validator_1 = require("../middlewares/validator");
 const accountsRouter = express_1.Router();
 const debug = createDebug('pecorino-api:routes:accounts');
 accountsRouter.use(authentication_1.default);
-const redisClient = new pecorino.ioredis({
-    host: process.env.REDIS_HOST,
-    // tslint:disable-next-line:no-magic-numbers
-    port: parseInt(process.env.REDIS_PORT, 10),
-    password: process.env.REDIS_KEY,
-    tls: { servername: process.env.REDIS_HOST }
-});
 /**
  * 口座開設
  */
@@ -41,8 +34,7 @@ accountsRouter.post('', permitScopes_1.default(['admin']), (req, __2, next) => {
             name: req.body.name,
             initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
         })({
-            account: new pecorino.repository.Account(pecorino.mongoose.connection),
-            accountNumber: new pecorino.repository.AccountNumber(redisClient)
+            account: new pecorino.repository.Account(pecorino.mongoose.connection)
         });
         res.status(http_status_1.CREATED).json(account);
     }
