@@ -37,6 +37,7 @@ accountsRouter.post('', permitScopes_1.default(['admin']), (req, __2, next) => {
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         const account = yield pecorino.service.account.open({
+            accountNumber: (req.body.accountNumber !== undefined) ? req.body.accountNumber : '',
             name: req.body.name,
             initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
         })({

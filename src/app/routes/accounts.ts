@@ -38,6 +38,7 @@ accountsRouter.post(
     async (req, res, next) => {
         try {
             const account = await pecorino.service.account.open({
+                accountNumber: (req.body.accountNumber !== undefined) ? req.body.accountNumber : '',
                 name: req.body.name,
                 initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
             })({
