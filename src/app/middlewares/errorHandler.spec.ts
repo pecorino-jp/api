@@ -1,10 +1,8 @@
 // tslint:disable:no-implicit-dependencies
-
 /**
  * エラーハンドラーミドルウェアテスト
  * @ignore
  */
-
 import * as pecorino from '@motionpicture/pecorino-domain';
 import * as assert from 'assert';
 import { INTERNAL_SERVER_ERROR } from 'http-status';
@@ -17,7 +15,7 @@ import * as errorHandler from './errorHandler';
 // let scope: nock.Scope;
 let sandbox: sinon.SinonSandbox;
 
-describe('errorHandler.default()', () => {
+describe('エラーハンドラーミドルウェア', () => {
     beforeEach(() => {
         nock.cleanAll();
         nock.disableNetConnect();
@@ -73,9 +71,10 @@ describe('errorHandler.default()', () => {
         new pecorino.factory.errors.Forbidden(),
         new pecorino.factory.errors.NotFound(''),
         new pecorino.factory.errors.AlreadyInUse('', []),
-        new pecorino.factory.errors.ServiceUnavailable()
+        new pecorino.factory.errors.ServiceUnavailable(),
+        new Error('Unknown error')
     ].forEach((err) => {
-        it(`PECORINOErrorと共に呼ばれればAPIErrorが生成されてjson出力されるはず ${err.reason}`, async () => {
+        it(`${err.name}と共に呼ばれればAPIErrorが生成されてjson出力されるはず`, async () => {
             const params = {
                 err: err,
                 req: {},

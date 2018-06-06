@@ -2,7 +2,6 @@
  * mongoose接続オプション
  * @see http://mongoosejs.com/docs/api.html#index_Mongoose-connect
  * @see http://mongodb.github.io/node-mongodb-native/2.2/api/MongoClient.html
- * @ignore
  */
 const mongooseConnectionOptions = {
     autoReconnect: true,
