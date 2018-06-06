@@ -2,6 +2,8 @@
 
 # PECORINO API web application
 
+[![CircleCI](https://circleci.com/gh/motionpicture/pecorino-api.svg?style=svg&circle-token=a17f662cd12f7a182729d3f324dc4b3659379010)](https://circleci.com/gh/motionpicture/pecorino-api)
+
 ## Table of contents
 
 * [Usage](#usage)
