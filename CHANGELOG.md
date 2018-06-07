@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v0.0.1 - 2018-06-07
+
+### Changed
+
+- 口座開設時にバリデーションを強化。
+- 取引開始時パラメーター汎用性向上。
+
 ## v0.0.0 - 2018-06-06
 
 ### Added
