@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- 口座開設時にバリデーションを強化。
+- 取引開始時パラメーター汎用性向上。
+
 ### Deprecated
 
 ### Removed
