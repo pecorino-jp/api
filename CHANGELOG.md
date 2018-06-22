@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- MongoDBとの接続の疎通確認処理を追加。
+
 ### Deprecated
 
 ### Removed
