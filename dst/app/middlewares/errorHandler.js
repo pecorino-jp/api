@@ -5,7 +5,7 @@
  * @module middlewares.errorHandler
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const pecorino = require("@motionpicture/pecorino-domain");
+const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const http_status_1 = require("http-status");
 const api_1 = require("../error/api");

@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * ヘルスチェックルーター
  */
-const pecorino = require("@motionpicture/pecorino-domain");
+const pecorino = require("@pecorino/domain");
 const express = require("express");
 const http_status_1 = require("http-status");
 const healthRouter = express.Router();

@@ -4,7 +4,7 @@
  * @ignore
  */
 const middlewares = require("@motionpicture/express-middleware");
-const pecorino = require("@motionpicture/pecorino-domain");
+const pecorino = require("@pecorino/domain");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const createDebug = require("debug");

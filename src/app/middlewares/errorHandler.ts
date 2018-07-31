@@ -4,7 +4,7 @@
  * @module middlewares.errorHandler
  */
 
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import {

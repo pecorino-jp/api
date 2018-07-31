@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@motionpicture/express-middleware": "^0.1.0",
-    "@motionpicture/pecorino-domain": "0.0.1",
+    "@pecorino/domain": "^1.0.0-alpha.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",
     "debug": "^3.1.0",
@@ -65,12 +65,12 @@
     "npm": ">=5.3.0"
   },
   "keywords": [],
-  "license": "UNLICENSED",
+  "license": "ISC",
   "name": "pecorino-api",
   "private": true,
   "repository": {
     "type": "git",
-    "url": "https://github.com/motionpicture/pecorino-api.git"
+    "url": "https://github.com/pecorino-jp/api.git"
   },
   "scripts": {
     "build": "tsc",

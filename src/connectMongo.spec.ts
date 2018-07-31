@@ -2,7 +2,7 @@
 /**
  * mongoose接続テスト
  */
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import * as sinon from 'sinon';
 
 import { connectMongo } from './connectMongo';

@@ -1,4 +1,4 @@
-import { factory } from '@motionpicture/pecorino-domain';
+import { factory } from '@pecorino/domain';
 
 /**
  * APIError

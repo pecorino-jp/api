@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * mongooseコネクション確立
  */
-const pecorino = require("@motionpicture/pecorino-domain");
+const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:*');
 const PING_INTERVAL = 10000;

@@ -11,7 +11,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 転送取引ルーター
  */
-const pecorino = require("@motionpicture/pecorino-domain");
+const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const express_1 = require("express");
 const http_status_1 = require("http-status");
@@ -32,6 +32,7 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (re
     req.checkBody('recipient.typeOf', 'invalid recipient.typeOf').notEmpty().withMessage('recipient.typeOf is required');
     req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
     req.checkBody('amount', 'invalid amount').notEmpty().withMessage('amount is required').isInt();
+    req.checkBody('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
     req.checkBody('fromAccountNumber', 'invalid fromAccountNumber').notEmpty().withMessage('fromAccountNumber is required');
     req.checkBody('toAccountNumber', 'invalid toAccountNumber').notEmpty().withMessage('toAccountNumber is required');
     next();
@@ -54,6 +55,7 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (re
             object: {
                 clientUser: req.user,
                 amount: parseInt(req.body.amount, 10),
+                accountType: req.body.accountType,
                 fromAccountNumber: req.body.fromAccountNumber,
                 toAccountNumber: req.body.toAccountNumber,
                 notes: (req.body.notes !== undefined) ? req.body.notes : ''

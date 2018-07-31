@@ -1,8 +1,6 @@
-<img src="https://motionpicture.jp/images/common/logo_01.svg" alt="motionpicture" title="motionpicture" align="right" height="56" width="98"/>
+# Pecorino API web application
 
-# PECORINO API web application
-
-[![CircleCI](https://circleci.com/gh/motionpicture/pecorino-api.svg?style=svg&circle-token=a17f662cd12f7a182729d3f324dc4b3659379010)](https://circleci.com/gh/motionpicture/pecorino-api)
+[![CircleCI](https://circleci.com/gh/pecorino-jp/api.svg?style=svg)](https://circleci.com/gh/pecorino-jp/api)
 
 ## Table of contents
 
@@ -23,4 +21,4 @@
 
 ## License
 
-UNLICENSE
+ISC

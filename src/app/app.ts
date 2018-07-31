@@ -3,7 +3,7 @@
  * @ignore
  */
 import * as middlewares from '@motionpicture/express-middleware';
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as createDebug from 'debug';

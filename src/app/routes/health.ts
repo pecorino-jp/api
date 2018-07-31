@@ -1,7 +1,7 @@
 /**
  * ヘルスチェックルーター
  */
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import * as express from 'express';
 import { OK } from 'http-status';
 

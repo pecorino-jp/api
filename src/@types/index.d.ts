@@ -3,7 +3,7 @@
  * ユーザーの型をここで定義しています。
  * @ignore
  */
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import * as express from 'express';
 
 declare global {

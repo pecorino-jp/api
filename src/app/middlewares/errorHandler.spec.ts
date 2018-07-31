@@ -3,7 +3,7 @@
  * エラーハンドラーミドルウェアテスト
  * @ignore
  */
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import * as assert from 'assert';
 import { INTERNAL_SERVER_ERROR } from 'http-status';
 import * as nock from 'nock';
