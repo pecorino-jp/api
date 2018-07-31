@@ -1,4 +1,4 @@
-# Pecorino API web application
+# Pecorino API Web Application
 
 [![CircleCI](https://circleci.com/gh/pecorino-jp/api.svg?style=svg)](https://circleci.com/gh/pecorino-jp/api)
 
