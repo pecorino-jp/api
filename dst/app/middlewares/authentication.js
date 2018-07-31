@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * oauthミドルウェア
  */
 const express_middleware_1 = require("@motionpicture/express-middleware");
-const pecorino = require("@motionpicture/pecorino-domain");
+const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:authentication');
 // 許可発行者リスト

@@ -3,7 +3,7 @@
  * @module middlewares.notFoundHandler
  */
 
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import { NextFunction, Request, Response } from 'express';
 
 export default (req: Request, __: Response, next: NextFunction) => {

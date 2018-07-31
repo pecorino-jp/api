@@ -1,13 +1,8 @@
 /**
  * devルーター
  */
-import * as pecorino from '@motionpicture/pecorino-domain';
 import * as express from 'express';
 const devRouter = express.Router();
-
-import { NO_CONTENT } from 'http-status';
-
-import mongooseConnectionOptions from '../../mongooseConnectionOptions';
 
 import authentication from '../middlewares/authentication';
 
@@ -26,13 +21,6 @@ devRouter.get(
             type: 'envs',
             attributes: process.env
         });
-    });
-
-devRouter.get(
-    '/mongoose/connect',
-    async (__, res) => {
-        await pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, mongooseConnectionOptions);
-        res.status(NO_CONTENT).end();
     });
 
 export default devRouter;

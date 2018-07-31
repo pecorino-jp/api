@@ -1,7 +1,7 @@
 /**
  * アクションルーター
  */
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import { Router } from 'express';
 
 import authentication from '../middlewares/authentication';

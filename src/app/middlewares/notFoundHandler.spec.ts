@@ -5,7 +5,7 @@
  * @ignore
  */
 
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import * as assert from 'assert';
 import * as nock from 'nock';
 import * as sinon from 'sinon';

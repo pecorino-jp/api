@@ -1,7 +1,7 @@
 /**
  * 入金取引ルーター
  */
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
 import { NO_CONTENT } from 'http-status';
@@ -32,6 +32,7 @@ depositTransactionsRouter.post(
         req.checkBody('recipient.typeOf', 'invalid recipient.typeOf').notEmpty().withMessage('recipient.typeOf is required');
         req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
         req.checkBody('amount', 'invalid amount').notEmpty().withMessage('amount is required').isInt();
+        req.checkBody('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
         req.checkBody('toAccountNumber', 'invalid toAccountNumber').notEmpty().withMessage('toAccountNumber is required');
 
         next();
@@ -56,6 +57,7 @@ depositTransactionsRouter.post(
                 object: {
                     clientUser: req.user,
                     amount: parseInt(req.body.amount, 10),
+                    accountType: req.body.accountType,
                     toAccountNumber: req.body.toAccountNumber,
                     notes: (req.body.notes !== undefined) ? req.body.notes : ''
                 },

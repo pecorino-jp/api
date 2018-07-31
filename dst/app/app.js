@@ -4,14 +4,14 @@
  * @ignore
  */
 const middlewares = require("@motionpicture/express-middleware");
-const pecorino = require("@motionpicture/pecorino-domain");
+const pecorino = require("@pecorino/domain");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const createDebug = require("debug");
 const express = require("express");
 const expressValidator = require("express-validator");
 const helmet = require("helmet");
-const mongooseConnectionOptions_1 = require("../mongooseConnectionOptions");
+const connectMongo_1 = require("../connectMongo");
 const errorHandler_1 = require("./middlewares/errorHandler");
 const notFoundHandler_1 = require("./middlewares/notFoundHandler");
 const router_1 = require("./routes/router");
@@ -69,11 +69,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressValidator({})); // this line must be immediately after any of the bodyParser middlewares!
 // 静的ファイル
 // app.use(express.static(__dirname + '/../../public'));
-pecorino.mongoose.connect(process.env.MONGOLAB_URI, mongooseConnectionOptions_1.default)
-    .then(() => {
-    debug('MongoDB connected.');
-})
-    .catch(console.error);
+connectMongo_1.connectMongo().then().catch((err) => {
+    console.error('connetMongo:', err);
+    process.exit(1);
+});
 // routers
 app.use('/', router_1.default);
 // 404

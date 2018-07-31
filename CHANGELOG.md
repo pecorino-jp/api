@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v1.0.0 - 2018-07-31
+
+### Changed
+
+- MongoDBとの接続の疎通確認処理を追加。
+- 口座に口座タイプ属性を追加。
+
 ## v0.0.1 - 2018-06-07
 
 ### Changed

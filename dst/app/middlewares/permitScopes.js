@@ -4,7 +4,7 @@
  * @module middlewares.permitScopes
  */
 Object.defineProperty(exports, "__esModule", { value: true });
-const pecorino = require("@motionpicture/pecorino-domain");
+const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:permitScopes');
 exports.default = (permittedScopes) => {

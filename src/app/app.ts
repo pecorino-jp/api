@@ -3,7 +3,7 @@
  * @ignore
  */
 import * as middlewares from '@motionpicture/express-middleware';
-import * as pecorino from '@motionpicture/pecorino-domain';
+import * as pecorino from '@pecorino/domain';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as createDebug from 'debug';
@@ -11,7 +11,7 @@ import * as express from 'express';
 import * as expressValidator from 'express-validator';
 import * as helmet from 'helmet';
 
-import mongooseConnectionOptions from '../mongooseConnectionOptions';
+import { connectMongo } from '../connectMongo';
 
 import errorHandler from './middlewares/errorHandler';
 import notFoundHandler from './middlewares/notFoundHandler';
@@ -80,11 +80,10 @@ app.use(expressValidator({})); // this line must be immediately after any of the
 // 静的ファイル
 // app.use(express.static(__dirname + '/../../public'));
 
-pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, mongooseConnectionOptions)
-    .then(() => {
-        debug('MongoDB connected.');
-    })
-    .catch(console.error);
+connectMongo().then().catch((err) => {
+    console.error('connetMongo:', err);
+    process.exit(1);
+});
 
 // routers
 app.use('/', router);
