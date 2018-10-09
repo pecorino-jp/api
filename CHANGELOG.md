@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- 口座検索と取引履歴検索にページネーション追加。
+
 ### Deprecated
 
 ### Removed
