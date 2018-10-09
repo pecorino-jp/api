@@ -74,14 +74,19 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (req, __2, next) => {
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
-        const accounts = yield accountRepo.search({
+        const searchConditions = {
+            // tslint:disable-next-line:no-magic-numbers
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
+            page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
+            sort: (req.query.sort !== undefined) ? req.query.sort : { openDate: pecorino.factory.sortType.Descending },
             accountType: req.query.accountType,
             accountNumbers: req.query.accountNumbers,
             statuses: req.query.statuses,
-            name: req.query.name,
-            // tslint:disable-next-line:no-magic-numbers
-            limit: (Number.isInteger(req.query.limit)) ? req.query.limit : 100
-        });
+            name: req.query.name
+        };
+        const accounts = yield accountRepo.search(searchConditions);
+        const totalCount = yield accountRepo.count(searchConditions);
+        res.set('X-Total-Count', totalCount.toString());
         res.json(accounts);
     }
     catch (error) {
@@ -97,10 +102,17 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
     try {
         debug('searching trade actions...', req.params);
         const actionRepo = new pecorino.repository.Action(pecorino.mongoose.connection);
-        const actions = yield actionRepo.searchTransferActions({
+        const searchConditions = {
+            // tslint:disable-next-line:no-magic-numbers
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
+            page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
+            sort: (req.query.sort !== undefined) ? req.query.sort : { endDate: pecorino.factory.sortType.Descending },
             accountType: req.params.accountType,
             accountNumber: req.params.accountNumber
-        });
+        };
+        const actions = yield actionRepo.searchTransferActions(searchConditions);
+        const totalCount = yield actionRepo.countTransferActions(searchConditions);
+        res.set('X-Total-Count', totalCount.toString());
         res.json(actions);
     }
     catch (error) {

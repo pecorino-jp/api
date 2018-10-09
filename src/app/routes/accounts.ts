@@ -15,7 +15,6 @@ const accountsRouter = Router();
 const debug = createDebug('pecorino-api:routes:accounts');
 
 accountsRouter.use(authentication);
-
 /**
  * 口座開設
  */
@@ -45,7 +44,6 @@ accountsRouter.post(
         }
     }
 );
-
 /**
  * 口座解約
  * 冪等性の担保された処理となります。
@@ -71,7 +69,6 @@ accountsRouter.put(
         }
     }
 );
-
 /**
  * 口座検索
  */
@@ -86,21 +83,25 @@ accountsRouter.get(
     async (req, res, next) => {
         try {
             const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
-            const accounts = await accountRepo.search({
+            const searchConditions: pecorino.factory.account.ISearchConditions<pecorino.factory.account.AccountType> = {
+                // tslint:disable-next-line:no-magic-numbers
+                limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
+                page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
+                sort: (req.query.sort !== undefined) ? req.query.sort : { openDate: pecorino.factory.sortType.Descending },
                 accountType: req.query.accountType,
                 accountNumbers: req.query.accountNumbers,
                 statuses: req.query.statuses,
-                name: req.query.name,
-                // tslint:disable-next-line:no-magic-numbers
-                limit: (Number.isInteger(req.query.limit)) ? req.query.limit : 100
-            });
+                name: req.query.name
+            };
+            const accounts = await accountRepo.search(searchConditions);
+            const totalCount = await accountRepo.count(searchConditions);
+            res.set('X-Total-Count', totalCount.toString());
             res.json(accounts);
         } catch (error) {
             next(error);
         }
     }
 );
-
 /**
  * 取引履歴検索
  */
@@ -115,15 +116,22 @@ accountsRouter.get(
         try {
             debug('searching trade actions...', req.params);
             const actionRepo = new pecorino.repository.Action(pecorino.mongoose.connection);
-            const actions = await actionRepo.searchTransferActions({
+            const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions<pecorino.factory.account.AccountType>
+                = {
+                // tslint:disable-next-line:no-magic-numbers
+                limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
+                page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
+                sort: (req.query.sort !== undefined) ? req.query.sort : { endDate: pecorino.factory.sortType.Descending },
                 accountType: req.params.accountType,
                 accountNumber: req.params.accountNumber
-            });
+            };
+            const actions = await actionRepo.searchTransferActions(searchConditions);
+            const totalCount = await actionRepo.countTransferActions(searchConditions);
+            res.set('X-Total-Count', totalCount.toString());
             res.json(actions);
         } catch (error) {
             next(error);
         }
     }
 );
-
 export default accountsRouter;

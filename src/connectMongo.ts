@@ -32,6 +32,7 @@ export async function connectMongo() {
                     pingResult = await pecorino.mongoose.connection.db.admin().ping();
                     debug('pingResult:', pingResult);
                 } catch (error) {
+                    // tslint:disable-next-line:no-console
                     console.error('ping:', error);
                 }
 
@@ -46,6 +47,7 @@ export async function connectMongo() {
                 await pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, connectOptions);
                 debug('MongoDB connected!');
             } catch (error) {
+                // tslint:disable-next-line:no-console
                 console.error('mongoose.connect:', error);
             }
         },

@@ -81,6 +81,7 @@ app.use(expressValidator({})); // this line must be immediately after any of the
 // app.use(express.static(__dirname + '/../../public'));
 
 connectMongo().then().catch((err) => {
+    // tslint:disable-next-line:no-console
     console.error('connetMongo:', err);
     process.exit(1);
 });

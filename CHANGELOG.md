@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v1.0.1 - 2018-10-09
+
+### Changed
+
+- 口座検索と取引履歴検索にページネーション追加。
+
 ## v1.0.0 - 2018-07-31
 
 ### Changed
