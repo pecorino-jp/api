@@ -17,7 +17,7 @@ const debug = createDebug('pecorino-api:*');
 const PING_INTERVAL = 10000;
 const connectOptions = {
     autoReconnect: true,
-    keepAlive: 120000,
+    keepAlive: true,
     connectTimeoutMS: 30000,
     socketTimeoutMS: 0,
     reconnectTries: 30,
