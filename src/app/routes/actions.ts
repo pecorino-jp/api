@@ -3,6 +3,7 @@
  */
 import * as pecorino from '@pecorino/domain';
 import { Router } from 'express';
+import * as mongoose from 'mongoose';
 
 import authentication from '../middlewares/authentication';
 import permitScopes from '../middlewares/permitScopes';
@@ -12,7 +13,7 @@ const actionsRouter = Router();
 
 actionsRouter.use(authentication);
 
-const actionRepo = new pecorino.repository.Action(pecorino.mongoose.connection);
+const actionRepo = new pecorino.repository.Action(mongoose.connection);
 
 /**
  * アクション検索

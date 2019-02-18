@@ -13,12 +13,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const pecorino = require("@pecorino/domain");
 const express_1 = require("express");
+const mongoose = require("mongoose");
 const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
 const actionsRouter = express_1.Router();
 actionsRouter.use(authentication_1.default);
-const actionRepo = new pecorino.repository.Action(pecorino.mongoose.connection);
+const actionRepo = new pecorino.repository.Action(mongoose.connection);
 /**
  * アクション検索
  */

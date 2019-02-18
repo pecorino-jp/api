@@ -1,8 +1,8 @@
 /**
  * mongooseコネクション確立
  */
-import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
+import * as mongoose from 'mongoose';
 
 const debug = createDebug('pecorino-api:*');
 const PING_INTERVAL = 10000;
@@ -17,7 +17,7 @@ const connectOptions = {
 
 export async function connectMongo() {
     // コネクション確立
-    await pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, connectOptions);
+    await mongoose.connect(<string>process.env.MONGOLAB_URI, connectOptions);
 
     // 定期的にコネクションチェック
     // tslint:disable-next-line:no-single-line-block-comment
@@ -25,11 +25,11 @@ export async function connectMongo() {
     setInterval(
         async () => {
             // すでに接続済かどうか
-            if (pecorino.mongoose.connection.readyState === 1) {
+            if (mongoose.connection.readyState === 1) {
                 // 接続済であれば疎通確認
                 let pingResult: any;
                 try {
-                    pingResult = await pecorino.mongoose.connection.db.admin().ping();
+                    pingResult = await mongoose.connection.db.admin().ping();
                     debug('pingResult:', pingResult);
                 } catch (error) {
                     // tslint:disable-next-line:no-console
@@ -44,7 +44,7 @@ export async function connectMongo() {
 
             // コネクション確立
             try {
-                await pecorino.mongoose.connect(<string>process.env.MONGOLAB_URI, connectOptions);
+                await mongoose.connect(<string>process.env.MONGOLAB_URI, connectOptions);
                 debug('MongoDB connected!');
             } catch (error) {
                 // tslint:disable-next-line:no-console

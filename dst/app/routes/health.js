@@ -11,13 +11,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * ヘルスチェックルーター
  */
-const pecorino = require("@pecorino/domain");
 const express = require("express");
 const http_status_1 = require("http-status");
+const mongoose = require("mongoose");
 const healthRouter = express.Router();
 healthRouter.get('', (_, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        yield pecorino.mongoose.connection.db.admin().ping();
+        yield mongoose.connection.db.admin().ping();
         res.status(http_status_1.OK).send('healthy!');
     }
     catch (error) {

@@ -2,7 +2,7 @@
 /**
  * mongoose接続テスト
  */
-import * as pecorino from '@pecorino/domain';
+import * as mongoose from 'mongoose';
 import * as sinon from 'sinon';
 
 import { connectMongo } from './connectMongo';
@@ -15,7 +15,7 @@ describe('connectMongo', () => {
     });
 
     it('MongoDBに接続できるはず', async () => {
-        sinon.mock(pecorino.mongoose).expects('connect').once().resolves();
+        sinon.mock(mongoose).expects('connect').once().resolves();
 
         await connectMongo();
         sandbox.verify();

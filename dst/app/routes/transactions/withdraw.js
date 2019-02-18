@@ -16,14 +16,15 @@ const createDebug = require("debug");
 const express_1 = require("express");
 const http_status_1 = require("http-status");
 const moment = require("moment");
+const mongoose = require("mongoose");
 const withdrawTransactionsRouter = express_1.Router();
 const authentication_1 = require("../../middlewares/authentication");
 const permitScopes_1 = require("../../middlewares/permitScopes");
 const validator_1 = require("../../middlewares/validator");
 const debug = createDebug('pecorino-api:withdrawTransactionsRouter');
 withdrawTransactionsRouter.use(authentication_1.default);
-const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
-const transactionRepo = new pecorino.repository.Transaction(pecorino.mongoose.connection);
+const accountRepo = new pecorino.repository.Account(mongoose.connection);
+const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
 withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _, next) => {
     req.checkBody('expires', 'invalid expires').notEmpty().withMessage('expires is required').isISO8601();
     req.checkBody('agent.name', 'invalid agent.name').notEmpty().withMessage('agent.name is required');
@@ -54,9 +55,12 @@ withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (re
             object: {
                 clientUser: req.user,
                 amount: parseInt(req.body.amount, 10),
-                accountType: req.body.accountType,
-                fromAccountNumber: req.body.fromAccountNumber,
-                notes: (req.body.notes !== undefined) ? req.body.notes : ''
+                fromLocation: {
+                    typeOf: pecorino.factory.account.TypeOf.Account,
+                    accountType: req.body.accountType,
+                    accountNumber: req.body.fromAccountNumber
+                },
+                description: (req.body.notes !== undefined) ? req.body.notes : ''
             },
             expires: moment(req.body.expires).toDate()
         })({ account: accountRepo, transaction: transactionRepo });

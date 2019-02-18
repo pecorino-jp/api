@@ -11,8 +11,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * mongooseコネクション確立
  */
-const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
+const mongoose = require("mongoose");
 const debug = createDebug('pecorino-api:*');
 const PING_INTERVAL = 10000;
 const connectOptions = {
@@ -26,17 +26,17 @@ const connectOptions = {
 function connectMongo() {
     return __awaiter(this, void 0, void 0, function* () {
         // コネクション確立
-        yield pecorino.mongoose.connect(process.env.MONGOLAB_URI, connectOptions);
+        yield mongoose.connect(process.env.MONGOLAB_URI, connectOptions);
         // 定期的にコネクションチェック
         // tslint:disable-next-line:no-single-line-block-comment
         /* istanbul ignore next */
         setInterval(() => __awaiter(this, void 0, void 0, function* () {
             // すでに接続済かどうか
-            if (pecorino.mongoose.connection.readyState === 1) {
+            if (mongoose.connection.readyState === 1) {
                 // 接続済であれば疎通確認
                 let pingResult;
                 try {
-                    pingResult = yield pecorino.mongoose.connection.db.admin().ping();
+                    pingResult = yield mongoose.connection.db.admin().ping();
                     debug('pingResult:', pingResult);
                 }
                 catch (error) {
@@ -50,7 +50,7 @@ function connectMongo() {
             }
             // コネクション確立
             try {
-                yield pecorino.mongoose.connect(process.env.MONGOLAB_URI, connectOptions);
+                yield mongoose.connect(process.env.MONGOLAB_URI, connectOptions);
                 debug('MongoDB connected!');
             }
             catch (error) {

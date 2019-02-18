@@ -6,6 +6,7 @@ import * as createDebug from 'debug';
 import { Router } from 'express';
 import { NO_CONTENT } from 'http-status';
 import * as moment from 'moment';
+import * as mongoose from 'mongoose';
 
 const transferTransactionsRouter = Router();
 
@@ -17,8 +18,8 @@ const debug = createDebug('pecorino-api:transferTransactionsRouter');
 
 transferTransactionsRouter.use(authentication);
 
-const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
-const transactionRepo = new pecorino.repository.Transaction(pecorino.mongoose.connection);
+const accountRepo = new pecorino.repository.Account(mongoose.connection);
+const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
 
 transferTransactionsRouter.post(
     '/start',
@@ -57,10 +58,17 @@ transferTransactionsRouter.post(
                 object: {
                     clientUser: req.user,
                     amount: parseInt(req.body.amount, 10),
-                    accountType: req.body.accountType,
-                    fromAccountNumber: req.body.fromAccountNumber,
-                    toAccountNumber: req.body.toAccountNumber,
-                    notes: (req.body.notes !== undefined) ? req.body.notes : ''
+                    fromLocation: {
+                        typeOf: pecorino.factory.account.TypeOf.Account,
+                        accountType: req.body.accountType,
+                        accountNumber: req.body.fromAccountNumber
+                    },
+                    toLocation: {
+                        typeOf: pecorino.factory.account.TypeOf.Account,
+                        accountType: req.body.accountType,
+                        accountNumber: req.body.toAccountNumber
+                    },
+                    description: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
                 expires: moment(req.body.expires).toDate()
             })({ account: accountRepo, transaction: transactionRepo });

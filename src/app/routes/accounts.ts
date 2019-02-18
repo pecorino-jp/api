@@ -5,6 +5,7 @@ import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
 import { CREATED, NO_CONTENT } from 'http-status';
+import * as mongoose from 'mongoose';
 
 import authentication from '../middlewares/authentication';
 import permitScopes from '../middlewares/permitScopes';
@@ -36,7 +37,7 @@ accountsRouter.post(
                 name: req.body.name,
                 initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
             })({
-                account: new pecorino.repository.Account(pecorino.mongoose.connection)
+                account: new pecorino.repository.Account(mongoose.connection)
             });
             res.status(CREATED).json(account);
         } catch (error) {
@@ -61,7 +62,7 @@ accountsRouter.put(
                 accountType: req.params.accountType,
                 accountNumber: req.params.accountNumber
             })({
-                account: new pecorino.repository.Account(pecorino.mongoose.connection)
+                account: new pecorino.repository.Account(mongoose.connection)
             });
             res.status(NO_CONTENT).end();
         } catch (error) {
@@ -82,12 +83,12 @@ accountsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
+            const accountRepo = new pecorino.repository.Account(mongoose.connection);
             const searchConditions: pecorino.factory.account.ISearchConditions<pecorino.factory.account.AccountType> = {
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-                sort: (req.query.sort !== undefined) ? req.query.sort : { openDate: pecorino.factory.sortType.Descending },
+                sort: req.query.sort,
                 accountType: req.query.accountType,
                 accountNumbers: req.query.accountNumbers,
                 statuses: req.query.statuses,
@@ -115,13 +116,13 @@ accountsRouter.get(
     async (req, res, next) => {
         try {
             debug('searching trade actions...', req.params);
-            const actionRepo = new pecorino.repository.Action(pecorino.mongoose.connection);
+            const actionRepo = new pecorino.repository.Action(mongoose.connection);
             const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions<pecorino.factory.account.AccountType>
                 = {
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-                sort: (req.query.sort !== undefined) ? req.query.sort : { endDate: pecorino.factory.sortType.Descending },
+                sort: req.query.sort,
                 accountType: req.params.accountType,
                 accountNumber: req.params.accountNumber
             };
