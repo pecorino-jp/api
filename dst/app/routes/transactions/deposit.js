@@ -16,14 +16,15 @@ const createDebug = require("debug");
 const express_1 = require("express");
 const http_status_1 = require("http-status");
 const moment = require("moment");
+const mongoose = require("mongoose");
 const depositTransactionsRouter = express_1.Router();
 const authentication_1 = require("../../middlewares/authentication");
 const permitScopes_1 = require("../../middlewares/permitScopes");
 const validator_1 = require("../../middlewares/validator");
 const debug = createDebug('pecorino-api:depositTransactionsRouter');
 depositTransactionsRouter.use(authentication_1.default);
-const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
-const transactionRepo = new pecorino.repository.Transaction(pecorino.mongoose.connection);
+const accountRepo = new pecorino.repository.Account(mongoose.connection);
+const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
 depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _, next) => {
     req.checkBody('expires', 'invalid expires').notEmpty().withMessage('expires is required').isISO8601();
     req.checkBody('agent', 'invalid agent').notEmpty().withMessage('agent is required');
@@ -55,9 +56,12 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req
             object: {
                 clientUser: req.user,
                 amount: parseInt(req.body.amount, 10),
-                accountType: req.body.accountType,
-                toAccountNumber: req.body.toAccountNumber,
-                notes: (req.body.notes !== undefined) ? req.body.notes : ''
+                toLocation: {
+                    typeOf: pecorino.factory.account.TypeOf.Account,
+                    accountType: req.body.accountType,
+                    accountNumber: req.body.toAccountNumber
+                },
+                description: (req.body.notes !== undefined) ? req.body.notes : ''
             },
             expires: moment(req.body.expires).toDate()
         })({ account: accountRepo, transaction: transactionRepo });

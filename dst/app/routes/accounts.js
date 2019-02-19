@@ -15,6 +15,7 @@ const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const express_1 = require("express");
 const http_status_1 = require("http-status");
+const mongoose = require("mongoose");
 const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
@@ -37,7 +38,7 @@ accountsRouter.post('', permitScopes_1.default(['admin']), (req, __2, next) => {
             name: req.body.name,
             initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
         })({
-            account: new pecorino.repository.Account(pecorino.mongoose.connection)
+            account: new pecorino.repository.Account(mongoose.connection)
         });
         res.status(http_status_1.CREATED).json(account);
     }
@@ -57,7 +58,7 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
             accountType: req.params.accountType,
             accountNumber: req.params.accountNumber
         })({
-            account: new pecorino.repository.Account(pecorino.mongoose.connection)
+            account: new pecorino.repository.Account(mongoose.connection)
         });
         res.status(http_status_1.NO_CONTENT).end();
     }
@@ -73,12 +74,12 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (req, __2, next) => {
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const accountRepo = new pecorino.repository.Account(pecorino.mongoose.connection);
+        const accountRepo = new pecorino.repository.Account(mongoose.connection);
         const searchConditions = {
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
             page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-            sort: (req.query.sort !== undefined) ? req.query.sort : { openDate: pecorino.factory.sortType.Descending },
+            sort: req.query.sort,
             accountType: req.query.accountType,
             accountNumbers: req.query.accountNumbers,
             statuses: req.query.statuses,
@@ -101,12 +102,12 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         debug('searching trade actions...', req.params);
-        const actionRepo = new pecorino.repository.Action(pecorino.mongoose.connection);
+        const actionRepo = new pecorino.repository.Action(mongoose.connection);
         const searchConditions = {
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
             page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-            sort: (req.query.sort !== undefined) ? req.query.sort : { endDate: pecorino.factory.sortType.Descending },
+            sort: req.query.sort,
             accountType: req.params.accountType,
             accountNumber: req.params.accountNumber
         };

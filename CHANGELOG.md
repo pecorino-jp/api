@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v2.0.0 - 2019-02-19
+
+### Changed
+
+- MongoDBインデックス調整
+- install @pecorino/domain@2.0.0
+
 ## v1.0.1 - 2018-10-09
 
 ### Changed
