@@ -14,7 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const connectMongo_1 = require("../../../connectMongo");
-const debug = createDebug('pecorino-jobs:*');
+const debug = createDebug('pecorino-api:jobs');
 exports.default = () => __awaiter(this, void 0, void 0, function* () {
     const connection = yield connectMongo_1.connectMongo({ defaultConnection: false });
     let count = 0;
