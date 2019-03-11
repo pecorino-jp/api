@@ -87,6 +87,15 @@ withdrawTransactionsRouter.put(
                 transactionId: req.params.transactionId
             })({ transaction: transactionRepo });
             debug('transaction confirmed.');
+
+            // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
+            const taskRepo = new pecorino.repository.Task(mongoose.connection);
+            // tslint:disable-next-line:no-floating-promises
+            pecorino.service.transaction.withdraw.exportTasks(pecorino.factory.transactionStatusType.Confirmed)({
+                task: taskRepo,
+                transaction: transactionRepo
+            });
+
             res.status(NO_CONTENT).end();
         } catch (error) {
             next(error);
@@ -102,6 +111,15 @@ withdrawTransactionsRouter.put(
         try {
             await transactionRepo.cancel(pecorino.factory.transactionType.Withdraw, req.params.transactionId);
             debug('transaction canceled.');
+
+            // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
+            const taskRepo = new pecorino.repository.Task(mongoose.connection);
+            // tslint:disable-next-line:no-floating-promises
+            pecorino.service.transaction.withdraw.exportTasks(pecorino.factory.transactionStatusType.Canceled)({
+                task: taskRepo,
+                transaction: transactionRepo
+            });
+
             res.status(NO_CONTENT).end();
         } catch (error) {
             next(error);

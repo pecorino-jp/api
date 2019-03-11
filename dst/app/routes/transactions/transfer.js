@@ -85,6 +85,13 @@ transferTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default
             transactionId: req.params.transactionId
         })({ transaction: transactionRepo });
         debug('transaction confirmed.');
+        // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
+        const taskRepo = new pecorino.repository.Task(mongoose.connection);
+        // tslint:disable-next-line:no-floating-promises
+        pecorino.service.transaction.transfer.exportTasks(pecorino.factory.transactionStatusType.Confirmed)({
+            task: taskRepo,
+            transaction: transactionRepo
+        });
         res.status(http_status_1.NO_CONTENT).end();
     }
     catch (error) {
@@ -95,6 +102,13 @@ transferTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(
     try {
         yield transactionRepo.cancel(pecorino.factory.transactionType.Transfer, req.params.transactionId);
         debug('transaction canceled.');
+        // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
+        const taskRepo = new pecorino.repository.Task(mongoose.connection);
+        // tslint:disable-next-line:no-floating-promises
+        pecorino.service.transaction.transfer.exportTasks(pecorino.factory.transactionStatusType.Canceled)({
+            task: taskRepo,
+            transaction: transactionRepo
+        });
         res.status(http_status_1.NO_CONTENT).end();
     }
     catch (error) {

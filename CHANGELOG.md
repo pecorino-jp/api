@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - 非同期タスクを統合
+- 取引確定&中止時の非同期処理実行レイテンシを改善
 
 ### Deprecated
 
