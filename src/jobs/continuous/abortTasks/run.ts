@@ -11,7 +11,7 @@ export default async () => {
     let count = 0;
 
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
-    const INTERVAL_MILLISECONDS = 500;
+    const INTERVAL_MILLISECONDS = 1000;
     const RETRY_INTERVAL_MINUTES = 10;
     const taskRepo = new pecorino.repository.Task(connection);
 

@@ -1,9 +1,12 @@
 /**
- * タスクリトライ
+ * 現金転送取消
  */
 import * as pecorino from '@pecorino/domain';
+import * as createDebug from 'debug';
 
 import { connectMongo } from '../../../connectMongo';
+
+const debug = createDebug('pecorino-jobs:*');
 
 export default async () => {
     const connection = await connectMongo({ defaultConnection: false });
@@ -11,8 +14,7 @@ export default async () => {
     let count = 0;
 
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
-    const INTERVAL_MILLISECONDS = 1000;
-    const RETRY_INTERVAL_MINUTES = 10;
+    const INTERVAL_MILLISECONDS = 200;
     const taskRepo = new pecorino.repository.Task(connection);
 
     setInterval(
@@ -24,7 +26,10 @@ export default async () => {
             count += 1;
 
             try {
-                await pecorino.service.task.retry(RETRY_INTERVAL_MINUTES)({ task: taskRepo });
+                debug('count:', count);
+                await pecorino.service.task.executeByName(
+                    pecorino.factory.taskName.CancelMoneyTransfer
+                )({ taskRepo: taskRepo, connection: connection });
             } catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error(error);

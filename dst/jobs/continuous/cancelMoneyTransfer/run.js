@@ -9,26 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * 取引期限監視
+ * 現金転送取消
  */
 const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const connectMongo_1 = require("../../../connectMongo");
-const debug = createDebug('pecorino-api');
+const debug = createDebug('pecorino-jobs:*');
 exports.default = () => __awaiter(this, void 0, void 0, function* () {
     const connection = yield connectMongo_1.connectMongo({ defaultConnection: false });
     let count = 0;
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 200;
-    const transactionRepo = new pecorino.repository.Transaction(connection);
+    const taskRepo = new pecorino.repository.Task(connection);
     setInterval(() => __awaiter(this, void 0, void 0, function* () {
         if (count > MAX_NUBMER_OF_PARALLEL_TASKS) {
             return;
         }
         count += 1;
         try {
-            debug('transaction expiring...');
-            yield transactionRepo.makeExpired({ expires: new Date() });
+            debug('count:', count);
+            yield pecorino.service.task.executeByName(pecorino.factory.taskName.CancelMoneyTransfer)({ taskRepo: taskRepo, connection: connection });
         }
         catch (error) {
             // tslint:disable-next-line:no-console

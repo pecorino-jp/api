@@ -9,31 +9,32 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * 取引期限監視
+ * 成立取引監視
  */
 const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const connectMongo_1 = require("../../../connectMongo");
-const debug = createDebug('pecorino-api');
+const debug = createDebug('pecorino-jobs:*');
 exports.default = () => __awaiter(this, void 0, void 0, function* () {
     const connection = yield connectMongo_1.connectMongo({ defaultConnection: false });
-    let count = 0;
+    let countExecute = 0;
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 200;
+    const taskRepo = new pecorino.repository.Task(connection);
     const transactionRepo = new pecorino.repository.Transaction(connection);
     setInterval(() => __awaiter(this, void 0, void 0, function* () {
-        if (count > MAX_NUBMER_OF_PARALLEL_TASKS) {
+        if (countExecute > MAX_NUBMER_OF_PARALLEL_TASKS) {
             return;
         }
-        count += 1;
+        countExecute += 1;
         try {
-            debug('transaction expiring...');
-            yield transactionRepo.makeExpired({ expires: new Date() });
+            debug('exporting tasks...');
+            yield pecorino.service.transaction.withdraw.exportTasks(pecorino.factory.transactionStatusType.Confirmed)({ task: taskRepo, transaction: transactionRepo });
         }
         catch (error) {
             // tslint:disable-next-line:no-console
             console.error(error);
         }
-        count -= 1;
+        countExecute -= 1;
     }), INTERVAL_MILLISECONDS);
 });
