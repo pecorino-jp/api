@@ -11,12 +11,13 @@
 
 ### Environment variables
 
-| Name                          | Required | Value          | Purpose                    |
-|-------------------------------|----------|----------------|----------------------------|
-| `DEBUG`                       | false    | pecorino-api:* | Debug                      |
-| `MONGOLAB_URI`                | true     |                | MongoDB接続文字列               |
+| Name                          | Required | Value          | Purpose                                     |
+| ----------------------------- | -------- | -------------- | ------------------------------------------- |
+| `DEBUG`                       | false    | pecorino-api:* | Debug                                       |
+| `MONGOLAB_URI`                | true     |                | MongoDB接続文字列                           |
 | `TOKEN_ISSUERS`               | true     |                | Cognitoトークン発行者(カンマつなぎでリスト) |
-| `RESOURECE_SERVER_IDENTIFIER` | true     |                | リソースサーバーとしての識別子            |
+| `RESOURECE_SERVER_IDENTIFIER` | true     |                | リソースサーバーとしての識別子              |
+| `JOBS_STOPPED`                | true     | 1 or 0         | 非同期ジョブ停止フラグ                      |
 
 ## License
 

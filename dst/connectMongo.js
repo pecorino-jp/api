@@ -9,55 +9,74 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 /**
- * mongooseコネクション確立
+ * MongoDBコネクション確立
  */
+const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const mongoose = require("mongoose");
-const debug = createDebug('pecorino-api:*');
+const debug = createDebug('pecorino-api:connectMongo');
 const PING_INTERVAL = 10000;
+const MONGOLAB_URI = process.env.MONGOLAB_URI;
 const connectOptions = {
     autoReconnect: true,
     keepAlive: true,
     connectTimeoutMS: 30000,
     socketTimeoutMS: 0,
     reconnectTries: 30,
-    reconnectInterval: 1000
+    reconnectInterval: 1000,
+    useNewUrlParser: true
 };
-function connectMongo() {
+function connectMongo(params) {
     return __awaiter(this, void 0, void 0, function* () {
-        // コネクション確立
-        yield mongoose.connect(process.env.MONGOLAB_URI, connectOptions);
+        let connection;
+        if (params === undefined || params.defaultConnection) {
+            // コネクション確立
+            yield mongoose.connect(MONGOLAB_URI, connectOptions);
+            connection = mongoose.connection;
+        }
+        else {
+            connection = mongoose.createConnection(MONGOLAB_URI, connectOptions);
+        }
         // 定期的にコネクションチェック
         // tslint:disable-next-line:no-single-line-block-comment
         /* istanbul ignore next */
         setInterval(() => __awaiter(this, void 0, void 0, function* () {
             // すでに接続済かどうか
-            if (mongoose.connection.readyState === 1) {
+            if (connection.readyState === 1) {
                 // 接続済であれば疎通確認
                 let pingResult;
-                try {
-                    pingResult = yield mongoose.connection.db.admin().ping();
-                    debug('pingResult:', pingResult);
-                }
-                catch (error) {
-                    // tslint:disable-next-line:no-console
-                    console.error('ping:', error);
-                }
+                yield new Promise((resolve) => __awaiter(this, void 0, void 0, function* () {
+                    try {
+                        pingResult = yield connection.db.admin()
+                            .ping();
+                        debug('pingResult:', pingResult);
+                    }
+                    catch (error) {
+                        // tslint:disable-next-line:no-console
+                        console.error('ping:', error);
+                    }
+                    // tslint:disable-next-line:no-magic-numbers
+                    setTimeout(() => { resolve(); }, 5000);
+                }));
                 // 疎通確認結果が適性であれば何もしない
                 if (pingResult !== undefined && pingResult.ok === 1) {
                     return;
                 }
             }
-            // コネクション確立
             try {
-                yield mongoose.connect(process.env.MONGOLAB_URI, connectOptions);
-                debug('MongoDB connected!');
+                // コネクション再確立
+                yield connection.close();
+                yield connection.openUri(MONGOLAB_URI, undefined, undefined, connectOptions);
+                debug('MongoDB reconnected!');
+                yield pecorino.service.notification.report2developers(`[${process.env.PROJECT_ID}] api:connectMongo`, 'MongoDB connection reestablished!')();
             }
             catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error('mongoose.connect:', error);
+                yield pecorino.service.notification.report2developers(`[${process.env.PROJECT_ID}] api:connectMongo`, `MongoDB connection error: ${error.stack}`)();
             }
         }), PING_INTERVAL);
+        return connection;
     });
 }
 exports.connectMongo = connectMongo;
