@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v3.0.0 - 2019-03-12
+
+### Changed
+
+- 非同期タスクを統合
+- 取引確定&中止時の非同期処理実行レイテンシを改善
+
 ## v2.0.0 - 2019-02-19
 
 ### Changed
