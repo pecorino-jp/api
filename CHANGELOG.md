@@ -10,9 +10,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- 非同期タスクを統合
-- 取引確定&中止時の非同期処理実行レイテンシを改善
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +17,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 ### Security
+
+## v3.0.0 - 2019-03-12
+
+### Changed
+
+- 非同期タスクを統合
+- 取引確定&中止時の非同期処理実行レイテンシを改善
 
 ## v2.0.0 - 2019-02-19
 
