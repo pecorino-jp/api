@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v3.1.1 - 2019-03-27
+
+### Changed
+
+- インデックスが効くように、タスクコレクションに対するクエリを調整
+
 ## v3.1.0 - 2019-03-15
 
 ### Added
