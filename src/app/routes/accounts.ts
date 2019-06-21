@@ -16,13 +16,14 @@ const accountsRouter = Router();
 const debug = createDebug('pecorino-api:routes:accounts');
 
 accountsRouter.use(authentication);
+
 /**
  * 口座開設
  */
 accountsRouter.post(
     '',
     permitScopes(['admin']),
-    (req, __2, next) => {
+    (req, __, next) => {
         req.checkBody('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
         req.checkBody('accountNumber', 'invalid accountNumber').notEmpty().withMessage('accountNumber is required');
         req.checkBody('name', 'invalid name').notEmpty().withMessage('name is required');
@@ -45,6 +46,50 @@ accountsRouter.post(
         }
     }
 );
+
+/**
+ * 口座編集
+ */
+accountsRouter.put(
+    '/:accountType/:accountNumber',
+    permitScopes(['admin']),
+    (req, __, next) => {
+        req.checkBody('name', 'invalid name')
+            .optional()
+            .notEmpty();
+
+        next();
+    },
+    validator,
+    async (req, res, next) => {
+        try {
+            const accountRepo = new pecorino.repository.Account(mongoose.connection);
+
+            const update = {
+                ...(req.body.name !== undefined) ? { name: String(req.body.name) } : undefined
+            };
+            const doc = await accountRepo.accountModel.findOneAndUpdate(
+                {
+                    accountType: req.params.accountType,
+                    accountNumber: req.params.accountNumber
+                },
+                update,
+                { new: true }
+            )
+                .exec();
+
+            if (doc === null) {
+                throw new pecorino.factory.errors.NotFound('Account');
+            }
+
+            res.status(NO_CONTENT)
+                .end();
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
 /**
  * 口座解約
  * 冪等性の担保された処理となります。
@@ -52,9 +97,6 @@ accountsRouter.post(
 accountsRouter.put(
     '/:accountType/:accountNumber/close',
     permitScopes(['admin']),
-    (_1, _2, next) => {
-        next();
-    },
     validator,
     async (req, res, next) => {
         try {
@@ -70,13 +112,14 @@ accountsRouter.put(
         }
     }
 );
+
 /**
  * 口座検索
  */
 accountsRouter.get(
     '',
     permitScopes(['admin']),
-    (req, __2, next) => {
+    (req, __, next) => {
         req.checkQuery('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
         next();
     },
@@ -103,15 +146,13 @@ accountsRouter.get(
         }
     }
 );
+
 /**
  * 取引履歴検索
  */
 accountsRouter.get(
     '/:accountType/:accountNumber/actions/moneyTransfer',
     permitScopes(['admin']),
-    (_1, _2, next) => {
-        next();
-    },
     validator,
     async (req, res, next) => {
         try {
@@ -135,4 +176,5 @@ accountsRouter.get(
         }
     }
 );
+
 export default accountsRouter;

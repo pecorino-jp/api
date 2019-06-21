@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v3.2.0 - 2019-06-21
+
+### Added
+
+- 口座編集エンドポイントを追加
+
 ## v3.1.1 - 2019-03-27
 
 ### Changed
