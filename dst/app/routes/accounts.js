@@ -25,7 +25,7 @@ accountsRouter.use(authentication_1.default);
 /**
  * 口座開設
  */
-accountsRouter.post('', permitScopes_1.default(['admin']), (req, __2, next) => {
+accountsRouter.post('', permitScopes_1.default(['admin']), (req, __, next) => {
     req.checkBody('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
     req.checkBody('accountNumber', 'invalid accountNumber').notEmpty().withMessage('accountNumber is required');
     req.checkBody('name', 'invalid name').notEmpty().withMessage('name is required');
@@ -47,12 +47,37 @@ accountsRouter.post('', permitScopes_1.default(['admin']), (req, __2, next) => {
     }
 }));
 /**
+ * 口座編集
+ */
+accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admin']), (req, __, next) => {
+    req.checkBody('name', 'invalid name')
+        .optional()
+        .notEmpty();
+    next();
+}, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+    try {
+        const accountRepo = new pecorino.repository.Account(mongoose.connection);
+        const update = Object.assign({}, (req.body.name !== undefined) ? { name: String(req.body.name) } : undefined);
+        const doc = yield accountRepo.accountModel.findOneAndUpdate({
+            accountType: req.params.accountType,
+            accountNumber: req.params.accountNumber
+        }, update, { new: true })
+            .exec();
+        if (doc === null) {
+            throw new pecorino.factory.errors.NotFound('Account');
+        }
+        res.status(http_status_1.NO_CONTENT)
+            .end();
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+/**
  * 口座解約
  * 冪等性の担保された処理となります。
  */
-accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(['admin']), (_1, _2, next) => {
-    next();
-}, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         yield pecorino.service.account.close({
             accountType: req.params.accountType,
@@ -69,7 +94,7 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
 /**
  * 口座検索
  */
-accountsRouter.get('', permitScopes_1.default(['admin']), (req, __2, next) => {
+accountsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
     req.checkQuery('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
@@ -97,9 +122,7 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (req, __2, next) => {
 /**
  * 取引履歴検索
  */
-accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), (_1, _2, next) => {
-    next();
-}, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         debug('searching trade actions...', req.params);
         const actionRepo = new pecorino.repository.Action(mongoose.connection);
