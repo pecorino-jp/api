@@ -17,7 +17,9 @@ const mongoose = require("mongoose");
 const debug = createDebug('pecorino-api:connectMongo');
 const PING_INTERVAL = 10000;
 const MONGOLAB_URI = process.env.MONGOLAB_URI;
+const AUTO_INDEX = process.env.MONGO_AUTO_INDEX_DISABLED !== '1';
 const connectOptions = {
+    autoIndex: AUTO_INDEX,
     autoReconnect: true,
     keepAlive: true,
     connectTimeoutMS: 30000,
@@ -66,7 +68,7 @@ function connectMongo(params) {
             try {
                 // コネクション再確立
                 yield connection.close();
-                yield connection.openUri(MONGOLAB_URI, undefined, undefined, connectOptions);
+                yield connection.openUri(MONGOLAB_URI, connectOptions);
                 debug('MongoDB reconnected!');
                 yield pecorino.service.notification.report2developers(`[${process.env.PROJECT_ID}] api:connectMongo`, 'MongoDB connection reestablished!')();
             }
