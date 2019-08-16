@@ -9,11 +9,9 @@ const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const http_status_1 = require("http-status");
 const api_1 = require("../error/api");
-// import logger from '../logger';
 const debug = createDebug('pecorino-api:middlewares:errorHandler');
 exports.default = (err, __, res, next) => {
     debug(err);
-    // logger.error('pecorino-api:middleware:errorHandler', err);
     if (res.headersSent) {
         next(err);
         return;

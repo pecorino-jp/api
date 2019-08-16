@@ -8,8 +8,10 @@ import * as mongoose from 'mongoose';
 const debug = createDebug('pecorino-api:connectMongo');
 const PING_INTERVAL = 10000;
 const MONGOLAB_URI = <string>process.env.MONGOLAB_URI;
+const AUTO_INDEX = process.env.MONGO_AUTO_INDEX_DISABLED !== '1';
 
 const connectOptions: mongoose.ConnectionOptions = {
+    autoIndex: AUTO_INDEX,
     autoReconnect: true,
     keepAlive: true,
     connectTimeoutMS: 30000,
@@ -63,7 +65,7 @@ export async function connectMongo(params: {
             try {
                 // コネクション再確立
                 await connection.close();
-                await connection.openUri(MONGOLAB_URI, undefined, undefined, connectOptions);
+                await connection.openUri(MONGOLAB_URI, connectOptions);
                 debug('MongoDB reconnected!');
                 await pecorino.service.notification.report2developers(
                     `[${process.env.PROJECT_ID}] api:connectMongo`,
