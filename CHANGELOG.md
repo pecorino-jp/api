@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v3.2.2 - 2019-08-19
+
+### Added
+
+- Add process.json
+
 ## v3.2.1 - 2019-08-16
 
 ### Changed
