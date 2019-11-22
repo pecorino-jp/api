@@ -41,7 +41,12 @@ transferTransactionsRouter.post(
     validator,
     async (req, res, next) => {
         try {
+            const project: any = (req.body.project !== undefined && req.body.project !== null)
+                ? { ...req.body.project, typeOf: 'Project' }
+                : { typeOf: 'Project', id: <string>process.env.PROJECT_ID };
+
             const transaction = await pecorino.service.transaction.transfer.start({
+                project: project,
                 typeOf: pecorino.factory.transactionType.Transfer,
                 agent: {
                     typeOf: req.body.agent.typeOf,

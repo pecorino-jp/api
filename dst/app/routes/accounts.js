@@ -32,7 +32,10 @@ accountsRouter.post('', permitScopes_1.default(['admin']), (req, __, next) => {
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
+        const project = (req.body.project !== undefined && req.body.project !== null)
+            ? Object.assign({}, req.body.project, { typeOf: 'Project' }) : { typeOf: 'Project', id: process.env.PROJECT_ID };
         const account = yield pecorino.service.account.open({
+            project: project,
             accountType: req.body.accountType,
             accountNumber: req.body.accountNumber,
             name: req.body.name,

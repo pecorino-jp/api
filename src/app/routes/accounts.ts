@@ -32,7 +32,12 @@ accountsRouter.post(
     validator,
     async (req, res, next) => {
         try {
+            const project: any = (req.body.project !== undefined && req.body.project !== null)
+                ? { ...req.body.project, typeOf: 'Project' }
+                : { typeOf: 'Project', id: <string>process.env.PROJECT_ID };
+
             const account = await pecorino.service.account.open({
+                project: project,
                 accountType: req.body.accountType,
                 accountNumber: req.body.accountNumber,
                 name: req.body.name,

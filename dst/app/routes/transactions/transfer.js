@@ -39,7 +39,10 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (re
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
+        const project = (req.body.project !== undefined && req.body.project !== null)
+            ? Object.assign({}, req.body.project, { typeOf: 'Project' }) : { typeOf: 'Project', id: process.env.PROJECT_ID };
         const transaction = yield pecorino.service.transaction.transfer.start({
+            project: project,
             typeOf: pecorino.factory.transactionType.Transfer,
             agent: {
                 typeOf: req.body.agent.typeOf,
