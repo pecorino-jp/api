@@ -70,12 +70,12 @@ function connectMongo(params) {
                 yield connection.close();
                 yield connection.openUri(MONGOLAB_URI, connectOptions);
                 debug('MongoDB reconnected!');
-                yield pecorino.service.notification.report2developers(`[${process.env.PROJECT_ID}] api:connectMongo`, 'MongoDB connection reestablished!')();
+                yield pecorino.service.notification.report2developers('api:connectMongo', 'MongoDB connection reestablished!')();
             }
             catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error('mongoose.connect:', error);
-                yield pecorino.service.notification.report2developers(`[${process.env.PROJECT_ID}] api:connectMongo`, `MongoDB connection error: ${error.stack}`)();
+                yield pecorino.service.notification.report2developers('api:connectMongo', `MongoDB connection error: ${error.stack}`)();
             }
         }), PING_INTERVAL);
         return connection;

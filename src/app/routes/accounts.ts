@@ -4,6 +4,8 @@
 import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
+// tslint:disable-next-line:no-submodule-imports
+import { body } from 'express-validator/check';
 import { CREATED, NO_CONTENT } from 'http-status';
 import * as mongoose from 'mongoose';
 
@@ -13,6 +15,7 @@ import validator from '../middlewares/validator';
 
 const accountsRouter = Router();
 
+const defaultProject = { typeOf: 'Project', id: <string>process.env.PROJECT_ID };
 const debug = createDebug('pecorino-api:routes:accounts');
 
 accountsRouter.use(authentication);
@@ -23,21 +26,42 @@ accountsRouter.use(authentication);
 accountsRouter.post(
     '',
     permitScopes(['admin']),
-    (req, __, next) => {
-        req.checkBody('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
-        req.checkBody('accountNumber', 'invalid accountNumber').notEmpty().withMessage('accountNumber is required');
-        req.checkBody('name', 'invalid name').notEmpty().withMessage('name is required');
+    // プロジェクト指定非必須のバージョンへの互換性維持対応
+    (req, _, next) => {
+        if (req.body.project === undefined || req.body.project === null) {
+            req.body.project = defaultProject;
+        }
+
         next();
     },
+    ...[
+        body('project.typeOf')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required')
+            .isIn(['Project']),
+        body('project.id')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('accountType')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('accountNumber')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('name')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required')
+    ],
     validator,
     async (req, res, next) => {
         try {
-            const project: any = (req.body.project !== undefined && req.body.project !== null)
-                ? { ...req.body.project, typeOf: 'Project' }
-                : { typeOf: 'Project', id: <string>process.env.PROJECT_ID };
-
             const account = await pecorino.service.account.open({
-                project: project,
+                project: req.body.project,
                 accountType: req.body.accountType,
                 accountNumber: req.body.accountNumber,
                 name: req.body.name,

@@ -14,28 +14,53 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const express_1 = require("express");
+// tslint:disable-next-line:no-submodule-imports
+const check_1 = require("express-validator/check");
 const http_status_1 = require("http-status");
 const mongoose = require("mongoose");
 const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
 const accountsRouter = express_1.Router();
+const defaultProject = { typeOf: 'Project', id: process.env.PROJECT_ID };
 const debug = createDebug('pecorino-api:routes:accounts');
 accountsRouter.use(authentication_1.default);
 /**
  * 口座開設
  */
-accountsRouter.post('', permitScopes_1.default(['admin']), (req, __, next) => {
-    req.checkBody('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
-    req.checkBody('accountNumber', 'invalid accountNumber').notEmpty().withMessage('accountNumber is required');
-    req.checkBody('name', 'invalid name').notEmpty().withMessage('name is required');
+accountsRouter.post('', permitScopes_1.default(['admin']), 
+// プロジェクト指定非必須のバージョンへの互換性維持対応
+(req, _, next) => {
+    if (req.body.project === undefined || req.body.project === null) {
+        req.body.project = defaultProject;
+    }
     next();
-}, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+}, ...[
+    check_1.body('project.typeOf')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isIn(['Project']),
+    check_1.body('project.id')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('accountType')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('accountNumber')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('name')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+], validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const project = (req.body.project !== undefined && req.body.project !== null)
-            ? Object.assign({}, req.body.project, { typeOf: 'Project' }) : { typeOf: 'Project', id: process.env.PROJECT_ID };
         const account = yield pecorino.service.account.open({
-            project: project,
+            project: req.body.project,
             accountType: req.body.accountType,
             accountNumber: req.body.accountNumber,
             name: req.body.name,

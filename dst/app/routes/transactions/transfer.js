@@ -14,6 +14,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const express_1 = require("express");
+// tslint:disable-next-line:no-submodule-imports
+const check_1 = require("express-validator/check");
 const http_status_1 = require("http-status");
 const moment = require("moment");
 const mongoose = require("mongoose");
@@ -21,28 +23,74 @@ const transferTransactionsRouter = express_1.Router();
 const authentication_1 = require("../../middlewares/authentication");
 const permitScopes_1 = require("../../middlewares/permitScopes");
 const validator_1 = require("../../middlewares/validator");
+const defaultProject = { typeOf: 'Project', id: process.env.PROJECT_ID };
 const debug = createDebug('pecorino-api:transferTransactionsRouter');
 transferTransactionsRouter.use(authentication_1.default);
 const accountRepo = new pecorino.repository.Account(mongoose.connection);
 const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
-transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), (req, _, next) => {
-    req.checkBody('expires', 'invalid expires').notEmpty().withMessage('expires is required').isISO8601();
-    req.checkBody('agent.name', 'invalid agent.name').notEmpty().withMessage('agent.name is required');
-    req.checkBody('agent.typeOf', 'invalid agent.typeOf').notEmpty().withMessage('agent.typeOf is required');
-    req.checkBody('recipient', 'invalid recipient').notEmpty().withMessage('recipient is required');
-    req.checkBody('recipient.typeOf', 'invalid recipient.typeOf').notEmpty().withMessage('recipient.typeOf is required');
-    req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
-    req.checkBody('amount', 'invalid amount').notEmpty().withMessage('amount is required').isInt();
-    req.checkBody('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
-    req.checkBody('fromAccountNumber', 'invalid fromAccountNumber').notEmpty().withMessage('fromAccountNumber is required');
-    req.checkBody('toAccountNumber', 'invalid toAccountNumber').notEmpty().withMessage('toAccountNumber is required');
+transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), 
+// プロジェクト指定非必須のバージョンへの互換性維持対応
+(req, _, next) => {
+    if (req.body.project === undefined || req.body.project === null) {
+        req.body.project = defaultProject;
+    }
     next();
-}, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+}, ...[
+    check_1.body('project.typeOf')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isIn(['Project']),
+    check_1.body('project.id')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('expires')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isISO8601(),
+    check_1.body('agent.name')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('agent.typeOf')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('recipient')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('recipient.typeOf')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('recipient.name')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('amount')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isInt(),
+    check_1.body('accountType')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('fromAccountNumber')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('toAccountNumber')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+], validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
-        const project = (req.body.project !== undefined && req.body.project !== null)
-            ? Object.assign({}, req.body.project, { typeOf: 'Project' }) : { typeOf: 'Project', id: process.env.PROJECT_ID };
         const transaction = yield pecorino.service.transaction.transfer.start({
-            project: project,
+            project: req.body.project,
             typeOf: pecorino.factory.transactionType.Transfer,
             agent: {
                 typeOf: req.body.agent.typeOf,

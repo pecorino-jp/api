@@ -68,14 +68,14 @@ export async function connectMongo(params: {
                 await connection.openUri(MONGOLAB_URI, connectOptions);
                 debug('MongoDB reconnected!');
                 await pecorino.service.notification.report2developers(
-                    `[${process.env.PROJECT_ID}] api:connectMongo`,
+                    'api:connectMongo',
                     'MongoDB connection reestablished!'
                 )();
             } catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error('mongoose.connect:', error);
                 await pecorino.service.notification.report2developers(
-                    `[${process.env.PROJECT_ID}] api:connectMongo`,
+                    'api:connectMongo',
                     `MongoDB connection error: ${error.stack}`
                 )();
             }

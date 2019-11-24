@@ -17,6 +17,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - 全コレクションにプロジェクト属性へのインデックスを追加
 - 口座検索条件を拡張
 - アクション検索条件を拡張
+- 口座開設時のプロジェクト指定を必須化
+- 取引開始時のプロジェクト指定を必須化
 
 ### Deprecated
 
