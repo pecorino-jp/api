@@ -133,14 +133,10 @@ accountsRouter.get(
         try {
             const accountRepo = new pecorino.repository.Account(mongoose.connection);
             const searchConditions: pecorino.factory.account.ISearchConditions<pecorino.factory.account.AccountType> = {
+                ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
-                page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-                sort: req.query.sort,
-                accountType: req.query.accountType,
-                accountNumbers: req.query.accountNumbers,
-                statuses: req.query.statuses,
-                name: req.query.name
+                page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1
             };
             const accounts = await accountRepo.search(searchConditions);
             const totalCount = await accountRepo.count(searchConditions);
@@ -165,10 +161,10 @@ accountsRouter.get(
             const actionRepo = new pecorino.repository.Action(mongoose.connection);
             const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions<pecorino.factory.account.AccountType>
                 = {
+                ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-                sort: req.query.sort,
                 accountType: req.params.accountType,
                 accountNumber: req.params.accountNumber
             };

@@ -22,23 +22,23 @@ actionsRouter.use(authentication_1.default);
 /**
  * アクション検索
  */
-actionsRouter.get('', permitScopes_1.default(['admin']), (__1, __2, next) => {
+actionsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
+    req.checkQuery('startDateFrom')
+        .optional()
+        .isISO8601()
+        .toDate();
+    req.checkQuery('startDateThrough')
+        .optional()
+        .isISO8601()
+        .toDate();
     next();
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         const actionRepo = new pecorino.repository.Action(mongoose.connection);
-        const accounts = yield actionRepo.search({
-            typeOf: req.query.typeOf,
-            actionStatuses: req.query.actionStatuses,
-            startDateFrom: req.query.startDateFrom,
-            startDateThrough: req.query.startDateThrough,
-            purposeTypeOfs: req.query.purposeTypeOfs,
-            fromLocationAccountNumbers: req.query.fromLocationAccountNumbers,
-            toLocationAccountNumbers: req.query.toLocationAccountNumbers,
+        const actions = yield actionRepo.search(Object.assign({}, req.query, { 
             // tslint:disable-next-line:no-magic-numbers
-            limit: (Number.isInteger(req.query.limit)) ? req.query.limit : 100
-        });
-        res.json(accounts);
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 }));
+        res.json(actions);
     }
     catch (error) {
         next(error);

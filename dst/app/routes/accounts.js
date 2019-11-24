@@ -103,16 +103,9 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         const accountRepo = new pecorino.repository.Account(mongoose.connection);
-        const searchConditions = {
+        const searchConditions = Object.assign({}, req.query, { 
             // tslint:disable-next-line:no-magic-numbers
-            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
-            page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-            sort: req.query.sort,
-            accountType: req.query.accountType,
-            accountNumbers: req.query.accountNumbers,
-            statuses: req.query.statuses,
-            name: req.query.name
-        };
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 });
         const accounts = yield accountRepo.search(searchConditions);
         const totalCount = yield accountRepo.count(searchConditions);
         res.set('X-Total-Count', totalCount.toString());
@@ -129,14 +122,9 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
     try {
         debug('searching trade actions...', req.params);
         const actionRepo = new pecorino.repository.Action(mongoose.connection);
-        const searchConditions = {
+        const searchConditions = Object.assign({}, req.query, { 
             // tslint:disable-next-line:no-magic-numbers
-            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
-            page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-            sort: req.query.sort,
-            accountType: req.params.accountType,
-            accountNumber: req.params.accountNumber
-        };
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountType: req.params.accountType, accountNumber: req.params.accountNumber });
         const actions = yield actionRepo.searchTransferActions(searchConditions);
         const totalCount = yield actionRepo.countTransferActions(searchConditions);
         res.set('X-Total-Count', totalCount.toString());
