@@ -1,7 +1,6 @@
 // tslint:disable:no-implicit-dependencies
 /**
  * エラーハンドラーミドルウェアテスト
- * @ignore
  */
 import * as pecorino from '@pecorino/domain';
 import * as assert from 'assert';

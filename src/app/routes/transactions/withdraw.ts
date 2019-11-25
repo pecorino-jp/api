@@ -16,8 +16,7 @@ import authentication from '../../middlewares/authentication';
 import permitScopes from '../../middlewares/permitScopes';
 import validator from '../../middlewares/validator';
 
-const defaultProject = { typeOf: 'Project', id: <string>process.env.PROJECT_ID };
-const debug = createDebug('pecorino-api:withdrawTransactionsRouter');
+const debug = createDebug('pecorino-api:router');
 
 withdrawTransactionsRouter.use(authentication);
 
@@ -27,14 +26,6 @@ const transactionRepo = new pecorino.repository.Transaction(mongoose.connection)
 withdrawTransactionsRouter.post(
     '/start',
     permitScopes(['admin']),
-    // プロジェクト指定非必須のバージョンへの互換性維持対応
-    (req, _, next) => {
-        if (req.body.project === undefined || req.body.project === null) {
-            req.body.project = defaultProject;
-        }
-
-        next();
-    },
     ...[
         body('project.typeOf')
             .not()

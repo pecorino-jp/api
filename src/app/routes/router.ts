@@ -1,6 +1,5 @@
 /**
  * ルーター
- * @ignore
  */
 import * as express from 'express';
 

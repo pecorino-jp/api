@@ -23,19 +23,11 @@ const withdrawTransactionsRouter = express_1.Router();
 const authentication_1 = require("../../middlewares/authentication");
 const permitScopes_1 = require("../../middlewares/permitScopes");
 const validator_1 = require("../../middlewares/validator");
-const defaultProject = { typeOf: 'Project', id: process.env.PROJECT_ID };
-const debug = createDebug('pecorino-api:withdrawTransactionsRouter');
+const debug = createDebug('pecorino-api:router');
 withdrawTransactionsRouter.use(authentication_1.default);
 const accountRepo = new pecorino.repository.Account(mongoose.connection);
 const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
-withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), 
-// プロジェクト指定非必須のバージョンへの互換性維持対応
-(req, _, next) => {
-    if (req.body.project === undefined || req.body.project === null) {
-        req.body.project = defaultProject;
-    }
-    next();
-}, ...[
+withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
     check_1.body('project.typeOf')
         .not()
         .isEmpty()

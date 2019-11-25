@@ -1,6 +1,5 @@
 /**
  * Expressアプリケーション
- * @ignore
  */
 import * as middlewares from '@motionpicture/express-middleware';
 import * as pecorino from '@pecorino/domain';

@@ -15,8 +15,7 @@ import validator from '../middlewares/validator';
 
 const accountsRouter = Router();
 
-const defaultProject = { typeOf: 'Project', id: <string>process.env.PROJECT_ID };
-const debug = createDebug('pecorino-api:routes:accounts');
+const debug = createDebug('pecorino-api:router');
 
 accountsRouter.use(authentication);
 
@@ -26,14 +25,6 @@ accountsRouter.use(authentication);
 accountsRouter.post(
     '',
     permitScopes(['admin']),
-    // プロジェクト指定非必須のバージョンへの互換性維持対応
-    (req, _, next) => {
-        if (req.body.project === undefined || req.body.project === null) {
-            req.body.project = defaultProject;
-        }
-
-        next();
-    },
     ...[
         body('project.typeOf')
             .not()

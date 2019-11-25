@@ -22,20 +22,12 @@ const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
 const accountsRouter = express_1.Router();
-const defaultProject = { typeOf: 'Project', id: process.env.PROJECT_ID };
-const debug = createDebug('pecorino-api:routes:accounts');
+const debug = createDebug('pecorino-api:router');
 accountsRouter.use(authentication_1.default);
 /**
  * 口座開設
  */
-accountsRouter.post('', permitScopes_1.default(['admin']), 
-// プロジェクト指定非必須のバージョンへの互換性維持対応
-(req, _, next) => {
-    if (req.body.project === undefined || req.body.project === null) {
-        req.body.project = defaultProject;
-    }
-    next();
-}, ...[
+accountsRouter.post('', permitScopes_1.default(['admin']), ...[
     check_1.body('project.typeOf')
         .not()
         .isEmpty()
