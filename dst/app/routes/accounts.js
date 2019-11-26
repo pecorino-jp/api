@@ -14,25 +14,45 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const express_1 = require("express");
+// tslint:disable-next-line:no-submodule-imports
+const check_1 = require("express-validator/check");
 const http_status_1 = require("http-status");
 const mongoose = require("mongoose");
 const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
 const accountsRouter = express_1.Router();
-const debug = createDebug('pecorino-api:routes:accounts');
+const debug = createDebug('pecorino-api:router');
 accountsRouter.use(authentication_1.default);
 /**
  * 口座開設
  */
-accountsRouter.post('', permitScopes_1.default(['admin']), (req, __, next) => {
-    req.checkBody('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
-    req.checkBody('accountNumber', 'invalid accountNumber').notEmpty().withMessage('accountNumber is required');
-    req.checkBody('name', 'invalid name').notEmpty().withMessage('name is required');
-    next();
-}, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+accountsRouter.post('', permitScopes_1.default(['admin']), ...[
+    check_1.body('project.typeOf')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isIn(['Project']),
+    check_1.body('project.id')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('accountType')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('accountNumber')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required'),
+    check_1.body('name')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+], validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         const account = yield pecorino.service.account.open({
+            project: req.body.project,
             accountType: req.body.accountType,
             accountNumber: req.body.accountNumber,
             name: req.body.name,
@@ -100,16 +120,9 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
 }, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
     try {
         const accountRepo = new pecorino.repository.Account(mongoose.connection);
-        const searchConditions = {
+        const searchConditions = Object.assign({}, req.query, { 
             // tslint:disable-next-line:no-magic-numbers
-            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
-            page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-            sort: req.query.sort,
-            accountType: req.query.accountType,
-            accountNumbers: req.query.accountNumbers,
-            statuses: req.query.statuses,
-            name: req.query.name
-        };
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 });
         const accounts = yield accountRepo.search(searchConditions);
         const totalCount = yield accountRepo.count(searchConditions);
         res.set('X-Total-Count', totalCount.toString());
@@ -126,14 +139,9 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
     try {
         debug('searching trade actions...', req.params);
         const actionRepo = new pecorino.repository.Action(mongoose.connection);
-        const searchConditions = {
+        const searchConditions = Object.assign({}, req.query, { 
             // tslint:disable-next-line:no-magic-numbers
-            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
-            page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-            sort: req.query.sort,
-            accountType: req.params.accountType,
-            accountNumber: req.params.accountNumber
-        };
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountType: req.params.accountType, accountNumber: req.params.accountNumber });
         const actions = yield actionRepo.searchTransferActions(searchConditions);
         const totalCount = yield actionRepo.countTransferActions(searchConditions);
         res.set('X-Total-Count', totalCount.toString());

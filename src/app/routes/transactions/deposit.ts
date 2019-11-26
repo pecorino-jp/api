@@ -4,6 +4,8 @@
 import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
+// tslint:disable-next-line:no-submodule-imports
+import { body } from 'express-validator/check';
 import { NO_CONTENT } from 'http-status';
 import * as moment from 'moment';
 import * as mongoose from 'mongoose';
@@ -14,7 +16,7 @@ import authentication from '../../middlewares/authentication';
 import permitScopes from '../../middlewares/permitScopes';
 import validator from '../../middlewares/validator';
 
-const debug = createDebug('pecorino-api:depositTransactionsRouter');
+const debug = createDebug('pecorino-api:router');
 
 depositTransactionsRouter.use(authentication);
 
@@ -24,24 +26,64 @@ const transactionRepo = new pecorino.repository.Transaction(mongoose.connection)
 depositTransactionsRouter.post(
     '/start',
     permitScopes(['admin']),
-    (req, _, next) => {
-        req.checkBody('expires', 'invalid expires').notEmpty().withMessage('expires is required').isISO8601();
-        req.checkBody('agent', 'invalid agent').notEmpty().withMessage('agent is required');
-        req.checkBody('agent.typeOf', 'invalid agent.typeOf').notEmpty().withMessage('agent.typeOf is required');
-        req.checkBody('agent.name', 'invalid agent.name').notEmpty().withMessage('agent.name is required');
-        req.checkBody('recipient', 'invalid recipient').notEmpty().withMessage('recipient is required');
-        req.checkBody('recipient.typeOf', 'invalid recipient.typeOf').notEmpty().withMessage('recipient.typeOf is required');
-        req.checkBody('recipient.name', 'invalid recipient.name').notEmpty().withMessage('recipient.name is required');
-        req.checkBody('amount', 'invalid amount').notEmpty().withMessage('amount is required').isInt();
-        req.checkBody('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
-        req.checkBody('toAccountNumber', 'invalid toAccountNumber').notEmpty().withMessage('toAccountNumber is required');
-
-        next();
-    },
+    ...[
+        body('project.typeOf')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required')
+            .isIn(['Project']),
+        body('project.id')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('expires')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required')
+            .isISO8601(),
+        body('agent')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('agent.typeOf')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('agent.name')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('recipient')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('recipient.typeOf')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('recipient.name')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('amount')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required')
+            .isInt(),
+        body('accountType')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('toAccountNumber')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required')
+    ],
     validator,
     async (req, res, next) => {
         try {
             const transaction = await pecorino.service.transaction.deposit.start({
+                project: req.body.project,
                 typeOf: pecorino.factory.transactionType.Deposit,
                 agent: {
                     typeOf: req.body.agent.typeOf,

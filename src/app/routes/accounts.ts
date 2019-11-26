@@ -4,6 +4,8 @@
 import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
+// tslint:disable-next-line:no-submodule-imports
+import { body } from 'express-validator/check';
 import { CREATED, NO_CONTENT } from 'http-status';
 import * as mongoose from 'mongoose';
 
@@ -13,7 +15,7 @@ import validator from '../middlewares/validator';
 
 const accountsRouter = Router();
 
-const debug = createDebug('pecorino-api:routes:accounts');
+const debug = createDebug('pecorino-api:router');
 
 accountsRouter.use(authentication);
 
@@ -23,16 +25,34 @@ accountsRouter.use(authentication);
 accountsRouter.post(
     '',
     permitScopes(['admin']),
-    (req, __, next) => {
-        req.checkBody('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
-        req.checkBody('accountNumber', 'invalid accountNumber').notEmpty().withMessage('accountNumber is required');
-        req.checkBody('name', 'invalid name').notEmpty().withMessage('name is required');
-        next();
-    },
+    ...[
+        body('project.typeOf')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required')
+            .isIn(['Project']),
+        body('project.id')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('accountType')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('accountNumber')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('name')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required')
+    ],
     validator,
     async (req, res, next) => {
         try {
             const account = await pecorino.service.account.open({
+                project: req.body.project,
                 accountType: req.body.accountType,
                 accountNumber: req.body.accountNumber,
                 name: req.body.name,
@@ -128,14 +148,10 @@ accountsRouter.get(
         try {
             const accountRepo = new pecorino.repository.Account(mongoose.connection);
             const searchConditions: pecorino.factory.account.ISearchConditions<pecorino.factory.account.AccountType> = {
+                ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
-                page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-                sort: req.query.sort,
-                accountType: req.query.accountType,
-                accountNumbers: req.query.accountNumbers,
-                statuses: req.query.statuses,
-                name: req.query.name
+                page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1
             };
             const accounts = await accountRepo.search(searchConditions);
             const totalCount = await accountRepo.count(searchConditions);
@@ -160,10 +176,10 @@ accountsRouter.get(
             const actionRepo = new pecorino.repository.Action(mongoose.connection);
             const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions<pecorino.factory.account.AccountType>
                 = {
+                ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-                sort: req.query.sort,
                 accountType: req.params.accountType,
                 accountNumber: req.params.accountNumber
             };
