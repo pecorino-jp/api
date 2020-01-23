@@ -154,8 +154,7 @@ accountsRouter.get(
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1
             };
             const accounts = await accountRepo.search(searchConditions);
-            const totalCount = await accountRepo.count(searchConditions);
-            res.set('X-Total-Count', totalCount.toString());
+
             res.json(accounts);
         } catch (error) {
             next(error);
@@ -184,8 +183,7 @@ accountsRouter.get(
                 accountNumber: req.params.accountNumber
             };
             const actions = await actionRepo.searchTransferActions(searchConditions);
-            const totalCount = await actionRepo.countTransferActions(searchConditions);
-            res.set('X-Total-Count', totalCount.toString());
+
             res.json(actions);
         } catch (error) {
             next(error);

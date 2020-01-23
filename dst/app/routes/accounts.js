@@ -124,8 +124,6 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 });
         const accounts = yield accountRepo.search(searchConditions);
-        const totalCount = yield accountRepo.count(searchConditions);
-        res.set('X-Total-Count', totalCount.toString());
         res.json(accounts);
     }
     catch (error) {
@@ -143,8 +141,6 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountType: req.params.accountType, accountNumber: req.params.accountNumber });
         const actions = yield actionRepo.searchTransferActions(searchConditions);
-        const totalCount = yield actionRepo.countTransferActions(searchConditions);
-        res.set('X-Total-Count', totalCount.toString());
         res.json(actions);
     }
     catch (error) {
