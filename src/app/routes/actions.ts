@@ -68,10 +68,8 @@ actionsRouter.get(
             };
 
             const actionRepo = new pecorino.repository.Action(mongoose.connection);
-            const totalCount = await actionRepo.countTransferActions(searchConditions);
             const actions = await actionRepo.searchTransferActions(searchConditions);
 
-            res.set('X-Total-Count', totalCount.toString());
             res.json(actions);
         } catch (error) {
             next(error);

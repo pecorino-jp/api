@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.0.0 - 2020-03-27
+
+### Changed
+
+- 各リソース検索からX-Total-Countを削除
+- MongoDBコネクション監視調整
+
 ## v4.0.1 - 2019-11-27
 
 ### Changed

@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -26,7 +27,7 @@ const run_12 = require("./continuous/onConfirmedWithdrawTransaction/run");
 const run_13 = require("./continuous/onExpiredDepositTransaction/run");
 const run_14 = require("./continuous/onExpiredTransferTransaction/run");
 const run_15 = require("./continuous/onExpiredWithdrawTransaction/run");
-exports.default = () => __awaiter(this, void 0, void 0, function* () {
+exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     yield run_1.default();
     yield run_2.default();
     yield run_3.default();

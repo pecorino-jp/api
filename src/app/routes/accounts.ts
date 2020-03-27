@@ -60,7 +60,8 @@ accountsRouter.post(
             })({
                 account: new pecorino.repository.Account(mongoose.connection)
             });
-            res.status(CREATED).json(account);
+            res.status(CREATED)
+                .json(account);
         } catch (error) {
             next(error);
         }
@@ -126,7 +127,8 @@ accountsRouter.put(
             })({
                 account: new pecorino.repository.Account(mongoose.connection)
             });
-            res.status(NO_CONTENT).end();
+            res.status(NO_CONTENT)
+                .end();
         } catch (error) {
             next(error);
         }
@@ -140,7 +142,9 @@ accountsRouter.get(
     '',
     permitScopes(['admin']),
     (req, __, next) => {
-        req.checkQuery('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
+        req.checkQuery('accountType', 'invalid accountType')
+            .notEmpty()
+            .withMessage('accountType is required');
         next();
     },
     validator,
@@ -154,8 +158,7 @@ accountsRouter.get(
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1
             };
             const accounts = await accountRepo.search(searchConditions);
-            const totalCount = await accountRepo.count(searchConditions);
-            res.set('X-Total-Count', totalCount.toString());
+
             res.json(accounts);
         } catch (error) {
             next(error);
@@ -184,8 +187,7 @@ accountsRouter.get(
                 accountNumber: req.params.accountNumber
             };
             const actions = await actionRepo.searchTransferActions(searchConditions);
-            const totalCount = await actionRepo.countTransferActions(searchConditions);
-            res.set('X-Total-Count', totalCount.toString());
+
             res.json(actions);
         } catch (error) {
             next(error);
