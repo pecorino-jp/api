@@ -60,7 +60,8 @@ accountsRouter.post(
             })({
                 account: new pecorino.repository.Account(mongoose.connection)
             });
-            res.status(CREATED).json(account);
+            res.status(CREATED)
+                .json(account);
         } catch (error) {
             next(error);
         }
@@ -126,7 +127,8 @@ accountsRouter.put(
             })({
                 account: new pecorino.repository.Account(mongoose.connection)
             });
-            res.status(NO_CONTENT).end();
+            res.status(NO_CONTENT)
+                .end();
         } catch (error) {
             next(error);
         }
@@ -140,7 +142,9 @@ accountsRouter.get(
     '',
     permitScopes(['admin']),
     (req, __, next) => {
-        req.checkQuery('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
+        req.checkQuery('accountType', 'invalid accountType')
+            .notEmpty()
+            .withMessage('accountType is required');
         next();
     },
     validator,

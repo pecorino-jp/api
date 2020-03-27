@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -49,7 +50,7 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...[
         .not()
         .isEmpty()
         .withMessage(() => 'required')
-], validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const account = yield pecorino.service.account.open({
             project: req.body.project,
@@ -60,7 +61,8 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...[
         })({
             account: new pecorino.repository.Account(mongoose.connection)
         });
-        res.status(http_status_1.CREATED).json(account);
+        res.status(http_status_1.CREATED)
+            .json(account);
     }
     catch (error) {
         next(error);
@@ -74,7 +76,7 @@ accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admi
         .optional()
         .notEmpty();
     next();
-}, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+}, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accountRepo = new pecorino.repository.Account(mongoose.connection);
         const update = Object.assign({}, (req.body.name !== undefined) ? { name: String(req.body.name) } : undefined);
@@ -97,7 +99,7 @@ accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admi
  * 口座解約
  * 冪等性の担保された処理となります。
  */
-accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield pecorino.service.account.close({
             accountType: req.params.accountType,
@@ -105,7 +107,8 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
         })({
             account: new pecorino.repository.Account(mongoose.connection)
         });
-        res.status(http_status_1.NO_CONTENT).end();
+        res.status(http_status_1.NO_CONTENT)
+            .end();
     }
     catch (error) {
         next(error);
@@ -115,12 +118,14 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
  * 口座検索
  */
 accountsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
-    req.checkQuery('accountType', 'invalid accountType').notEmpty().withMessage('accountType is required');
+    req.checkQuery('accountType', 'invalid accountType')
+        .notEmpty()
+        .withMessage('accountType is required');
     next();
-}, validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+}, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accountRepo = new pecorino.repository.Account(mongoose.connection);
-        const searchConditions = Object.assign({}, req.query, { 
+        const searchConditions = Object.assign(Object.assign({}, req.query), { 
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 });
         const accounts = yield accountRepo.search(searchConditions);
@@ -133,11 +138,11 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
 /**
  * 取引履歴検索
  */
-accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         debug('searching trade actions...', req.params);
         const actionRepo = new pecorino.repository.Action(mongoose.connection);
-        const searchConditions = Object.assign({}, req.query, { 
+        const searchConditions = Object.assign(Object.assign({}, req.query), { 
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountType: req.params.accountType, accountNumber: req.params.accountNumber });
         const actions = yield actionRepo.searchTransferActions(searchConditions);

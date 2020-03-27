@@ -1,17 +1,15 @@
 import { factory } from '@pecorino/domain';
 
 /**
- * APIError
- *
- * @class APIError
- * @extends {Error}
+ * アプリケーションエラー
  */
 export class APIError extends Error {
     public readonly code: number;
     public readonly errors: factory.errors.PECORINO[];
 
     constructor(code: number, errors: factory.errors.PECORINO[]) {
-        const message = errors.map((error) => error.message).join('\n');
+        const message = errors.map((error) => error.message)
+            .join('\n');
         super(message);
 
         this.name = 'APIError';

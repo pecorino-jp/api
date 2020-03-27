@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - 各リソース検索からX-Total-Countを削除
+- MongoDBコネクション監視調整
 
 ### Deprecated
 

@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -79,7 +80,7 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
         .not()
         .isEmpty()
         .withMessage(() => 'required')
-], validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transaction = yield pecorino.service.transaction.deposit.start({
             project: req.body.project,
@@ -106,7 +107,8 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
                 },
                 description: (req.body.notes !== undefined) ? req.body.notes : ''
             },
-            expires: moment(req.body.expires).toDate()
+            expires: moment(req.body.expires)
+                .toDate()
         })({ account: accountRepo, transaction: transactionRepo });
         // tslint:disable-next-line:no-string-literal
         // const host = req.headers['host'];
@@ -117,7 +119,7 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
         next(error);
     }
 }));
-depositTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+depositTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield pecorino.service.transaction.deposit.confirm({
             transactionId: req.params.transactionId
@@ -130,13 +132,14 @@ depositTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(
             task: taskRepo,
             transaction: transactionRepo
         });
-        res.status(http_status_1.NO_CONTENT).end();
+        res.status(http_status_1.NO_CONTENT)
+            .end();
     }
     catch (error) {
         next(error);
     }
 }));
-depositTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(this, void 0, void 0, function* () {
+depositTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield transactionRepo.cancel(pecorino.factory.transactionType.Deposit, req.params.transactionId);
         debug('transaction canceled.');
@@ -147,7 +150,8 @@ depositTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default([
             task: taskRepo,
             transaction: transactionRepo
         });
-        res.status(http_status_1.NO_CONTENT).end();
+        res.status(http_status_1.NO_CONTENT)
+            .end();
     }
     catch (error) {
         next(error);

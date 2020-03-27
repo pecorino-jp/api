@@ -33,7 +33,8 @@ exports.default = (err, __, res, next) => {
             apiError = new api_1.APIError(http_status_1.INTERNAL_SERVER_ERROR, [new pecorino.factory.errors.PECORINO('InternalServerError', err.message)]);
         }
     }
-    res.status(apiError.code).json({
+    res.status(apiError.code)
+        .json({
         error: apiError.toObject()
     });
 };

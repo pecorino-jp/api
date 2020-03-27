@@ -103,7 +103,8 @@ withdrawTransactionsRouter.post(
                     },
                     description: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
-                expires: moment(req.body.expires).toDate()
+                expires: moment(req.body.expires)
+                    .toDate()
             })({ account: accountRepo, transaction: transactionRepo });
 
             // tslint:disable-next-line:no-string-literal
@@ -135,7 +136,8 @@ withdrawTransactionsRouter.put(
                 transaction: transactionRepo
             });
 
-            res.status(NO_CONTENT).end();
+            res.status(NO_CONTENT)
+                .end();
         } catch (error) {
             next(error);
         }
@@ -159,7 +161,8 @@ withdrawTransactionsRouter.put(
                 transaction: transactionRepo
             });
 
-            res.status(NO_CONTENT).end();
+            res.status(NO_CONTENT)
+                .end();
         } catch (error) {
             next(error);
         }
