@@ -151,7 +151,7 @@ accountsRouter.get(
     async (req, res, next) => {
         try {
             const accountRepo = new pecorino.repository.Account(mongoose.connection);
-            const searchConditions: pecorino.factory.account.ISearchConditions<pecorino.factory.account.AccountType> = {
+            const searchConditions: pecorino.factory.account.ISearchConditions = {
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
@@ -177,7 +177,7 @@ accountsRouter.get(
         try {
             debug('searching trade actions...', req.params);
             const actionRepo = new pecorino.repository.Action(mongoose.connection);
-            const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions<pecorino.factory.account.AccountType>
+            const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions
                 = {
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers

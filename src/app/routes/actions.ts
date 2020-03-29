@@ -59,8 +59,7 @@ actionsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions<pecorino.factory.account.AccountType>
-                = {
+            const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions = {
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,

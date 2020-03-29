@@ -21,6 +21,7 @@ const debug = createDebug('pecorino-api:router');
 withdrawTransactionsRouter.use(authentication);
 
 const accountRepo = new pecorino.repository.Account(mongoose.connection);
+const actionRepo = new pecorino.repository.Action(mongoose.connection);
 const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
 
 withdrawTransactionsRouter.post(
@@ -105,7 +106,7 @@ withdrawTransactionsRouter.post(
                 },
                 expires: moment(req.body.expires)
                     .toDate()
-            })({ account: accountRepo, transaction: transactionRepo });
+            })({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
 
             // tslint:disable-next-line:no-string-literal
             // const host = req.headers['host'];
