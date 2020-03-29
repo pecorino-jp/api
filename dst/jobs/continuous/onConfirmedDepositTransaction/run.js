@@ -30,7 +30,10 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         countExecute += 1;
         try {
             debug('exporting tasks...');
-            yield pecorino.service.transaction.deposit.exportTasks(pecorino.factory.transactionStatusType.Confirmed)({ task: taskRepo, transaction: transactionRepo });
+            yield pecorino.service.transaction.exportTasks({
+                status: pecorino.factory.transactionStatusType.Confirmed,
+                typeOf: pecorino.factory.transactionType.Deposit
+            })({ task: taskRepo, transaction: transactionRepo });
         }
         catch (error) {
             // tslint:disable-next-line:no-console

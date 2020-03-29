@@ -28,9 +28,10 @@ export default async () => {
 
             try {
                 debug('exporting tasks...');
-                await pecorino.service.transaction.deposit.exportTasks(
-                    pecorino.factory.transactionStatusType.Canceled
-                )({ task: taskRepo, transaction: transactionRepo });
+                await pecorino.service.transaction.exportTasks({
+                    status: pecorino.factory.transactionStatusType.Canceled,
+                    typeOf: pecorino.factory.transactionType.Deposit
+                })({ task: taskRepo, transaction: transactionRepo });
             } catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error(error);

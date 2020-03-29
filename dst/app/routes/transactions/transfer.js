@@ -134,7 +134,10 @@ transferTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
         const taskRepo = new pecorino.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
-        pecorino.service.transaction.transfer.exportTasks(pecorino.factory.transactionStatusType.Confirmed)({
+        pecorino.service.transaction.exportTasks({
+            status: pecorino.factory.transactionStatusType.Confirmed,
+            typeOf: pecorino.factory.transactionType.Transfer
+        })({
             task: taskRepo,
             transaction: transactionRepo
         });
@@ -152,7 +155,10 @@ transferTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
         const taskRepo = new pecorino.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
-        pecorino.service.transaction.transfer.exportTasks(pecorino.factory.transactionStatusType.Canceled)({
+        pecorino.service.transaction.exportTasks({
+            status: pecorino.factory.transactionStatusType.Canceled,
+            typeOf: pecorino.factory.transactionType.Transfer
+        })({
             task: taskRepo,
             transaction: transactionRepo
         });
