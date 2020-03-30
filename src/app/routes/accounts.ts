@@ -179,6 +179,16 @@ accountsRouter.get(
 accountsRouter.get(
     '/:accountType/:accountNumber/actions/moneyTransfer',
     permitScopes(['admin']),
+    ...[
+        query('startDate.$gte')
+            .optional()
+            .isISO8601()
+            .toDate(),
+        query('startDate.$lte')
+            .optional()
+            .isISO8601()
+            .toDate()
+    ],
     validator,
     async (req, res, next) => {
         try {
