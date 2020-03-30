@@ -118,8 +118,9 @@ withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
 }));
 withdrawTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield pecorino.service.transaction.withdraw.confirm({
-            transactionId: req.params.transactionId
+        yield pecorino.service.transaction.confirm({
+            id: req.params.transactionId,
+            typeOf: pecorino.factory.transactionType.Withdraw
         })({ transaction: transactionRepo });
         debug('transaction confirmed.');
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)

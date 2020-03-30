@@ -133,8 +133,9 @@ transferTransactionsRouter.put(
     validator,
     async (req, res, next) => {
         try {
-            await pecorino.service.transaction.transfer.confirm({
-                transactionId: req.params.transactionId
+            await pecorino.service.transaction.confirm({
+                id: req.params.transactionId,
+                typeOf: pecorino.factory.transactionType.Transfer
             })({ transaction: transactionRepo });
             debug('transaction confirmed.');
 

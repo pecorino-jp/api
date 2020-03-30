@@ -122,8 +122,9 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
 }));
 depositTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield pecorino.service.transaction.deposit.confirm({
-            transactionId: req.params.transactionId
+        yield pecorino.service.transaction.confirm({
+            id: req.params.transactionId,
+            typeOf: pecorino.factory.transactionType.Deposit
         })({ transaction: transactionRepo });
         debug('transaction confirmed.');
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)

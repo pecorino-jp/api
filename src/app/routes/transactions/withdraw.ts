@@ -124,8 +124,9 @@ withdrawTransactionsRouter.put(
     validator,
     async (req, res, next) => {
         try {
-            await pecorino.service.transaction.withdraw.confirm({
-                transactionId: req.params.transactionId
+            await pecorino.service.transaction.confirm({
+                id: req.params.transactionId,
+                typeOf: pecorino.factory.transactionType.Withdraw
             })({ transaction: transactionRepo });
             debug('transaction confirmed.');
 

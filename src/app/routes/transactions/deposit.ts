@@ -128,8 +128,9 @@ depositTransactionsRouter.put(
     validator,
     async (req, res, next) => {
         try {
-            await pecorino.service.transaction.deposit.confirm({
-                transactionId: req.params.transactionId
+            await pecorino.service.transaction.confirm({
+                id: req.params.transactionId,
+                typeOf: pecorino.factory.transactionType.Deposit
             })({ transaction: transactionRepo });
             debug('transaction confirmed.');
 
