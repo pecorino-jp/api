@@ -15,6 +15,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - 口座検索条件拡張
 - アクション検索条件拡張
 - 取引処理を最適化
+- 転送取引開始時の口座間比較バリデーションを追加
 
 ### Deprecated
 
