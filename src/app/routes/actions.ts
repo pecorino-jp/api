@@ -3,6 +3,8 @@
  */
 import * as pecorino from '@pecorino/domain';
 import { Router } from 'express';
+// tslint:disable-next-line:no-submodule-imports
+import { query } from 'express-validator/check';
 import * as mongoose from 'mongoose';
 
 import authentication from '../middlewares/authentication';
@@ -56,6 +58,16 @@ actionsRouter.get(
 actionsRouter.get(
     '/moneyTransfer',
     permitScopes(['admin']),
+    ...[
+        query('startDate.$gte')
+            .optional()
+            .isISO8601()
+            .toDate(),
+        query('startDate.$lte')
+            .optional()
+            .isISO8601()
+            .toDate()
+    ],
     validator,
     async (req, res, next) => {
         try {

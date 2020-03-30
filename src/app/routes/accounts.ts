@@ -5,7 +5,7 @@ import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
 // tslint:disable-next-line:no-submodule-imports
-import { body } from 'express-validator/check';
+import { body, query } from 'express-validator/check';
 import { CREATED, NO_CONTENT } from 'http-status';
 import * as mongoose from 'mongoose';
 
@@ -141,12 +141,19 @@ accountsRouter.put(
 accountsRouter.get(
     '',
     permitScopes(['admin']),
-    (req, __, next) => {
-        req.checkQuery('accountType', 'invalid accountType')
-            .notEmpty()
-            .withMessage('accountType is required');
-        next();
-    },
+    ...[
+        query('accountType')
+            .not()
+            .isEmpty(),
+        query('openDate.$gte')
+            .optional()
+            .isISO8601()
+            .toDate(),
+        query('openDate.$lte')
+            .optional()
+            .isISO8601()
+            .toDate()
+    ],
     validator,
     async (req, res, next) => {
         try {

@@ -117,12 +117,19 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
 /**
  * 口座検索
  */
-accountsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
-    req.checkQuery('accountType', 'invalid accountType')
-        .notEmpty()
-        .withMessage('accountType is required');
-    next();
-}, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountsRouter.get('', permitScopes_1.default(['admin']), ...[
+    check_1.query('accountType')
+        .not()
+        .isEmpty(),
+    check_1.query('openDate.$gte')
+        .optional()
+        .isISO8601()
+        .toDate(),
+    check_1.query('openDate.$lte')
+        .optional()
+        .isISO8601()
+        .toDate()
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accountRepo = new pecorino.repository.Account(mongoose.connection);
         const searchConditions = Object.assign(Object.assign({}, req.query), { 
