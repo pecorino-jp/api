@@ -8,7 +8,6 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const createDebug = require("debug");
 const express = require("express");
-const expressValidator = require("express-validator");
 const helmet = require("helmet");
 const connectMongo_1 = require("../connectMongo");
 const errorHandler_1 = require("./middlewares/errorHandler");
@@ -65,7 +64,6 @@ app.use(bodyParser.json());
 // The extended option allows to choose between parsing the URL-encoded data
 // with the querystring library (when false) or the qs library (when true).
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(expressValidator({})); // this line must be immediately after any of the bodyParser middlewares!
 // 静的ファイル
 // app.use(express.static(__dirname + '/../../public'));
 connectMongo_1.connectMongo({ defaultConnection: true })

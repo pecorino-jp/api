@@ -74,13 +74,11 @@ accountsRouter.post(
 accountsRouter.put(
     '/:accountType/:accountNumber',
     permitScopes(['admin']),
-    (req, __, next) => {
-        req.checkBody('name', 'invalid name')
-            .optional()
-            .notEmpty();
-
-        next();
-    },
+    ...[
+        body('name')
+            .not()
+            .isEmpty()
+    ],
     validator,
     async (req, res, next) => {
         try {

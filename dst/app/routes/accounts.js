@@ -71,12 +71,11 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...[
 /**
  * 口座編集
  */
-accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admin']), (req, __, next) => {
-    req.checkBody('name', 'invalid name')
-        .optional()
-        .notEmpty();
-    next();
-}, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admin']), ...[
+    check_1.body('name')
+        .not()
+        .isEmpty()
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accountRepo = new pecorino.repository.Account(mongoose.connection);
         const update = Object.assign({}, (req.body.name !== undefined) ? { name: String(req.body.name) } : undefined);

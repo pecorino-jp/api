@@ -21,19 +21,16 @@ actionsRouter.use(authentication);
 actionsRouter.get(
     '',
     permitScopes(['admin']),
-    (req, __, next) => {
-        req.checkQuery('startDateFrom')
+    ...[
+        query('startDateFrom')
             .optional()
             .isISO8601()
-            .toDate();
-
-        req.checkQuery('startDateThrough')
+            .toDate(),
+        query('startDateThrough')
             .optional()
             .isISO8601()
-            .toDate();
-
-        next();
-    },
+            .toDate()
+    ],
     validator,
     async (req, res, next) => {
         try {

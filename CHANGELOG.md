@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - アクション検索条件拡張
 - 取引処理を最適化
 - 転送取引開始時の口座間比較バリデーションを追加
+- install express-validator@6.4.0
 
 ### Deprecated
 
