@@ -27,6 +27,7 @@ const validator_1 = require("../../middlewares/validator");
 const debug = createDebug('pecorino-api:router');
 depositTransactionsRouter.use(authentication_1.default);
 const accountRepo = new pecorino.repository.Account(mongoose.connection);
+const actionRepo = new pecorino.repository.Action(mongoose.connection);
 const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
 depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
     check_1.body('project.typeOf')
@@ -109,7 +110,7 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
             },
             expires: moment(req.body.expires)
                 .toDate()
-        })({ account: accountRepo, transaction: transactionRepo });
+        })({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
         // tslint:disable-next-line:no-string-literal
         // const host = req.headers['host'];
         // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
@@ -121,14 +122,18 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
 }));
 depositTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield pecorino.service.transaction.deposit.confirm({
-            transactionId: req.params.transactionId
+        yield pecorino.service.transaction.confirm({
+            id: req.params.transactionId,
+            typeOf: pecorino.factory.transactionType.Deposit
         })({ transaction: transactionRepo });
         debug('transaction confirmed.');
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
         const taskRepo = new pecorino.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
-        pecorino.service.transaction.deposit.exportTasks(pecorino.factory.transactionStatusType.Confirmed)({
+        pecorino.service.transaction.exportTasks({
+            status: pecorino.factory.transactionStatusType.Confirmed,
+            typeOf: pecorino.factory.transactionType.Deposit
+        })({
             task: taskRepo,
             transaction: transactionRepo
         });
@@ -146,7 +151,10 @@ depositTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default([
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
         const taskRepo = new pecorino.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
-        pecorino.service.transaction.deposit.exportTasks(pecorino.factory.transactionStatusType.Canceled)({
+        pecorino.service.transaction.exportTasks({
+            status: pecorino.factory.transactionStatusType.Canceled,
+            typeOf: pecorino.factory.transactionType.Deposit
+        })({
             task: taskRepo,
             transaction: transactionRepo
         });

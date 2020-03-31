@@ -71,12 +71,11 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...[
 /**
  * 口座編集
  */
-accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admin']), (req, __, next) => {
-    req.checkBody('name', 'invalid name')
-        .optional()
-        .notEmpty();
-    next();
-}, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admin']), ...[
+    check_1.body('name')
+        .not()
+        .isEmpty()
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accountRepo = new pecorino.repository.Account(mongoose.connection);
         const update = Object.assign({}, (req.body.name !== undefined) ? { name: String(req.body.name) } : undefined);
@@ -117,12 +116,19 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
 /**
  * 口座検索
  */
-accountsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
-    req.checkQuery('accountType', 'invalid accountType')
-        .notEmpty()
-        .withMessage('accountType is required');
-    next();
-}, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountsRouter.get('', permitScopes_1.default(['admin']), ...[
+    check_1.query('accountType')
+        .not()
+        .isEmpty(),
+    check_1.query('openDate.$gte')
+        .optional()
+        .isISO8601()
+        .toDate(),
+    check_1.query('openDate.$lte')
+        .optional()
+        .isISO8601()
+        .toDate()
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accountRepo = new pecorino.repository.Account(mongoose.connection);
         const searchConditions = Object.assign(Object.assign({}, req.query), { 
@@ -138,7 +144,16 @@ accountsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
 /**
  * 取引履歴検索
  */
-accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), ...[
+    check_1.query('startDate.$gte')
+        .optional()
+        .isISO8601()
+        .toDate(),
+    check_1.query('startDate.$lte')
+        .optional()
+        .isISO8601()
+        .toDate()
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         debug('searching trade actions...', req.params);
         const actionRepo = new pecorino.repository.Action(mongoose.connection);

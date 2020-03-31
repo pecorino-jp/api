@@ -14,6 +14,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const pecorino = require("@pecorino/domain");
 const express_1 = require("express");
+// tslint:disable-next-line:no-submodule-imports
+const check_1 = require("express-validator/check");
 const mongoose = require("mongoose");
 const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
@@ -23,17 +25,16 @@ actionsRouter.use(authentication_1.default);
 /**
  * アクション検索
  */
-actionsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
-    req.checkQuery('startDateFrom')
+actionsRouter.get('', permitScopes_1.default(['admin']), ...[
+    check_1.query('startDateFrom')
         .optional()
         .isISO8601()
-        .toDate();
-    req.checkQuery('startDateThrough')
+        .toDate(),
+    check_1.query('startDateThrough')
         .optional()
         .isISO8601()
-        .toDate();
-    next();
-}, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+        .toDate()
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const actionRepo = new pecorino.repository.Action(mongoose.connection);
         const actions = yield actionRepo.search(Object.assign(Object.assign({}, req.query), { 
@@ -48,7 +49,16 @@ actionsRouter.get('', permitScopes_1.default(['admin']), (req, __, next) => {
 /**
  * 転送アクション検索
  */
-actionsRouter.get('/moneyTransfer', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+actionsRouter.get('/moneyTransfer', permitScopes_1.default(['admin']), ...[
+    check_1.query('startDate.$gte')
+        .optional()
+        .isISO8601()
+        .toDate(),
+    check_1.query('startDate.$lte')
+        .optional()
+        .isISO8601()
+        .toDate()
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const searchConditions = Object.assign(Object.assign({}, req.query), { 
             // tslint:disable-next-line:no-magic-numbers

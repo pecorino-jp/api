@@ -5,7 +5,7 @@ import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
 // tslint:disable-next-line:no-submodule-imports
-import { body } from 'express-validator/check';
+import { body, query } from 'express-validator/check';
 import { CREATED, NO_CONTENT } from 'http-status';
 import * as mongoose from 'mongoose';
 
@@ -74,13 +74,11 @@ accountsRouter.post(
 accountsRouter.put(
     '/:accountType/:accountNumber',
     permitScopes(['admin']),
-    (req, __, next) => {
-        req.checkBody('name', 'invalid name')
-            .optional()
-            .notEmpty();
-
-        next();
-    },
+    ...[
+        body('name')
+            .not()
+            .isEmpty()
+    ],
     validator,
     async (req, res, next) => {
         try {
@@ -141,17 +139,24 @@ accountsRouter.put(
 accountsRouter.get(
     '',
     permitScopes(['admin']),
-    (req, __, next) => {
-        req.checkQuery('accountType', 'invalid accountType')
-            .notEmpty()
-            .withMessage('accountType is required');
-        next();
-    },
+    ...[
+        query('accountType')
+            .not()
+            .isEmpty(),
+        query('openDate.$gte')
+            .optional()
+            .isISO8601()
+            .toDate(),
+        query('openDate.$lte')
+            .optional()
+            .isISO8601()
+            .toDate()
+    ],
     validator,
     async (req, res, next) => {
         try {
             const accountRepo = new pecorino.repository.Account(mongoose.connection);
-            const searchConditions: pecorino.factory.account.ISearchConditions<pecorino.factory.account.AccountType> = {
+            const searchConditions: pecorino.factory.account.ISearchConditions = {
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
@@ -172,12 +177,22 @@ accountsRouter.get(
 accountsRouter.get(
     '/:accountType/:accountNumber/actions/moneyTransfer',
     permitScopes(['admin']),
+    ...[
+        query('startDate.$gte')
+            .optional()
+            .isISO8601()
+            .toDate(),
+        query('startDate.$lte')
+            .optional()
+            .isISO8601()
+            .toDate()
+    ],
     validator,
     async (req, res, next) => {
         try {
             debug('searching trade actions...', req.params);
             const actionRepo = new pecorino.repository.Action(mongoose.connection);
-            const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions<pecorino.factory.account.AccountType>
+            const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions
                 = {
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers

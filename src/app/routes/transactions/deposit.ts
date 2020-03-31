@@ -21,6 +21,7 @@ const debug = createDebug('pecorino-api:router');
 depositTransactionsRouter.use(authentication);
 
 const accountRepo = new pecorino.repository.Account(mongoose.connection);
+const actionRepo = new pecorino.repository.Action(mongoose.connection);
 const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
 
 depositTransactionsRouter.post(
@@ -109,7 +110,7 @@ depositTransactionsRouter.post(
                 },
                 expires: moment(req.body.expires)
                     .toDate()
-            })({ account: accountRepo, transaction: transactionRepo });
+            })({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
 
             // tslint:disable-next-line:no-string-literal
             // const host = req.headers['host'];
@@ -127,15 +128,19 @@ depositTransactionsRouter.put(
     validator,
     async (req, res, next) => {
         try {
-            await pecorino.service.transaction.deposit.confirm({
-                transactionId: req.params.transactionId
+            await pecorino.service.transaction.confirm({
+                id: req.params.transactionId,
+                typeOf: pecorino.factory.transactionType.Deposit
             })({ transaction: transactionRepo });
             debug('transaction confirmed.');
 
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
             const taskRepo = new pecorino.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
-            pecorino.service.transaction.deposit.exportTasks(pecorino.factory.transactionStatusType.Confirmed)({
+            pecorino.service.transaction.exportTasks({
+                status: pecorino.factory.transactionStatusType.Confirmed,
+                typeOf: pecorino.factory.transactionType.Deposit
+            })({
                 task: taskRepo,
                 transaction: transactionRepo
             });
@@ -160,7 +165,10 @@ depositTransactionsRouter.put(
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
             const taskRepo = new pecorino.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
-            pecorino.service.transaction.deposit.exportTasks(pecorino.factory.transactionStatusType.Canceled)({
+            pecorino.service.transaction.exportTasks({
+                status: pecorino.factory.transactionStatusType.Canceled,
+                typeOf: pecorino.factory.transactionType.Deposit
+            })({
                 task: taskRepo,
                 transaction: transactionRepo
             });

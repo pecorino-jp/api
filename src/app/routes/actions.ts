@@ -3,6 +3,8 @@
  */
 import * as pecorino from '@pecorino/domain';
 import { Router } from 'express';
+// tslint:disable-next-line:no-submodule-imports
+import { query } from 'express-validator/check';
 import * as mongoose from 'mongoose';
 
 import authentication from '../middlewares/authentication';
@@ -19,19 +21,16 @@ actionsRouter.use(authentication);
 actionsRouter.get(
     '',
     permitScopes(['admin']),
-    (req, __, next) => {
-        req.checkQuery('startDateFrom')
+    ...[
+        query('startDateFrom')
             .optional()
             .isISO8601()
-            .toDate();
-
-        req.checkQuery('startDateThrough')
+            .toDate(),
+        query('startDateThrough')
             .optional()
             .isISO8601()
-            .toDate();
-
-        next();
-    },
+            .toDate()
+    ],
     validator,
     async (req, res, next) => {
         try {
@@ -56,11 +55,20 @@ actionsRouter.get(
 actionsRouter.get(
     '/moneyTransfer',
     permitScopes(['admin']),
+    ...[
+        query('startDate.$gte')
+            .optional()
+            .isISO8601()
+            .toDate(),
+        query('startDate.$lte')
+            .optional()
+            .isISO8601()
+            .toDate()
+    ],
     validator,
     async (req, res, next) => {
         try {
-            const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions<pecorino.factory.account.AccountType>
-                = {
+            const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions = {
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
