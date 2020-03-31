@@ -10,14 +10,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- 取引タイプごとの転送アクション属性作成処理を統一
-- 取引開始時に転送アクションを開始するように変更
-- 口座検索条件拡張
-- アクション検索条件拡張
-- 取引処理を最適化
-- 転送取引開始時の口座間比較バリデーションを追加
-- install express-validator@6.4.0
-
 ### Deprecated
 
 ### Removed
@@ -25,6 +17,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 ### Security
+
+## v5.1.0 - 2020-03-31
+
+### Changed
+
+- 取引タイプごとの転送アクション属性作成処理を統一
+- 取引開始時に転送アクションを開始するように変更
+- 口座検索条件拡張
+- アクション検索条件拡張
+- 取引処理を最適化
+- 転送取引開始時の口座間比較バリデーションを追加
+- install express-validator@6.4.0
 
 ## v5.0.0 - 2020-03-27
 
