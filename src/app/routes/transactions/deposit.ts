@@ -109,7 +109,8 @@ depositTransactionsRouter.post(
                     description: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
                 expires: moment(req.body.expires)
-                    .toDate()
+                    .toDate(),
+                ...(typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined
             })({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
 
             // tslint:disable-next-line:no-string-literal
@@ -128,8 +129,10 @@ depositTransactionsRouter.put(
     validator,
     async (req, res, next) => {
         try {
+            const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
+
             await pecorino.service.transaction.confirm({
-                id: req.params.transactionId,
+                ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId },
                 typeOf: pecorino.factory.transactionType.Deposit
             })({ transaction: transactionRepo });
             debug('transaction confirmed.');
@@ -159,7 +162,12 @@ depositTransactionsRouter.put(
     validator,
     async (req, res, next) => {
         try {
-            await transactionRepo.cancel(pecorino.factory.transactionType.Deposit, req.params.transactionId);
+            const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
+
+            await transactionRepo.cancel({
+                typeOf: pecorino.factory.transactionType.Deposit,
+                ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }
+            });
             debug('transaction canceled.');
 
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)

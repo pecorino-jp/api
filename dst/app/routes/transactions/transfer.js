@@ -83,22 +83,17 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
         .withMessage(() => 'required')
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const transaction = yield pecorino.service.transaction.transfer.start({
-            project: req.body.project,
-            typeOf: pecorino.factory.transactionType.Transfer,
-            agent: {
+        const transaction = yield pecorino.service.transaction.transfer.start(Object.assign({ project: req.body.project, typeOf: pecorino.factory.transactionType.Transfer, agent: {
                 typeOf: req.body.agent.typeOf,
                 id: (req.body.agent.id !== undefined) ? req.body.agent.id : req.user.sub,
                 name: req.body.agent.name,
                 url: req.body.agent.url
-            },
-            recipient: {
+            }, recipient: {
                 typeOf: req.body.recipient.typeOf,
                 id: req.body.recipient.id,
                 name: req.body.recipient.name,
                 url: req.body.recipient.url
-            },
-            object: {
+            }, object: {
                 clientUser: req.user,
                 amount: parseInt(req.body.amount, 10),
                 fromLocation: {
@@ -112,10 +107,8 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
                     accountNumber: req.body.toAccountNumber
                 },
                 description: (req.body.notes !== undefined) ? req.body.notes : ''
-            },
-            expires: moment(req.body.expires)
-                .toDate()
-        })({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
+            }, expires: moment(req.body.expires)
+                .toDate() }, (typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined))({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
         // tslint:disable-next-line:no-string-literal
         // const host = req.headers['host'];
         // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
@@ -127,10 +120,8 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
 }));
 transferTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield pecorino.service.transaction.confirm({
-            id: req.params.transactionId,
-            typeOf: pecorino.factory.transactionType.Transfer
-        })({ transaction: transactionRepo });
+        const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
+        yield pecorino.service.transaction.confirm(Object.assign(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }), { typeOf: pecorino.factory.transactionType.Transfer }))({ transaction: transactionRepo });
         debug('transaction confirmed.');
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
         const taskRepo = new pecorino.repository.Task(mongoose.connection);
@@ -151,7 +142,8 @@ transferTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default
 }));
 transferTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        yield transactionRepo.cancel(pecorino.factory.transactionType.Transfer, req.params.transactionId);
+        const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
+        yield transactionRepo.cancel(Object.assign({ typeOf: pecorino.factory.transactionType.Transfer }, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
         debug('transaction canceled.');
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
         const taskRepo = new pecorino.repository.Task(mongoose.connection);
