@@ -153,4 +153,25 @@ withdrawTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(
         next(error);
     }
 }));
+withdrawTransactionsRouter.put('/:transactionId/return', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
+        yield transactionRepo.returnMoneyTransfer(Object.assign({ typeOf: pecorino.factory.transactionType.Withdraw }, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
+        // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
+        const taskRepo = new pecorino.repository.Task(mongoose.connection);
+        // tslint:disable-next-line:no-floating-promises
+        pecorino.service.transaction.exportTasks({
+            status: pecorino.factory.transactionStatusType.Returned,
+            typeOf: pecorino.factory.transactionType.Withdraw
+        })({
+            task: taskRepo,
+            transaction: transactionRepo
+        });
+        res.status(http_status_1.NO_CONTENT)
+            .end();
+    }
+    catch (error) {
+        next(error);
+    }
+}));
 exports.default = withdrawTransactionsRouter;
