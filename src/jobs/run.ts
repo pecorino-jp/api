@@ -9,15 +9,15 @@ import retryTasks from './continuous/retryTasks/run';
 import cancelMoneyTransfer from './continuous/cancelMoneyTransfer/run';
 import moneyTransfer from './continuous/moneyTransfer/run';
 
-import onCanceledDepositTransaction from './continuous/onCanceledDepositTransaction/run';
-import onCanceledTransferTransaction from './continuous/onCanceledTransferTransaction/run';
-import onCanceledWithdrawTransaction from './continuous/onCanceledWithdrawTransaction/run';
-import onConfirmedDepositTransaction from './continuous/onConfirmedDepositTransaction/run';
-import onConfirmedTransferTransaction from './continuous/onConfirmedTransferTransaction/run';
-import onConfirmedWithdrawTransaction from './continuous/onConfirmedWithdrawTransaction/run';
-import onExpiredDepositTransaction from './continuous/onExpiredDepositTransaction/run';
-import onExpiredTransferTransaction from './continuous/onExpiredTransferTransaction/run';
-import onExpiredWithdrawTransaction from './continuous/onExpiredWithdrawTransaction/run';
+import onDepositCanceled from './continuous/onDepositCanceled/run';
+import onDepositConfirmed from './continuous/onDepositConfirmed/run';
+import onDepositExpired from './continuous/onDepositExpired/run';
+import onTransferCanceled from './continuous/onTransferCanceled/run';
+import onTransferConfirmed from './continuous/onTransferConfirmed/run';
+import onTransferExpired from './continuous/onTransferExpired/run';
+import onWithdrawCanceled from './continuous/onWithdrawCanceled/run';
+import onWithdrawConfirmed from './continuous/onWithdrawConfirmed/run';
+import onWithdrawExpired from './continuous/onWithdrawExpired/run';
 
 export default async () => {
     await abortTasks();
@@ -28,13 +28,13 @@ export default async () => {
     await cancelMoneyTransfer();
     await moneyTransfer();
 
-    await onCanceledDepositTransaction();
-    await onCanceledTransferTransaction();
-    await onCanceledWithdrawTransaction();
-    await onConfirmedDepositTransaction();
-    await onConfirmedTransferTransaction();
-    await onConfirmedWithdrawTransaction();
-    await onExpiredDepositTransaction();
-    await onExpiredTransferTransaction();
-    await onExpiredWithdrawTransaction();
+    await onDepositCanceled();
+    await onDepositConfirmed();
+    await onDepositExpired();
+    await onTransferCanceled();
+    await onTransferConfirmed();
+    await onTransferExpired();
+    await onWithdrawCanceled();
+    await onWithdrawConfirmed();
+    await onWithdrawExpired();
 };

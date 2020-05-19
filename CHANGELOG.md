@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.3.0 - 2020-05-19
+
+### Added
+
+- アクションにidentifierを追加
+- 取引の返金処理を追加
+
 ## v5.2.0 - 2020-05-14
 
 ### Added
