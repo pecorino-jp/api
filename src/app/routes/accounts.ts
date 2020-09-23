@@ -88,10 +88,7 @@ accountsRouter.put(
                 ...(req.body.name !== undefined) ? { name: String(req.body.name) } : undefined
             };
             const doc = await accountRepo.accountModel.findOneAndUpdate(
-                {
-                    accountType: req.params.accountType,
-                    accountNumber: req.params.accountNumber
-                },
+                { accountNumber: req.params.accountNumber },
                 update,
                 { new: true }
             )

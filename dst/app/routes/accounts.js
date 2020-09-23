@@ -79,10 +79,7 @@ accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admi
     try {
         const accountRepo = new pecorino.repository.Account(mongoose.connection);
         const update = Object.assign({}, (req.body.name !== undefined) ? { name: String(req.body.name) } : undefined);
-        const doc = yield accountRepo.accountModel.findOneAndUpdate({
-            accountType: req.params.accountType,
-            accountNumber: req.params.accountNumber
-        }, update, { new: true })
+        const doc = yield accountRepo.accountModel.findOneAndUpdate({ accountNumber: req.params.accountNumber }, update, { new: true })
             .exec();
         if (doc === null) {
             throw new pecorino.factory.errors.NotFound('Account');

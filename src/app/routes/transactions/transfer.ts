@@ -67,10 +67,6 @@ transferTransactionsRouter.post(
             .isEmpty()
             .withMessage(() => 'required')
             .isInt(),
-        body('accountType')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required'),
         body('fromAccountNumber')
             .not()
             .isEmpty()
@@ -102,13 +98,9 @@ transferTransactionsRouter.post(
                     clientUser: req.user,
                     amount: parseInt(req.body.amount, 10),
                     fromLocation: {
-                        typeOf: pecorino.factory.account.TypeOf.Account,
-                        accountType: req.body.accountType,
                         accountNumber: req.body.fromAccountNumber
                     },
                     toLocation: {
-                        typeOf: pecorino.factory.account.TypeOf.Account,
-                        accountType: req.body.accountType,
                         accountNumber: req.body.toAccountNumber
                     },
                     description: (req.body.notes !== undefined) ? req.body.notes : ''
