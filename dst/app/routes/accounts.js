@@ -101,7 +101,6 @@ accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admi
 accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield pecorino.service.account.close({
-            accountType: req.params.accountType,
             accountNumber: req.params.accountNumber
         })({
             account: new pecorino.repository.Account(mongoose.connection)

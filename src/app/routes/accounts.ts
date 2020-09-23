@@ -120,11 +120,11 @@ accountsRouter.put(
     async (req, res, next) => {
         try {
             await pecorino.service.account.close({
-                accountType: req.params.accountType,
                 accountNumber: req.params.accountNumber
             })({
                 account: new pecorino.repository.Account(mongoose.connection)
             });
+
             res.status(NO_CONTENT)
                 .end();
         } catch (error) {

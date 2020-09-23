@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- update @pecorino/factory
+- 口座番号をグローバルユニークに変更
+- 口座に対する処理を口座番号の指定のみで実行するように調整
+
 ### Deprecated
 
 ### Removed
