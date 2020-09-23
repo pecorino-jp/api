@@ -137,9 +137,9 @@ accountsRouter.get(
     '',
     permitScopes(['admin']),
     ...[
-        query('accountType')
-            .not()
-            .isEmpty(),
+        // query('accountType')
+        //     .not()
+        //     .isEmpty(),
         query('openDate.$gte')
             .optional()
             .isISO8601()
@@ -195,7 +195,7 @@ accountsRouter.get(
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-                accountType: req.params.accountType,
+                // accountType: req.params.accountType,
                 accountNumber: req.params.accountNumber
             };
             const actions = await actionRepo.searchTransferActions(searchConditions);

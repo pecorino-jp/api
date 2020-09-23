@@ -113,9 +113,9 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
  * 口座検索
  */
 accountsRouter.get('', permitScopes_1.default(['admin']), ...[
-    check_1.query('accountType')
-        .not()
-        .isEmpty(),
+    // query('accountType')
+    //     .not()
+    //     .isEmpty(),
     check_1.query('openDate.$gte')
         .optional()
         .isISO8601()
@@ -155,7 +155,9 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
         const actionRepo = new pecorino.repository.Action(mongoose.connection);
         const searchConditions = Object.assign(Object.assign({}, req.query), { 
             // tslint:disable-next-line:no-magic-numbers
-            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountType: req.params.accountType, accountNumber: req.params.accountNumber });
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, 
+            // accountType: req.params.accountType,
+            accountNumber: req.params.accountNumber });
         const actions = yield actionRepo.searchTransferActions(searchConditions);
         res.json(actions);
     }
