@@ -1,8 +1,6 @@
 /**
  * Expressアプリケーション
  */
-import * as middlewares from '@motionpicture/express-middleware';
-import * as pecorino from '@pecorino/domain';
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
 import * as createDebug from 'debug';
@@ -19,14 +17,6 @@ const debug = createDebug('pecorino-api:*');
 
 const app = express();
 
-app.use(middlewares.basicAuth({ // ベーシック認証
-    name: process.env.BASIC_AUTH_NAME,
-    pass: process.env.BASIC_AUTH_PASS,
-    unauthorizedHandler: (__, res, next) => {
-        res.setHeader('WWW-Authenticate', 'Basic realm="pecorino-api Authentication"');
-        next(new pecorino.factory.errors.Unauthorized());
-    }
-}));
 app.use(cors()); // enable All CORS Requests
 app.use(helmet());
 app.use(helmet.contentSecurityPolicy({

@@ -54,6 +54,8 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...[
     try {
         const account = yield pecorino.service.account.open({
             project: req.body.project,
+            // 互換性維持対応として、未指定であれば'Account'
+            typeOf: (typeof req.body.typeOf === 'string') ? req.body.typeOf : 'Account',
             accountType: req.body.accountType,
             accountNumber: req.body.accountNumber,
             name: req.body.name,

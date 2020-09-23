@@ -2,8 +2,6 @@
 /**
  * Expressアプリケーション
  */
-const middlewares = require("@motionpicture/express-middleware");
-const pecorino = require("@pecorino/domain");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const createDebug = require("debug");
@@ -15,14 +13,6 @@ const notFoundHandler_1 = require("./middlewares/notFoundHandler");
 const router_1 = require("./routes/router");
 const debug = createDebug('pecorino-api:*');
 const app = express();
-app.use(middlewares.basicAuth({
-    name: process.env.BASIC_AUTH_NAME,
-    pass: process.env.BASIC_AUTH_PASS,
-    unauthorizedHandler: (__, res, next) => {
-        res.setHeader('WWW-Authenticate', 'Basic realm="pecorino-api Authentication"');
-        next(new pecorino.factory.errors.Unauthorized());
-    }
-}));
 app.use(cors()); // enable All CORS Requests
 app.use(helmet());
 app.use(helmet.contentSecurityPolicy({
