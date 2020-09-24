@@ -69,10 +69,6 @@ withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
         .isEmpty()
         .withMessage(() => 'required')
         .isInt(),
-    check_1.body('accountType')
-        .not()
-        .isEmpty()
-        .withMessage(() => 'required'),
     check_1.body('fromAccountNumber')
         .not()
         .isEmpty()
@@ -93,8 +89,6 @@ withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
                 clientUser: req.user,
                 amount: parseInt(req.body.amount, 10),
                 fromLocation: {
-                    typeOf: pecorino.factory.account.TypeOf.Account,
-                    accountType: req.body.accountType,
                     accountNumber: req.body.fromAccountNumber
                 },
                 description: (req.body.notes !== undefined) ? req.body.notes : ''

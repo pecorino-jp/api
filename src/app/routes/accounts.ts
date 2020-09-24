@@ -53,6 +53,8 @@ accountsRouter.post(
         try {
             const account = await pecorino.service.account.open({
                 project: req.body.project,
+                // 互換性維持対応として、未指定であれば'Account'
+                typeOf: (typeof req.body.typeOf === 'string') ? req.body.typeOf : 'Account',
                 accountType: req.body.accountType,
                 accountNumber: req.body.accountNumber,
                 name: req.body.name,
@@ -88,10 +90,7 @@ accountsRouter.put(
                 ...(req.body.name !== undefined) ? { name: String(req.body.name) } : undefined
             };
             const doc = await accountRepo.accountModel.findOneAndUpdate(
-                {
-                    accountType: req.params.accountType,
-                    accountNumber: req.params.accountNumber
-                },
+                { accountNumber: req.params.accountNumber },
                 update,
                 { new: true }
             )
@@ -120,11 +119,11 @@ accountsRouter.put(
     async (req, res, next) => {
         try {
             await pecorino.service.account.close({
-                accountType: req.params.accountType,
                 accountNumber: req.params.accountNumber
             })({
                 account: new pecorino.repository.Account(mongoose.connection)
             });
+
             res.status(NO_CONTENT)
                 .end();
         } catch (error) {
@@ -140,9 +139,9 @@ accountsRouter.get(
     '',
     permitScopes(['admin']),
     ...[
-        query('accountType')
-            .not()
-            .isEmpty(),
+        // query('accountType')
+        //     .not()
+        //     .isEmpty(),
         query('openDate.$gte')
             .optional()
             .isISO8601()
@@ -198,7 +197,7 @@ accountsRouter.get(
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-                accountType: req.params.accountType,
+                // accountType: req.params.accountType,
                 accountNumber: req.params.accountNumber
             };
             const actions = await actionRepo.searchTransferActions(searchConditions);

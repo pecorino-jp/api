@@ -54,6 +54,8 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...[
     try {
         const account = yield pecorino.service.account.open({
             project: req.body.project,
+            // 互換性維持対応として、未指定であれば'Account'
+            typeOf: (typeof req.body.typeOf === 'string') ? req.body.typeOf : 'Account',
             accountType: req.body.accountType,
             accountNumber: req.body.accountNumber,
             name: req.body.name,
@@ -79,10 +81,7 @@ accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admi
     try {
         const accountRepo = new pecorino.repository.Account(mongoose.connection);
         const update = Object.assign({}, (req.body.name !== undefined) ? { name: String(req.body.name) } : undefined);
-        const doc = yield accountRepo.accountModel.findOneAndUpdate({
-            accountType: req.params.accountType,
-            accountNumber: req.params.accountNumber
-        }, update, { new: true })
+        const doc = yield accountRepo.accountModel.findOneAndUpdate({ accountNumber: req.params.accountNumber }, update, { new: true })
             .exec();
         if (doc === null) {
             throw new pecorino.factory.errors.NotFound('Account');
@@ -101,7 +100,6 @@ accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admi
 accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield pecorino.service.account.close({
-            accountType: req.params.accountType,
             accountNumber: req.params.accountNumber
         })({
             account: new pecorino.repository.Account(mongoose.connection)
@@ -117,9 +115,9 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
  * 口座検索
  */
 accountsRouter.get('', permitScopes_1.default(['admin']), ...[
-    check_1.query('accountType')
-        .not()
-        .isEmpty(),
+    // query('accountType')
+    //     .not()
+    //     .isEmpty(),
     check_1.query('openDate.$gte')
         .optional()
         .isISO8601()
@@ -159,7 +157,9 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
         const actionRepo = new pecorino.repository.Action(mongoose.connection);
         const searchConditions = Object.assign(Object.assign({}, req.query), { 
             // tslint:disable-next-line:no-magic-numbers
-            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountType: req.params.accountType, accountNumber: req.params.accountNumber });
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, 
+            // accountType: req.params.accountType,
+            accountNumber: req.params.accountNumber });
         const actions = yield actionRepo.searchTransferActions(searchConditions);
         res.json(actions);
     }

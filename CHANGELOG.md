@@ -18,6 +18,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.4.0 - 2020-09-24
+
+### Changed
+
+- update @pecorino/factory
+- 口座番号をグローバルユニークに変更
+- 口座に対する処理を口座番号の指定のみで実行するように調整
+- 処理は口座のtypeOfに依存しないように調整
+
+### Removed
+
+- ベーシック認証設定を削除
+
 ## v5.3.0 - 2020-05-19
 
 ### Added

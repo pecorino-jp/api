@@ -71,10 +71,6 @@ depositTransactionsRouter.post(
             .isEmpty()
             .withMessage(() => 'required')
             .isInt(),
-        body('accountType')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required'),
         body('toAccountNumber')
             .not()
             .isEmpty()
@@ -102,8 +98,6 @@ depositTransactionsRouter.post(
                     clientUser: req.user,
                     amount: parseInt(req.body.amount, 10),
                     toLocation: {
-                        typeOf: pecorino.factory.account.TypeOf.Account,
-                        accountType: req.body.accountType,
                         accountNumber: req.body.toAccountNumber
                     },
                     description: (req.body.notes !== undefined) ? req.body.notes : ''
