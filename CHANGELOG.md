@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- 口座検索条件拡張
+- 口座開設を複数口座に対応
+- update mongoose
+
 ### Deprecated
 
 ### Removed

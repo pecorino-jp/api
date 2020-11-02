@@ -41,30 +41,34 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...[
     check_1.body('accountType')
         .not()
         .isEmpty()
-        .withMessage(() => 'required'),
+        .withMessage(() => 'required')
+        .isString(),
     check_1.body('accountNumber')
         .not()
         .isEmpty()
-        .withMessage(() => 'required'),
+        .withMessage(() => 'required')
+        .isString(),
     check_1.body('name')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
+        .isString()
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     try {
-        const account = yield pecorino.service.account.open({
-            project: req.body.project,
-            // 互換性維持対応として、未指定であれば'Account'
-            typeOf: (typeof req.body.typeOf === 'string') ? req.body.typeOf : 'Account',
-            accountType: req.body.accountType,
-            accountNumber: req.body.accountNumber,
-            name: req.body.name,
-            initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
-        })({
+        const accounts = yield pecorino.service.account.open([{
+                project: { id: (_a = req.body.project) === null || _a === void 0 ? void 0 : _a.id, typeOf: (_b = req.body.project) === null || _b === void 0 ? void 0 : _b.typeOf },
+                // 互換性維持対応として、未指定であれば'Account'
+                typeOf: (typeof req.body.typeOf === 'string' && req.body.typeOf.length > 0) ? req.body.typeOf : 'Account',
+                accountType: req.body.accountType,
+                accountNumber: req.body.accountNumber,
+                name: req.body.name,
+                initialBalance: (req.body.initialBalance !== undefined) ? Number(req.body.initialBalance) : 0
+            }])({
             account: new pecorino.repository.Account(mongoose.connection)
         });
         res.status(http_status_1.CREATED)
-            .json(account);
+            .json(accounts[0]);
     }
     catch (error) {
         next(error);
@@ -115,9 +119,6 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
  * 口座検索
  */
 accountsRouter.get('', permitScopes_1.default(['admin']), ...[
-    // query('accountType')
-    //     .not()
-    //     .isEmpty(),
     check_1.query('openDate.$gte')
         .optional()
         .isISO8601()
@@ -157,9 +158,7 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
         const actionRepo = new pecorino.repository.Action(mongoose.connection);
         const searchConditions = Object.assign(Object.assign({}, req.query), { 
             // tslint:disable-next-line:no-magic-numbers
-            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, 
-            // accountType: req.params.accountType,
-            accountNumber: req.params.accountNumber });
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountNumber: req.params.accountNumber });
         const actions = yield actionRepo.searchTransferActions(searchConditions);
         res.json(actions);
     }
