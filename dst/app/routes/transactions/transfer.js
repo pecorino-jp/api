@@ -15,8 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const express_1 = require("express");
-// tslint:disable-next-line:no-submodule-imports
-const check_1 = require("express-validator/check");
+const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");
 const moment = require("moment");
 const mongoose = require("mongoose");
@@ -30,50 +29,50 @@ const accountRepo = new pecorino.repository.Account(mongoose.connection);
 const actionRepo = new pecorino.repository.Action(mongoose.connection);
 const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
 transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
-    check_1.body('project.typeOf')
+    express_validator_1.body('project.typeOf')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isIn(['Project']),
-    check_1.body('project.id')
+    express_validator_1.body('project.id')
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    check_1.body('expires')
+    express_validator_1.body('expires')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isISO8601(),
-    check_1.body('agent.name')
+    express_validator_1.body('agent.name')
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    check_1.body('agent.typeOf')
+    express_validator_1.body('agent.typeOf')
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    check_1.body('recipient')
+    express_validator_1.body('recipient')
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    check_1.body('recipient.typeOf')
+    express_validator_1.body('recipient.typeOf')
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    check_1.body('recipient.name')
+    express_validator_1.body('recipient.name')
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    check_1.body('amount')
+    express_validator_1.body('amount')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isInt(),
-    check_1.body('fromAccountNumber')
+    express_validator_1.body('fromAccountNumber')
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    check_1.body('toAccountNumber')
+    express_validator_1.body('toAccountNumber')
         .not()
         .isEmpty()
         .withMessage(() => 'required')

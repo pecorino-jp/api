@@ -15,8 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const pecorino = require("@pecorino/domain");
 const createDebug = require("debug");
 const express_1 = require("express");
-// tslint:disable-next-line:no-submodule-imports
-const check_1 = require("express-validator/check");
+const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");
 const mongoose = require("mongoose");
 const authentication_1 = require("../middlewares/authentication");
@@ -24,51 +23,73 @@ const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
 const accountsRouter = express_1.Router();
 const debug = createDebug('pecorino-api:router');
-accountsRouter.use(authentication_1.default);
+const MAX_NUM_ACCOUNTS_CREATED = 100;
 /**
- * 口座開設
+ * 口座に対するバリデーション
  */
-accountsRouter.post('', permitScopes_1.default(['admin']), ...[
-    check_1.body('project.typeOf')
+const validations = [
+    (req, _, next) => {
+        // 単一リソース、複数リソースの両方に対応するため、bodyがオブジェクトの場合配列に変換
+        req.body = (Array.isArray(req.body)) ? req.body : [req.body];
+        next();
+    },
+    express_validator_1.body()
+        .isArray({ max: MAX_NUM_ACCOUNTS_CREATED })
+        .withMessage(() => `must be array <= ${MAX_NUM_ACCOUNTS_CREATED}`),
+    express_validator_1.body('*.project.typeOf')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isIn(['Project']),
-    check_1.body('project.id')
-        .not()
-        .isEmpty()
-        .withMessage(() => 'required'),
-    check_1.body('accountType')
+    express_validator_1.body('*.project.id')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString(),
-    check_1.body('accountNumber')
+    express_validator_1.body('*.accountType')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString(),
-    check_1.body('name')
+    express_validator_1.body('*.accountNumber')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isString(),
+    express_validator_1.body('*.name')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString()
-], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+];
+accountsRouter.use(authentication_1.default);
+/**
+ * 口座開設
+ */
+accountsRouter.post('', permitScopes_1.default(['admin']), ...validations, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const accounts = yield pecorino.service.account.open([{
-                project: { id: (_a = req.body.project) === null || _a === void 0 ? void 0 : _a.id, typeOf: (_b = req.body.project) === null || _b === void 0 ? void 0 : _b.typeOf },
+        const accounts = yield pecorino.service.account.open(req.body.map((bodyParams) => {
+            var _a, _b;
+            return {
+                project: { id: (_a = bodyParams.project) === null || _a === void 0 ? void 0 : _a.id, typeOf: (_b = bodyParams.project) === null || _b === void 0 ? void 0 : _b.typeOf },
                 // 互換性維持対応として、未指定であれば'Account'
-                typeOf: (typeof req.body.typeOf === 'string' && req.body.typeOf.length > 0) ? req.body.typeOf : 'Account',
-                accountType: req.body.accountType,
-                accountNumber: req.body.accountNumber,
-                name: req.body.name,
-                initialBalance: (req.body.initialBalance !== undefined) ? Number(req.body.initialBalance) : 0
-            }])({
+                typeOf: (typeof bodyParams.typeOf === 'string' && bodyParams.typeOf.length > 0) ? bodyParams.typeOf : 'Account',
+                accountType: bodyParams.accountType,
+                accountNumber: bodyParams.accountNumber,
+                name: bodyParams.name,
+                initialBalance: (req.body.initialBalance !== undefined) ? Number(bodyParams.initialBalance) : 0
+            };
+        }))({
             account: new pecorino.repository.Account(mongoose.connection)
         });
-        res.status(http_status_1.CREATED)
-            .json(accounts[0]);
+        if (accounts.length === 1) {
+            res.status(http_status_1.CREATED)
+                .json(accounts[0]);
+        }
+        else {
+            res.status(http_status_1.CREATED)
+                .json(accounts);
+        }
     }
     catch (error) {
         next(error);
@@ -78,7 +99,7 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...[
  * 口座編集
  */
 accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admin']), ...[
-    check_1.body('name')
+    express_validator_1.body('name')
         .not()
         .isEmpty()
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -119,11 +140,11 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
  * 口座検索
  */
 accountsRouter.get('', permitScopes_1.default(['admin']), ...[
-    check_1.query('openDate.$gte')
+    express_validator_1.query('openDate.$gte')
         .optional()
         .isISO8601()
         .toDate(),
-    check_1.query('openDate.$lte')
+    express_validator_1.query('openDate.$lte')
         .optional()
         .isISO8601()
         .toDate()
@@ -144,11 +165,11 @@ accountsRouter.get('', permitScopes_1.default(['admin']), ...[
  * 取引履歴検索
  */
 accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), ...[
-    check_1.query('startDate.$gte')
+    express_validator_1.query('startDate.$gte')
         .optional()
         .isISO8601()
         .toDate(),
-    check_1.query('startDate.$lte')
+    express_validator_1.query('startDate.$lte')
         .optional()
         .isISO8601()
         .toDate()
