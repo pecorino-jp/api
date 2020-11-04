@@ -14,8 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 const pecorino = require("@pecorino/domain");
 const express_1 = require("express");
-// tslint:disable-next-line:no-submodule-imports
-const check_1 = require("express-validator/check");
+const express_validator_1 = require("express-validator");
 const mongoose = require("mongoose");
 const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
@@ -26,11 +25,11 @@ actionsRouter.use(authentication_1.default);
  * アクション検索
  */
 actionsRouter.get('', permitScopes_1.default(['admin']), ...[
-    check_1.query('startDateFrom')
+    express_validator_1.query('startDateFrom')
         .optional()
         .isISO8601()
         .toDate(),
-    check_1.query('startDateThrough')
+    express_validator_1.query('startDateThrough')
         .optional()
         .isISO8601()
         .toDate()
@@ -50,11 +49,11 @@ actionsRouter.get('', permitScopes_1.default(['admin']), ...[
  * 転送アクション検索
  */
 actionsRouter.get('/moneyTransfer', permitScopes_1.default(['admin']), ...[
-    check_1.query('startDate.$gte')
+    express_validator_1.query('startDate.$gte')
         .optional()
         .isISO8601()
         .toDate(),
-    check_1.query('startDate.$lte')
+    express_validator_1.query('startDate.$lte')
         .optional()
         .isISO8601()
         .toDate()

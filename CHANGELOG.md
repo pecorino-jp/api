@@ -18,6 +18,16 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.5.0 - 2020-11-14
+
+### Changed
+
+- 口座検索条件拡張
+- 口座開設を複数口座に対応
+- update mongoose
+- update express-validator
+- update @pecorino/domain
+
 ## v5.4.0 - 2020-09-24
 
 ### Changed

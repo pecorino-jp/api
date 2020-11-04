@@ -4,8 +4,7 @@
 import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
-// tslint:disable-next-line:no-submodule-imports
-import { body } from 'express-validator/check';
+import { body } from 'express-validator';
 import { NO_CONTENT } from 'http-status';
 import * as moment from 'moment';
 import * as mongoose from 'mongoose';

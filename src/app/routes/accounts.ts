@@ -3,9 +3,8 @@
  */
 import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
-import { Router } from 'express';
-// tslint:disable-next-line:no-submodule-imports
-import { body, query } from 'express-validator/check';
+import { RequestHandler, Router } from 'express';
+import { body, query } from 'express-validator';
 import { CREATED, NO_CONTENT } from 'http-status';
 import * as mongoose from 'mongoose';
 
@@ -17,6 +16,47 @@ const accountsRouter = Router();
 
 const debug = createDebug('pecorino-api:router');
 
+const MAX_NUM_ACCOUNTS_CREATED = 100;
+
+/**
+ * 口座に対するバリデーション
+ */
+const validations: RequestHandler[] = [
+    (req, _, next) => {
+        // 単一リソース、複数リソースの両方に対応するため、bodyがオブジェクトの場合配列に変換
+        req.body = (Array.isArray(req.body)) ? req.body : [req.body];
+        next();
+    },
+    body()
+        .isArray({ max: MAX_NUM_ACCOUNTS_CREATED })
+        .withMessage(() => `must be array <= ${MAX_NUM_ACCOUNTS_CREATED}`),
+    body('*.project.typeOf')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isIn(['Project']),
+    body('*.project.id')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isString(),
+    body('*.accountType')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isString(),
+    body('*.accountNumber')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isString(),
+    body('*.name')
+        .not()
+        .isEmpty()
+        .withMessage(() => 'required')
+        .isString()
+];
+
 accountsRouter.use(authentication);
 
 /**
@@ -25,45 +65,31 @@ accountsRouter.use(authentication);
 accountsRouter.post(
     '',
     permitScopes(['admin']),
-    ...[
-        body('project.typeOf')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required')
-            .isIn(['Project']),
-        body('project.id')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required'),
-        body('accountType')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required'),
-        body('accountNumber')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required'),
-        body('name')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required')
-    ],
+    ...validations,
     validator,
     async (req, res, next) => {
         try {
-            const account = await pecorino.service.account.open({
-                project: req.body.project,
-                // 互換性維持対応として、未指定であれば'Account'
-                typeOf: (typeof req.body.typeOf === 'string') ? req.body.typeOf : 'Account',
-                accountType: req.body.accountType,
-                accountNumber: req.body.accountNumber,
-                name: req.body.name,
-                initialBalance: (req.body.initialBalance !== undefined) ? parseInt(req.body.initialBalance, 10) : 0
-            })({
+            const accounts = await pecorino.service.account.open((<any[]>req.body).map((bodyParams) => {
+                return {
+                    project: { id: bodyParams.project?.id, typeOf: bodyParams.project?.typeOf },
+                    // 互換性維持対応として、未指定であれば'Account'
+                    typeOf: (typeof bodyParams.typeOf === 'string' && bodyParams.typeOf.length > 0) ? bodyParams.typeOf : 'Account',
+                    accountType: bodyParams.accountType,
+                    accountNumber: bodyParams.accountNumber,
+                    name: bodyParams.name,
+                    initialBalance: (req.body.initialBalance !== undefined) ? Number(bodyParams.initialBalance) : 0
+                };
+            }))({
                 account: new pecorino.repository.Account(mongoose.connection)
             });
-            res.status(CREATED)
-                .json(account);
+
+            if (accounts.length === 1) {
+                res.status(CREATED)
+                    .json(accounts[0]);
+            } else {
+                res.status(CREATED)
+                    .json(accounts);
+            }
         } catch (error) {
             next(error);
         }
@@ -139,9 +165,6 @@ accountsRouter.get(
     '',
     permitScopes(['admin']),
     ...[
-        // query('accountType')
-        //     .not()
-        //     .isEmpty(),
         query('openDate.$gte')
             .optional()
             .isISO8601()
@@ -197,7 +220,6 @@ accountsRouter.get(
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
-                // accountType: req.params.accountType,
                 accountNumber: req.params.accountNumber
             };
             const actions = await actionRepo.searchTransferActions(searchConditions);
