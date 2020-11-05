@@ -10,6 +10,8 @@ import authentication from '../middlewares/authentication';
 import permitScopes from '../middlewares/permitScopes';
 import validator from '../middlewares/validator';
 
+const USE_MONEY_TRANFER_AMOUNT_AS_NUMBER = process.env.USE_MONEY_TRANFER_AMOUNT_AS_NUMBER === '1';
+
 const actionsRouter = Router();
 
 actionsRouter.use(authentication);
@@ -75,7 +77,17 @@ actionsRouter.get(
             };
 
             const actionRepo = new pecorino.repository.Action(mongoose.connection);
-            const actions = await actionRepo.searchTransferActions(searchConditions);
+            let actions = await actionRepo.searchTransferActions(searchConditions);
+
+            // 互換性維持対応
+            if (USE_MONEY_TRANFER_AMOUNT_AS_NUMBER) {
+                actions = actions.map<any>((a) => {
+                    return {
+                        ...a,
+                        amount: (typeof a.amount === 'number') ? a.amount : Number(a.amount?.value)
+                    };
+                });
+            }
 
             res.json(actions);
         } catch (error) {

@@ -12,6 +12,8 @@ import authentication from '../middlewares/authentication';
 import permitScopes from '../middlewares/permitScopes';
 import validator from '../middlewares/validator';
 
+const USE_MONEY_TRANFER_AMOUNT_AS_NUMBER = process.env.USE_MONEY_TRANFER_AMOUNT_AS_NUMBER === '1';
+
 const accountsRouter = Router();
 
 const debug = createDebug('pecorino-api:router');
@@ -222,7 +224,17 @@ accountsRouter.get(
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1,
                 accountNumber: req.params.accountNumber
             };
-            const actions = await actionRepo.searchTransferActions(searchConditions);
+            let actions = await actionRepo.searchTransferActions(searchConditions);
+
+            // 互換性維持対応
+            if (USE_MONEY_TRANFER_AMOUNT_AS_NUMBER) {
+                actions = actions.map<any>((a) => {
+                    return {
+                        ...a,
+                        amount: (typeof a.amount === 'number') ? a.amount : Number(a.amount?.value)
+                    };
+                });
+            }
 
             res.json(actions);
         } catch (error) {
