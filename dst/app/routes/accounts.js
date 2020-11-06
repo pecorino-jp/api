@@ -189,6 +189,17 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
                 return Object.assign(Object.assign({}, a), { amount: (typeof a.amount === 'number') ? a.amount : Number((_a = a.amount) === null || _a === void 0 ? void 0 : _a.value) });
             });
         }
+        else {
+            actions = actions.map((a) => {
+                return Object.assign(Object.assign({}, a), { amount: (typeof a.amount === 'number')
+                        ? {
+                            typeOf: 'MonetaryAmount',
+                            currency: 'Point',
+                            value: a.amount
+                        }
+                        : a.amount });
+            });
+        }
         res.json(actions);
     }
     catch (error) {

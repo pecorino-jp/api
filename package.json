@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@motionpicture/express-middleware": "^0.1.1",
-    "@pecorino/domain": "4.5.0-alpha.0",
+    "@pecorino/domain": "4.5.0-alpha.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "debug": "^3.2.6",
