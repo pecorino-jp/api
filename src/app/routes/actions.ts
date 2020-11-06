@@ -81,10 +81,23 @@ actionsRouter.get(
 
             // 互換性維持対応
             if (USE_MONEY_TRANFER_AMOUNT_AS_NUMBER) {
-                actions = actions.map<any>((a) => {
+                actions = actions.map((a) => {
                     return {
                         ...a,
                         amount: (typeof a.amount === 'number') ? a.amount : Number(a.amount?.value)
+                    };
+                });
+            } else {
+                actions = actions.map((a) => {
+                    return {
+                        ...a,
+                        amount: (typeof a.amount === 'number')
+                            ? {
+                                typeOf: 'MonetaryAmount',
+                                currency: 'Point', // 旧データはPointしかないのでこれで十分
+                                value: a.amount
+                            }
+                            : a.amount
                     };
                 });
             }
