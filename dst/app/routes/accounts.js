@@ -180,7 +180,17 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
         const searchConditions = Object.assign(Object.assign({}, req.query), { 
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountNumber: req.params.accountNumber });
-        const actions = yield actionRepo.searchTransferActions(searchConditions);
+        let actions = yield actionRepo.searchTransferActions(searchConditions);
+        // 互換性維持対応
+        actions = actions.map((a) => {
+            return Object.assign(Object.assign({}, a), { amount: (typeof a.amount === 'number')
+                    ? {
+                        typeOf: 'MonetaryAmount',
+                        currency: 'Point',
+                        value: a.amount
+                    }
+                    : a.amount });
+        });
         res.json(actions);
     }
     catch (error) {

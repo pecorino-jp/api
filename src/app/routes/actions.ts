@@ -75,7 +75,21 @@ actionsRouter.get(
             };
 
             const actionRepo = new pecorino.repository.Action(mongoose.connection);
-            const actions = await actionRepo.searchTransferActions(searchConditions);
+            let actions = await actionRepo.searchTransferActions(searchConditions);
+
+            // 互換性維持対応
+            actions = actions.map((a) => {
+                return {
+                    ...a,
+                    amount: (typeof a.amount === 'number')
+                        ? {
+                            typeOf: 'MonetaryAmount',
+                            currency: 'Point', // 旧データはPointしかないのでこれで十分
+                            value: a.amount
+                        }
+                        : a.amount
+                };
+            });
 
             res.json(actions);
         } catch (error) {
