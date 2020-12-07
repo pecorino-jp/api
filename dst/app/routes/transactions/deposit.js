@@ -78,7 +78,7 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
         .withMessage(() => 'required')
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const transaction = yield pecorino.service.transaction.deposit.start(Object.assign({ project: req.body.project, typeOf: pecorino.factory.transactionType.Deposit, agent: {
+        const transaction = yield pecorino.service.transaction.deposit.start(Object.assign(Object.assign({ project: req.body.project, typeOf: pecorino.factory.transactionType.Deposit, agent: {
                 typeOf: req.body.agent.typeOf,
                 id: (req.body.agent.id !== undefined) ? req.body.agent.id : req.user.sub,
                 name: req.body.agent.name,
@@ -96,7 +96,7 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
                 },
                 description: (req.body.notes !== undefined) ? req.body.notes : ''
             }, expires: moment(req.body.expires)
-                .toDate() }, (typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined))({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
+                .toDate() }, (typeof req.body.identifier === 'string') ? { identifier: req.body.identifier } : undefined), (typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined))({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
         // tslint:disable-next-line:no-string-literal
         // const host = req.headers['host'];
         // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
