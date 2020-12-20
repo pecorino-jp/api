@@ -99,6 +99,9 @@ withdrawTransactionsRouter.post(
                 },
                 expires: moment(req.body.expires)
                     .toDate(),
+                ...(typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
+                    ? { identifier: req.body.identifier }
+                    : undefined,
                 ...(typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined
             })({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
 

@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.7.1 - 2020-12-20
+
+### Changed
+
+- 同識別子に対して進行中取引のユニークネスを保証するように調整
+
 ## v5.7.0 - 2020-12-10
 
 ### Changed
