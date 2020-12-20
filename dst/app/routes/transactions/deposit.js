@@ -96,7 +96,9 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
                 },
                 description: (req.body.notes !== undefined) ? req.body.notes : ''
             }, expires: moment(req.body.expires)
-                .toDate() }, (typeof req.body.identifier === 'string') ? { identifier: req.body.identifier } : undefined), (typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined))({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
+                .toDate() }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
+            ? { identifier: req.body.identifier }
+            : undefined), (typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined))({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
         // tslint:disable-next-line:no-string-literal
         // const host = req.headers['host'];
         // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
