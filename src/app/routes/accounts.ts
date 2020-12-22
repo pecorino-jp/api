@@ -54,7 +54,11 @@ const validations: RequestHandler[] = [
         .not()
         .isEmpty()
         .withMessage(() => 'required')
-        .isString()
+        .isString(),
+    body('*.initialBalance')
+        .optional()
+        .isInt()
+        .toInt()
 ];
 
 accountsRouter.use(authentication);
@@ -77,7 +81,7 @@ accountsRouter.post(
                     accountType: bodyParams.accountType,
                     accountNumber: bodyParams.accountNumber,
                     name: bodyParams.name,
-                    initialBalance: (req.body.initialBalance !== undefined) ? Number(bodyParams.initialBalance) : 0
+                    initialBalance: (typeof bodyParams.initialBalance === 'number') ? Number(bodyParams.initialBalance) : 0
                 };
             }))({
                 account: new pecorino.repository.Account(mongoose.connection)

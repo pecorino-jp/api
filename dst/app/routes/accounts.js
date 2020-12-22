@@ -60,7 +60,11 @@ const validations = [
         .not()
         .isEmpty()
         .withMessage(() => 'required')
-        .isString()
+        .isString(),
+    express_validator_1.body('*.initialBalance')
+        .optional()
+        .isInt()
+        .toInt()
 ];
 accountsRouter.use(authentication_1.default);
 /**
@@ -77,7 +81,7 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...validations, valid
                 accountType: bodyParams.accountType,
                 accountNumber: bodyParams.accountNumber,
                 name: bodyParams.name,
-                initialBalance: (req.body.initialBalance !== undefined) ? Number(bodyParams.initialBalance) : 0
+                initialBalance: (typeof bodyParams.initialBalance === 'number') ? Number(bodyParams.initialBalance) : 0
             };
         }))({
             account: new pecorino.repository.Account(mongoose.connection)

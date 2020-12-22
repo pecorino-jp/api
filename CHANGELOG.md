@@ -16,6 +16,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
+- 口座開設時に初期金額が適用されないバグ対応
+
 ### Security
 
 ## v5.7.1 - 2020-12-20
