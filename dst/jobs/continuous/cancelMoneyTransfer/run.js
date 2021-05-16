@@ -29,7 +29,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         count += 1;
         try {
             debug('count:', count);
-            yield pecorino.service.task.executeByName(pecorino.factory.taskName.CancelMoneyTransfer)({ taskRepo: taskRepo, connection: connection });
+            yield pecorino.service.task.executeByName(pecorino.factory.taskName.CancelAccountMoneyTransfer)({ taskRepo: taskRepo, connection: connection });
         }
         catch (error) {
             // tslint:disable-next-line:no-console

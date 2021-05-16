@@ -29,7 +29,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         try {
             yield pecorino.service.transaction.exportTasks({
                 status: pecorino.factory.transactionStatusType.Canceled,
-                typeOf: pecorino.factory.transactionType.Deposit
+                typeOf: pecorino.factory.account.transactionType.Deposit
             })({ task: taskRepo, transaction: transactionRepo });
         }
         catch (error) {

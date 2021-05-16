@@ -74,7 +74,7 @@ withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
         .withMessage(() => 'required')
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const transaction = yield pecorino.service.transaction.withdraw.start(Object.assign(Object.assign({ project: req.body.project, typeOf: pecorino.factory.transactionType.Withdraw, agent: {
+        const transaction = yield pecorino.service.transaction.withdraw.start(Object.assign(Object.assign({ project: req.body.project, typeOf: pecorino.factory.account.transactionType.Withdraw, agent: {
                 typeOf: req.body.agent.typeOf,
                 id: (req.body.agent.id !== undefined) ? req.body.agent.id : req.user.sub,
                 name: req.body.agent.name,
@@ -107,14 +107,14 @@ withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
 withdrawTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        yield pecorino.service.transaction.confirm(Object.assign(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }), { typeOf: pecorino.factory.transactionType.Withdraw }))({ transaction: transactionRepo });
+        yield pecorino.service.transaction.confirm(Object.assign(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }), { typeOf: pecorino.factory.account.transactionType.Withdraw }))({ transaction: transactionRepo });
         debug('transaction confirmed.');
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
         const taskRepo = new pecorino.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
         pecorino.service.transaction.exportTasks({
             status: pecorino.factory.transactionStatusType.Confirmed,
-            typeOf: pecorino.factory.transactionType.Withdraw
+            typeOf: pecorino.factory.account.transactionType.Withdraw
         })({
             task: taskRepo,
             transaction: transactionRepo
@@ -129,14 +129,14 @@ withdrawTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default
 withdrawTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        yield transactionRepo.cancel(Object.assign({ typeOf: pecorino.factory.transactionType.Withdraw }, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
+        yield transactionRepo.cancel(Object.assign({ typeOf: pecorino.factory.account.transactionType.Withdraw }, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
         debug('transaction canceled.');
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
         const taskRepo = new pecorino.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
         pecorino.service.transaction.exportTasks({
             status: pecorino.factory.transactionStatusType.Canceled,
-            typeOf: pecorino.factory.transactionType.Withdraw
+            typeOf: pecorino.factory.account.transactionType.Withdraw
         })({
             task: taskRepo,
             transaction: transactionRepo
@@ -151,13 +151,13 @@ withdrawTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(
 withdrawTransactionsRouter.put('/:transactionId/return', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        yield transactionRepo.returnMoneyTransfer(Object.assign({ typeOf: pecorino.factory.transactionType.Withdraw }, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
+        yield transactionRepo.returnMoneyTransfer(Object.assign({ typeOf: pecorino.factory.account.transactionType.Withdraw }, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
         const taskRepo = new pecorino.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
         pecorino.service.transaction.exportTasks({
             status: pecorino.factory.transactionStatusType.Returned,
-            typeOf: pecorino.factory.transactionType.Withdraw
+            typeOf: pecorino.factory.account.transactionType.Withdraw
         })({
             task: taskRepo,
             transaction: transactionRepo

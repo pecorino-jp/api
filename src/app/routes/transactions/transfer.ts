@@ -80,7 +80,7 @@ transferTransactionsRouter.post(
         try {
             const transaction = await pecorino.service.transaction.transfer.start({
                 project: req.body.project,
-                typeOf: pecorino.factory.transactionType.Transfer,
+                typeOf: pecorino.factory.account.transactionType.Transfer,
                 agent: {
                     typeOf: req.body.agent.typeOf,
                     id: (req.body.agent.id !== undefined) ? req.body.agent.id : req.user.sub,
@@ -132,7 +132,7 @@ transferTransactionsRouter.put(
 
             await pecorino.service.transaction.confirm({
                 ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId },
-                typeOf: pecorino.factory.transactionType.Transfer
+                typeOf: pecorino.factory.account.transactionType.Transfer
             })({ transaction: transactionRepo });
             debug('transaction confirmed.');
 
@@ -141,7 +141,7 @@ transferTransactionsRouter.put(
             // tslint:disable-next-line:no-floating-promises
             pecorino.service.transaction.exportTasks({
                 status: pecorino.factory.transactionStatusType.Confirmed,
-                typeOf: pecorino.factory.transactionType.Transfer
+                typeOf: pecorino.factory.account.transactionType.Transfer
             })({
                 task: taskRepo,
                 transaction: transactionRepo
@@ -164,7 +164,7 @@ transferTransactionsRouter.put(
             const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
 
             await transactionRepo.cancel({
-                typeOf: pecorino.factory.transactionType.Transfer,
+                typeOf: pecorino.factory.account.transactionType.Transfer,
                 ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }
             });
             debug('transaction canceled.');
@@ -174,7 +174,7 @@ transferTransactionsRouter.put(
             // tslint:disable-next-line:no-floating-promises
             pecorino.service.transaction.exportTasks({
                 status: pecorino.factory.transactionStatusType.Canceled,
-                typeOf: pecorino.factory.transactionType.Transfer
+                typeOf: pecorino.factory.account.transactionType.Transfer
             })({
                 task: taskRepo,
                 transaction: transactionRepo

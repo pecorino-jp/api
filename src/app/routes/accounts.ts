@@ -218,7 +218,7 @@ accountsRouter.get(
         try {
             debug('searching trade actions...', req.params);
             const actionRepo = new pecorino.repository.Action(mongoose.connection);
-            const searchConditions: pecorino.factory.action.transfer.moneyTransfer.ISearchConditions
+            const searchConditions: pecorino.factory.account.action.moneyTransfer.ISearchConditions
                 = {
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers

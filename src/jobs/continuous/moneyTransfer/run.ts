@@ -28,7 +28,7 @@ export default async () => {
             try {
                 debug('count:', count);
                 await pecorino.service.task.executeByName(
-                    pecorino.factory.taskName.MoneyTransfer
+                    pecorino.factory.taskName.AccountMoneyTransfer
                 )({ taskRepo: taskRepo, connection: connection });
             } catch (error) {
                 // tslint:disable-next-line:no-console

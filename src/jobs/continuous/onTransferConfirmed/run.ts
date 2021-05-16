@@ -26,7 +26,7 @@ export default async () => {
             try {
                 await pecorino.service.transaction.exportTasks({
                     status: pecorino.factory.transactionStatusType.Confirmed,
-                    typeOf: pecorino.factory.transactionType.Transfer
+                    typeOf: pecorino.factory.account.transactionType.Transfer
                 })({ task: taskRepo, transaction: transactionRepo });
             } catch (error) {
                 // tslint:disable-next-line:no-console
