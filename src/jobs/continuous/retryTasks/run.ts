@@ -24,7 +24,7 @@ export default async () => {
             count += 1;
 
             try {
-                await pecorino.service.task.retry(RETRY_INTERVAL_MINUTES)({ task: taskRepo });
+                await pecorino.service.task.retry({ intervalInMinutes: RETRY_INTERVAL_MINUTES })({ task: taskRepo });
             } catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error(error);

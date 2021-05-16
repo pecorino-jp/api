@@ -27,7 +27,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         count += 1;
         try {
-            yield pecorino.service.task.retry(RETRY_INTERVAL_MINUTES)({ task: taskRepo });
+            yield pecorino.service.task.retry({ intervalInMinutes: RETRY_INTERVAL_MINUTES })({ task: taskRepo });
         }
         catch (error) {
             // tslint:disable-next-line:no-console

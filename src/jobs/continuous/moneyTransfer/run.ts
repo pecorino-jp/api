@@ -15,7 +15,6 @@ export default async () => {
 
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 100;
-    const taskRepo = new pecorino.repository.Task(connection);
 
     setInterval(
         async () => {
@@ -27,9 +26,9 @@ export default async () => {
 
             try {
                 debug('count:', count);
-                await pecorino.service.task.executeByName(
-                    pecorino.factory.taskName.AccountMoneyTransfer
-                )({ taskRepo: taskRepo, connection: connection });
+                await pecorino.service.task.executeByName({ name: pecorino.factory.taskName.AccountMoneyTransfer })({
+                    connection: connection
+                });
             } catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error(error);
