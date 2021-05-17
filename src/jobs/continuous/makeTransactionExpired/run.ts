@@ -15,7 +15,7 @@ export default async () => {
 
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 100;
-    const transactionRepo = new pecorino.repository.Transaction(connection);
+    const transactionRepo = new pecorino.repository.AccountTransaction(connection);
 
     setInterval(
         async () => {

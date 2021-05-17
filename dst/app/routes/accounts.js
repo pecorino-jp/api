@@ -180,7 +180,7 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         debug('searching trade actions...', req.params);
-        const actionRepo = new pecorino.repository.Action(mongoose.connection);
+        const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
         const searchConditions = Object.assign(Object.assign({}, req.query), { 
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountNumber: req.params.accountNumber });

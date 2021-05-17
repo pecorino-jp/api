@@ -21,7 +21,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     let countRetry = 0;
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 1000;
-    const transactionRepo = new pecorino.repository.Transaction(connection);
+    const transactionRepo = new pecorino.repository.AccountTransaction(connection);
     const RETRY_INTERVAL_MINUTES = 10;
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         if (countRetry > MAX_NUBMER_OF_PARALLEL_TASKS) {

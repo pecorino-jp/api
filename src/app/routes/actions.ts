@@ -33,7 +33,7 @@ actionsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            const actionRepo = new pecorino.repository.Action(mongoose.connection);
+            const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
             const actions = await actionRepo.search({
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
@@ -74,7 +74,7 @@ actionsRouter.get(
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1
             };
 
-            const actionRepo = new pecorino.repository.Action(mongoose.connection);
+            const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
             let actions = await actionRepo.searchTransferActions(searchConditions);
 
             // 互換性維持対応

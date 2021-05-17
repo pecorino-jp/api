@@ -20,7 +20,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 100;
     const taskRepo = new pecorino.repository.Task(connection);
-    const transactionRepo = new pecorino.repository.Transaction(connection);
+    const transactionRepo = new pecorino.repository.AccountTransaction(connection);
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         if (countExecute > MAX_NUBMER_OF_PARALLEL_TASKS) {
             return;
@@ -30,7 +30,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
             yield pecorino.service.transaction.exportTasks({
                 status: pecorino.factory.transactionStatusType.Canceled,
                 typeOf: pecorino.factory.account.transactionType.Transfer
-            })({ task: taskRepo, transaction: transactionRepo });
+            })({ task: taskRepo, accountTransaction: transactionRepo });
         }
         catch (error) {
             // tslint:disable-next-line:no-console

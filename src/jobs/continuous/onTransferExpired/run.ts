@@ -13,7 +13,7 @@ export default async () => {
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 100;
     const taskRepo = new pecorino.repository.Task(connection);
-    const transactionRepo = new pecorino.repository.Transaction(connection);
+    const transactionRepo = new pecorino.repository.AccountTransaction(connection);
 
     setInterval(
         async () => {
@@ -27,7 +27,7 @@ export default async () => {
                 await pecorino.service.transaction.exportTasks({
                     status: pecorino.factory.transactionStatusType.Expired,
                     typeOf: pecorino.factory.account.transactionType.Transfer
-                })({ task: taskRepo, transaction: transactionRepo });
+                })({ task: taskRepo, accountTransaction: transactionRepo });
             } catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error(error);

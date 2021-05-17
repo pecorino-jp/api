@@ -26,8 +26,8 @@ const validator_1 = require("../../middlewares/validator");
 const debug = createDebug('pecorino-api:router');
 transferTransactionsRouter.use(authentication_1.default);
 const accountRepo = new pecorino.repository.Account(mongoose.connection);
-const actionRepo = new pecorino.repository.Action(mongoose.connection);
-const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
+const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
+const transactionRepo = new pecorino.repository.AccountTransaction(mongoose.connection);
 transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
     express_validator_1.body('project.typeOf')
         .not()
@@ -101,7 +101,7 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
             }, expires: moment(req.body.expires)
                 .toDate() }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
             ? { identifier: req.body.identifier }
-            : undefined), (typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined))({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
+            : undefined), (typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined))({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
         // tslint:disable-next-line:no-string-literal
         // const host = req.headers['host'];
         // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
@@ -114,7 +114,7 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
 transferTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        yield pecorino.service.transaction.confirm(Object.assign(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }), { typeOf: pecorino.factory.account.transactionType.Transfer }))({ transaction: transactionRepo });
+        yield pecorino.service.transaction.confirm(Object.assign(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }), { typeOf: pecorino.factory.account.transactionType.Transfer }))({ accountTransaction: transactionRepo });
         debug('transaction confirmed.');
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
         const taskRepo = new pecorino.repository.Task(mongoose.connection);
@@ -124,7 +124,7 @@ transferTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default
             typeOf: pecorino.factory.account.transactionType.Transfer
         })({
             task: taskRepo,
-            transaction: transactionRepo
+            accountTransaction: transactionRepo
         });
         res.status(http_status_1.NO_CONTENT)
             .end();
@@ -146,7 +146,7 @@ transferTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(
             typeOf: pecorino.factory.account.transactionType.Transfer
         })({
             task: taskRepo,
-            transaction: transactionRepo
+            accountTransaction: transactionRepo
         });
         res.status(http_status_1.NO_CONTENT)
             .end();

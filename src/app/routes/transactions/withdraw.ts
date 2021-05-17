@@ -20,8 +20,8 @@ const debug = createDebug('pecorino-api:router');
 withdrawTransactionsRouter.use(authentication);
 
 const accountRepo = new pecorino.repository.Account(mongoose.connection);
-const actionRepo = new pecorino.repository.Action(mongoose.connection);
-const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
+const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
+const transactionRepo = new pecorino.repository.AccountTransaction(mongoose.connection);
 
 withdrawTransactionsRouter.post(
     '/start',
@@ -103,7 +103,7 @@ withdrawTransactionsRouter.post(
                     ? { identifier: req.body.identifier }
                     : undefined,
                 ...(typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined
-            })({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
+            })({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
 
             // tslint:disable-next-line:no-string-literal
             // const host = req.headers['host'];
@@ -126,7 +126,7 @@ withdrawTransactionsRouter.put(
             await pecorino.service.transaction.confirm({
                 ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId },
                 typeOf: pecorino.factory.account.transactionType.Withdraw
-            })({ transaction: transactionRepo });
+            })({ accountTransaction: transactionRepo });
             debug('transaction confirmed.');
 
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
@@ -137,7 +137,7 @@ withdrawTransactionsRouter.put(
                 typeOf: pecorino.factory.account.transactionType.Withdraw
             })({
                 task: taskRepo,
-                transaction: transactionRepo
+                accountTransaction: transactionRepo
             });
 
             res.status(NO_CONTENT)
@@ -170,7 +170,7 @@ withdrawTransactionsRouter.put(
                 typeOf: pecorino.factory.account.transactionType.Withdraw
             })({
                 task: taskRepo,
-                transaction: transactionRepo
+                accountTransaction: transactionRepo
             });
 
             res.status(NO_CONTENT)

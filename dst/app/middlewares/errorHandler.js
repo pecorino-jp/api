@@ -25,12 +25,12 @@ exports.default = (err, __, res, next) => {
         if (Array.isArray(err)) {
             apiError = new api_1.APIError(pecorinoError2httpStatusCode(err[0]), err);
         }
-        else if (err instanceof pecorino.factory.errors.PECORINO) {
+        else if (err instanceof pecorino.factory.errors.Chevre) {
             apiError = new api_1.APIError(pecorinoError2httpStatusCode(err), [err]);
         }
         else {
             // 500
-            apiError = new api_1.APIError(http_status_1.INTERNAL_SERVER_ERROR, [new pecorino.factory.errors.PECORINO('InternalServerError', err.message)]);
+            apiError = new api_1.APIError(http_status_1.INTERNAL_SERVER_ERROR, [new pecorino.factory.errors.Chevre('InternalServerError', err.message)]);
         }
     }
     res.status(apiError.code)
@@ -40,8 +40,6 @@ exports.default = (err, __, res, next) => {
 };
 /**
  * PECORINOエラーをHTTPステータスコードへ変換する
- * @function
- * @param {pecorino.factory.errors.PECORINO} err PECORINOエラー
  */
 function pecorinoError2httpStatusCode(err) {
     let statusCode = http_status_1.BAD_REQUEST;

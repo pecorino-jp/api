@@ -217,7 +217,7 @@ accountsRouter.get(
     async (req, res, next) => {
         try {
             debug('searching trade actions...', req.params);
-            const actionRepo = new pecorino.repository.Action(mongoose.connection);
+            const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
             const searchConditions: pecorino.factory.account.action.moneyTransfer.ISearchConditions
                 = {
                 ...req.query,
