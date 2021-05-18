@@ -3,10 +3,12 @@
  */
 import * as express from 'express';
 
-import accountsRouter from './accounts';
-import actionsRouter from './actions';
 import devRouter from './dev';
 import healthRouter from './health';
+import ahRouter from './_ah';
+
+import accountsRouter from './accounts';
+import actionsRouter from './actions';
 import depositTransactionsRouter from './transactions/deposit';
 import transferTransactionsRouter from './transactions/transfer';
 import withdrawTransactionsRouter from './transactions/withdraw';
@@ -19,9 +21,11 @@ const router = express.Router();
 //   next()
 // })
 
+router.use('/_ah', ahRouter);
+router.use('/health', healthRouter);
+
 router.use('/accounts', accountsRouter);
 router.use('/actions', actionsRouter);
-router.use('/health', healthRouter);
 router.use('/transactions/deposit', depositTransactionsRouter);
 router.use('/transactions/withdraw', withdrawTransactionsRouter);
 router.use('/transactions/transfer', transferTransactionsRouter);
