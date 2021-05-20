@@ -10,14 +10,14 @@ import authentication from '../middlewares/authentication';
 import permitScopes from '../middlewares/permitScopes';
 import validator from '../middlewares/validator';
 
-const actionsRouter = Router();
+const accountActionsRouter = Router();
 
-actionsRouter.use(authentication);
+accountActionsRouter.use(authentication);
 
 /**
  * アクション検索
  */
-actionsRouter.get(
+accountActionsRouter.get(
     '',
     permitScopes(['admin']),
     ...[
@@ -51,7 +51,7 @@ actionsRouter.get(
 /**
  * 転送アクション検索
  */
-actionsRouter.get(
+accountActionsRouter.get(
     '/moneyTransfer',
     permitScopes(['admin']),
     ...[
@@ -98,4 +98,4 @@ actionsRouter.get(
     }
 );
 
-export default actionsRouter;
+export default accountActionsRouter;

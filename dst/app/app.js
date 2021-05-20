@@ -4,14 +4,12 @@
  */
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const createDebug = require("debug");
 const express = require("express");
 const helmet = require("helmet");
 const connectMongo_1 = require("../connectMongo");
 const errorHandler_1 = require("./middlewares/errorHandler");
 const notFoundHandler_1 = require("./middlewares/notFoundHandler");
 const router_1 = require("./routes/router");
-const debug = createDebug('pecorino-api:*');
 const app = express();
 app.use(cors()); // enable All CORS Requests
 app.use(helmet());
@@ -34,19 +32,6 @@ app.use((__, res, next) => {
     res.setHeader('x-api-version', packageInfo.version);
     next();
 });
-// tslint:disable-next-line:no-single-line-block-comment
-/* istanbul ignore next */
-if (process.env.NODE_ENV !== 'production') {
-    // サーバーエラーテスト
-    app.get('/dev/uncaughtexception', (req) => {
-        req.on('data', (chunk) => {
-            debug(chunk);
-        });
-        req.on('end', () => {
-            throw new Error('uncaughtexception manually');
-        });
-    });
-}
 // view engine setup
 // app.set('views', `${__dirname}/views`);
 // app.set('view engine', 'ejs');

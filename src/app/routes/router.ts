@@ -3,15 +3,14 @@
  */
 import * as express from 'express';
 
-import devRouter from './dev';
 import healthRouter from './health';
 import ahRouter from './_ah';
 
+import accountActionsRouter from './accountActions';
 import accountsRouter from './accounts';
-import actionsRouter from './actions';
-import depositTransactionsRouter from './transactions/deposit';
-import transferTransactionsRouter from './transactions/transfer';
-import withdrawTransactionsRouter from './transactions/withdraw';
+import depositTransactionsRouter from './accountTransactions/deposit';
+import transferTransactionsRouter from './accountTransactions/transfer';
+import withdrawTransactionsRouter from './accountTransactions/withdraw';
 
 const router = express.Router();
 
@@ -25,15 +24,9 @@ router.use('/_ah', ahRouter);
 router.use('/health', healthRouter);
 
 router.use('/accounts', accountsRouter);
-router.use('/actions', actionsRouter);
+router.use('/actions', accountActionsRouter);
 router.use('/transactions/deposit', depositTransactionsRouter);
 router.use('/transactions/withdraw', withdrawTransactionsRouter);
 router.use('/transactions/transfer', transferTransactionsRouter);
-
-// tslint:disable-next-line:no-single-line-block-comment
-/* istanbul ignore next */
-if (process.env.NODE_ENV !== 'production') {
-    router.use('/dev', devRouter);
-}
 
 export default router;

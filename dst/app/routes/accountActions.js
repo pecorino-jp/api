@@ -19,12 +19,12 @@ const mongoose = require("mongoose");
 const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
-const actionsRouter = express_1.Router();
-actionsRouter.use(authentication_1.default);
+const accountActionsRouter = express_1.Router();
+accountActionsRouter.use(authentication_1.default);
 /**
  * アクション検索
  */
-actionsRouter.get('', permitScopes_1.default(['admin']), ...[
+accountActionsRouter.get('', permitScopes_1.default(['admin']), ...[
     express_validator_1.query('startDateFrom')
         .optional()
         .isISO8601()
@@ -48,7 +48,7 @@ actionsRouter.get('', permitScopes_1.default(['admin']), ...[
 /**
  * 転送アクション検索
  */
-actionsRouter.get('/moneyTransfer', permitScopes_1.default(['admin']), ...[
+accountActionsRouter.get('/moneyTransfer', permitScopes_1.default(['admin']), ...[
     express_validator_1.query('startDate.$gte')
         .optional()
         .isISO8601()
@@ -80,4 +80,4 @@ actionsRouter.get('/moneyTransfer', permitScopes_1.default(['admin']), ...[
         next(error);
     }
 }));
-exports.default = actionsRouter;
+exports.default = accountActionsRouter;

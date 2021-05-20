@@ -3,7 +3,6 @@
  */
 import * as bodyParser from 'body-parser';
 import * as cors from 'cors';
-import * as createDebug from 'debug';
 import * as express from 'express';
 import * as helmet from 'helmet';
 
@@ -12,8 +11,6 @@ import { connectMongo } from '../connectMongo';
 import errorHandler from './middlewares/errorHandler';
 import notFoundHandler from './middlewares/notFoundHandler';
 import router from './routes/router';
-
-const debug = createDebug('pecorino-api:*');
 
 const app = express();
 
@@ -39,21 +36,6 @@ app.use((__, res, next) => {
     res.setHeader('x-api-version', <string>packageInfo.version);
     next();
 });
-
-// tslint:disable-next-line:no-single-line-block-comment
-/* istanbul ignore next */
-if (process.env.NODE_ENV !== 'production') {
-    // サーバーエラーテスト
-    app.get('/dev/uncaughtexception', (req) => {
-        req.on('data', (chunk) => {
-            debug(chunk);
-        });
-
-        req.on('end', () => {
-            throw new Error('uncaughtexception manually');
-        });
-    });
-}
 
 // view engine setup
 // app.set('views', `${__dirname}/views`);
