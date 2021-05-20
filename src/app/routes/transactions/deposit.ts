@@ -78,7 +78,7 @@ depositTransactionsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            const transaction = await pecorino.service.transaction.deposit.start({
+            const transaction = await pecorino.service.accountTransaction.deposit.start({
                 project: req.body.project,
                 typeOf: pecorino.factory.account.transactionType.Deposit,
                 agent: {
@@ -127,7 +127,7 @@ depositTransactionsRouter.put(
         try {
             const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
 
-            await pecorino.service.transaction.confirm({
+            await pecorino.service.accountTransaction.confirm({
                 ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId },
                 typeOf: pecorino.factory.account.transactionType.Deposit
             })({ accountTransaction: transactionRepo });
@@ -136,7 +136,7 @@ depositTransactionsRouter.put(
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
             const taskRepo = new pecorino.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
-            pecorino.service.transaction.exportTasks({
+            pecorino.service.accountTransaction.exportTasks({
                 status: pecorino.factory.transactionStatusType.Confirmed,
                 typeOf: pecorino.factory.account.transactionType.Deposit
             })({
@@ -169,7 +169,7 @@ depositTransactionsRouter.put(
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
             const taskRepo = new pecorino.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
-            pecorino.service.transaction.exportTasks({
+            pecorino.service.accountTransaction.exportTasks({
                 status: pecorino.factory.transactionStatusType.Canceled,
                 typeOf: pecorino.factory.account.transactionType.Deposit
             })({

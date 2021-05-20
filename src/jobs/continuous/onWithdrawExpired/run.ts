@@ -24,7 +24,7 @@ export default async () => {
             countExecute += 1;
 
             try {
-                await pecorino.service.transaction.exportTasks({
+                await pecorino.service.accountTransaction.exportTasks({
                     status: pecorino.factory.transactionStatusType.Expired,
                     typeOf: pecorino.factory.account.transactionType.Withdraw
                 })({ task: taskRepo, accountTransaction: transactionRepo });

@@ -27,7 +27,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         }
         countExecute += 1;
         try {
-            yield pecorino.service.transaction.exportTasks({
+            yield pecorino.service.accountTransaction.exportTasks({
                 status: pecorino.factory.transactionStatusType.Canceled,
                 typeOf: pecorino.factory.account.transactionType.Transfer
             })({ task: taskRepo, accountTransaction: transactionRepo });

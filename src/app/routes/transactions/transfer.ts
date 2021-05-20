@@ -78,7 +78,7 @@ transferTransactionsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            const transaction = await pecorino.service.transaction.transfer.start({
+            const transaction = await pecorino.service.accountTransaction.transfer.start({
                 project: req.body.project,
                 typeOf: pecorino.factory.account.transactionType.Transfer,
                 agent: {
@@ -130,7 +130,7 @@ transferTransactionsRouter.put(
         try {
             const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
 
-            await pecorino.service.transaction.confirm({
+            await pecorino.service.accountTransaction.confirm({
                 ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId },
                 typeOf: pecorino.factory.account.transactionType.Transfer
             })({ accountTransaction: transactionRepo });
@@ -139,7 +139,7 @@ transferTransactionsRouter.put(
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
             const taskRepo = new pecorino.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
-            pecorino.service.transaction.exportTasks({
+            pecorino.service.accountTransaction.exportTasks({
                 status: pecorino.factory.transactionStatusType.Confirmed,
                 typeOf: pecorino.factory.account.transactionType.Transfer
             })({
@@ -172,7 +172,7 @@ transferTransactionsRouter.put(
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
             const taskRepo = new pecorino.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
-            pecorino.service.transaction.exportTasks({
+            pecorino.service.accountTransaction.exportTasks({
                 status: pecorino.factory.transactionStatusType.Canceled,
                 typeOf: pecorino.factory.account.transactionType.Transfer
             })({
