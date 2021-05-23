@@ -1,7 +1,7 @@
 /**
  * 口座ルーター
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as createDebug from 'debug';
 import { RequestHandler, Router } from 'express';
 import { body, query } from 'express-validator';
@@ -73,7 +73,7 @@ accountsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            const accounts = await pecorino.service.account.open((<any[]>req.body).map((bodyParams) => {
+            const accounts = await chevre.service.account.open((<any[]>req.body).map((bodyParams) => {
                 return {
                     project: { id: bodyParams.project?.id, typeOf: bodyParams.project?.typeOf },
                     // 互換性維持対応として、未指定であれば'Account'
@@ -84,7 +84,7 @@ accountsRouter.post(
                     initialBalance: (typeof bodyParams.initialBalance === 'number') ? Number(bodyParams.initialBalance) : 0
                 };
             }))({
-                account: new pecorino.repository.Account(mongoose.connection)
+                account: new chevre.repository.Account(mongoose.connection)
             });
 
             if (accounts.length === 1) {
@@ -114,7 +114,7 @@ accountsRouter.put(
     validator,
     async (req, res, next) => {
         try {
-            const accountRepo = new pecorino.repository.Account(mongoose.connection);
+            const accountRepo = new chevre.repository.Account(mongoose.connection);
 
             const update = {
                 ...(req.body.name !== undefined) ? { name: String(req.body.name) } : undefined
@@ -127,7 +127,7 @@ accountsRouter.put(
                 .exec();
 
             if (doc === null) {
-                throw new pecorino.factory.errors.NotFound('Account');
+                throw new chevre.factory.errors.NotFound('Account');
             }
 
             res.status(NO_CONTENT)
@@ -148,10 +148,10 @@ accountsRouter.put(
     validator,
     async (req, res, next) => {
         try {
-            await pecorino.service.account.close({
+            await chevre.service.account.close({
                 accountNumber: req.params.accountNumber
             })({
-                account: new pecorino.repository.Account(mongoose.connection)
+                account: new chevre.repository.Account(mongoose.connection)
             });
 
             res.status(NO_CONTENT)
@@ -181,8 +181,8 @@ accountsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            const accountRepo = new pecorino.repository.Account(mongoose.connection);
-            const searchConditions: pecorino.factory.account.ISearchConditions = {
+            const accountRepo = new chevre.repository.Account(mongoose.connection);
+            const searchConditions: chevre.factory.account.ISearchConditions = {
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
@@ -217,8 +217,8 @@ accountsRouter.get(
     async (req, res, next) => {
         try {
             debug('searching trade actions...', req.params);
-            const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
-            const searchConditions: pecorino.factory.account.action.moneyTransfer.ISearchConditions
+            const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
+            const searchConditions: chevre.factory.account.action.moneyTransfer.ISearchConditions
                 = {
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers

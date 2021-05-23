@@ -1,7 +1,7 @@
 /**
  * 取引期限監視
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as createDebug from 'debug';
 
 import { connectMongo } from '../../../connectMongo';
@@ -15,7 +15,7 @@ export default async () => {
 
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 100;
-    const transactionRepo = new pecorino.repository.AccountTransaction(connection);
+    const transactionRepo = new chevre.repository.AccountTransaction(connection);
 
     setInterval(
         async () => {

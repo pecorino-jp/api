@@ -2,7 +2,7 @@
 /**
  * エラーハンドラーミドルウェアテスト
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as assert from 'assert';
 import { INTERNAL_SERVER_ERROR } from 'http-status';
 import * as nock from 'nock';
@@ -65,12 +65,12 @@ describe('エラーハンドラーミドルウェア', () => {
 
     // tslint:disable-next-line:mocha-no-side-effect-code
     [
-        new pecorino.factory.errors.Argument(''),
-        new pecorino.factory.errors.Unauthorized(),
-        new pecorino.factory.errors.Forbidden(),
-        new pecorino.factory.errors.NotFound(''),
-        new pecorino.factory.errors.AlreadyInUse('', []),
-        new pecorino.factory.errors.ServiceUnavailable(),
+        new chevre.factory.errors.Argument(''),
+        new chevre.factory.errors.Unauthorized(),
+        new chevre.factory.errors.Forbidden(),
+        new chevre.factory.errors.NotFound(''),
+        new chevre.factory.errors.AlreadyInUse('', []),
+        new chevre.factory.errors.ServiceUnavailable(),
         new Error('Unknown error')
     ].forEach((err) => {
         it(`${err.name}と共に呼ばれればAPIErrorが生成されてjson出力されるはず`, async () => {
@@ -99,14 +99,14 @@ describe('エラーハンドラーミドルウェア', () => {
 
     // tslint:disable-next-line:mocha-no-side-effect-code
     [
-        new pecorino.factory.errors.Argument(''),
-        new pecorino.factory.errors.Unauthorized(),
-        new pecorino.factory.errors.Forbidden(),
-        new pecorino.factory.errors.NotFound(''),
-        new pecorino.factory.errors.AlreadyInUse('', []),
-        new pecorino.factory.errors.RateLimitExceeded(),
-        new pecorino.factory.errors.NotImplemented(),
-        new pecorino.factory.errors.ServiceUnavailable()
+        new chevre.factory.errors.Argument(''),
+        new chevre.factory.errors.Unauthorized(),
+        new chevre.factory.errors.Forbidden(),
+        new chevre.factory.errors.NotFound(''),
+        new chevre.factory.errors.AlreadyInUse('', []),
+        new chevre.factory.errors.RateLimitExceeded(),
+        new chevre.factory.errors.NotImplemented(),
+        new chevre.factory.errors.ServiceUnavailable()
     ].forEach((err) => {
         it(`PECORINOError配列と共に呼ばれればAPIErrorが生成されてjson出力されるはず ${err.reason}`, async () => {
             const params = {

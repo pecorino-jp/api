@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 転送取引ルーター
  */
-const pecorino = require("@pecorino/domain");
+const chevre = require("@chevre/domain");
 const createDebug = require("debug");
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
@@ -25,9 +25,9 @@ const permitScopes_1 = require("../../middlewares/permitScopes");
 const validator_1 = require("../../middlewares/validator");
 const debug = createDebug('pecorino-api:router');
 transferTransactionsRouter.use(authentication_1.default);
-const accountRepo = new pecorino.repository.Account(mongoose.connection);
-const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
-const transactionRepo = new pecorino.repository.AccountTransaction(mongoose.connection);
+const accountRepo = new chevre.repository.Account(mongoose.connection);
+const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
+const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
     express_validator_1.body('project.typeOf')
         .not()
@@ -78,7 +78,7 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
         .withMessage(() => 'required')
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const transaction = yield pecorino.service.accountTransaction.transfer.start(Object.assign(Object.assign({ project: req.body.project, typeOf: pecorino.factory.account.transactionType.Transfer, agent: {
+        const transaction = yield chevre.service.accountTransaction.transfer.start(Object.assign(Object.assign({ project: req.body.project, typeOf: chevre.factory.account.transactionType.Transfer, agent: {
                 typeOf: req.body.agent.typeOf,
                 id: (req.body.agent.id !== undefined) ? req.body.agent.id : req.user.sub,
                 name: req.body.agent.name,
@@ -114,14 +114,14 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
 transferTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        yield pecorino.service.accountTransaction.confirm(Object.assign(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }), { typeOf: pecorino.factory.account.transactionType.Transfer }))({ accountTransaction: transactionRepo });
+        yield chevre.service.accountTransaction.confirm(Object.assign(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }), { typeOf: chevre.factory.account.transactionType.Transfer }))({ accountTransaction: transactionRepo });
         debug('transaction confirmed.');
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-        const taskRepo = new pecorino.repository.Task(mongoose.connection);
+        const taskRepo = new chevre.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
-        pecorino.service.accountTransaction.exportTasks({
-            status: pecorino.factory.transactionStatusType.Confirmed,
-            typeOf: pecorino.factory.account.transactionType.Transfer
+        chevre.service.accountTransaction.exportTasks({
+            status: chevre.factory.transactionStatusType.Confirmed,
+            typeOf: chevre.factory.account.transactionType.Transfer
         })({
             task: taskRepo,
             accountTransaction: transactionRepo
@@ -136,14 +136,14 @@ transferTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default
 transferTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        yield transactionRepo.cancel(Object.assign({ typeOf: pecorino.factory.account.transactionType.Transfer }, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
+        yield transactionRepo.cancel(Object.assign({ typeOf: chevre.factory.account.transactionType.Transfer }, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
         debug('transaction canceled.');
         // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-        const taskRepo = new pecorino.repository.Task(mongoose.connection);
+        const taskRepo = new chevre.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
-        pecorino.service.accountTransaction.exportTasks({
-            status: pecorino.factory.transactionStatusType.Canceled,
-            typeOf: pecorino.factory.account.transactionType.Transfer
+        chevre.service.accountTransaction.exportTasks({
+            status: chevre.factory.transactionStatusType.Canceled,
+            typeOf: chevre.factory.account.transactionType.Transfer
         })({
             task: taskRepo,
             accountTransaction: transactionRepo

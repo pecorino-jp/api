@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * タスクリトライ
  */
-const pecorino = require("@pecorino/domain");
+const chevre = require("@chevre/domain");
 const connectMongo_1 = require("../../../connectMongo");
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     const connection = yield connectMongo_1.connectMongo({ defaultConnection: false });
@@ -20,14 +20,14 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 1000;
     const RETRY_INTERVAL_MINUTES = 10;
-    const taskRepo = new pecorino.repository.Task(connection);
+    const taskRepo = new chevre.repository.Task(connection);
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         if (count > MAX_NUBMER_OF_PARALLEL_TASKS) {
             return;
         }
         count += 1;
         try {
-            yield pecorino.service.task.retry({ intervalInMinutes: RETRY_INTERVAL_MINUTES })({ task: taskRepo });
+            yield chevre.service.task.retry({ intervalInMinutes: RETRY_INTERVAL_MINUTES })({ task: taskRepo });
         }
         catch (error) {
             // tslint:disable-next-line:no-console

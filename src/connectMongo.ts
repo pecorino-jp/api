@@ -1,7 +1,7 @@
 /**
  * MongoDBコネクション確立
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as createDebug from 'debug';
 import * as mongoose from 'mongoose';
 
@@ -42,7 +42,7 @@ export async function connectMongo(params: {
             if (connection.readyState === 1) {
                 // 接続済であれば疎通確認
                 let pingResult: any;
-                await new Promise((resolve) => {
+                await new Promise<void>((resolve) => {
                     try {
                         connection.db.admin()
                             .ping()
@@ -74,14 +74,14 @@ export async function connectMongo(params: {
                 await connection.close();
                 await connection.openUri(MONGOLAB_URI, connectOptions);
                 debug('MongoDB reconnected!');
-                await pecorino.service.notification.report2developers(
+                await chevre.service.notification.report2developers(
                     'api:connectMongo',
                     'MongoDB connection reestablished!'
                 )();
             } catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error('mongoose.connect:', error);
-                await pecorino.service.notification.report2developers(
+                await chevre.service.notification.report2developers(
                     'api:connectMongo',
                     `MongoDB connection error: ${error.stack}`
                 )();

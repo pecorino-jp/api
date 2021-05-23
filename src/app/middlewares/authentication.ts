@@ -1,8 +1,8 @@
 /**
  * oauthミドルウェア
  */
+import * as chevre from '@chevre/domain';
 import { cognitoAuth } from '@motionpicture/express-middleware';
-import * as pecorino from '@pecorino/domain';
 import * as createDebug from 'debug';
 
 const debug = createDebug('pecorino-api:middlewares:authentication');
@@ -21,15 +21,15 @@ const authentication = cognitoAuth({
         } catch (error) {
             // AmazonCognitoAPIのレート制限をハンドリング
             if (error.name === 'TooManyRequestsException') {
-                next(new pecorino.factory.errors.RateLimitExceeded(`getUser ${error.message}`));
+                next(new chevre.factory.errors.RateLimitExceeded(`getUser ${error.message}`));
             } else {
-                next(new pecorino.factory.errors.Unauthorized(`${error.name}:${error.message}`));
+                next(new chevre.factory.errors.Unauthorized(`${error.name}:${error.message}`));
             }
         }
     },
     unauthorizedHandler: (err, __1, __2, next) => {
         debug('unauthorized err handled', err);
-        next(new pecorino.factory.errors.Unauthorized(err.message));
+        next(new chevre.factory.errors.Unauthorized(err.message));
     }
 });
 

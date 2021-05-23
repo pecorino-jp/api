@@ -1,7 +1,7 @@
 /**
  * 入金取引ルーター
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
 import { body } from 'express-validator';
@@ -19,9 +19,9 @@ const debug = createDebug('pecorino-api:router');
 
 depositTransactionsRouter.use(authentication);
 
-const accountRepo = new pecorino.repository.Account(mongoose.connection);
-const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
-const transactionRepo = new pecorino.repository.AccountTransaction(mongoose.connection);
+const accountRepo = new chevre.repository.Account(mongoose.connection);
+const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
+const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
 depositTransactionsRouter.post(
     '/start',
@@ -78,9 +78,9 @@ depositTransactionsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            const transaction = await pecorino.service.accountTransaction.deposit.start({
+            const transaction = await chevre.service.accountTransaction.deposit.start({
                 project: req.body.project,
-                typeOf: pecorino.factory.account.transactionType.Deposit,
+                typeOf: chevre.factory.account.transactionType.Deposit,
                 agent: {
                     typeOf: req.body.agent.typeOf,
                     id: (req.body.agent.id !== undefined) ? req.body.agent.id : req.user.sub,
@@ -127,18 +127,18 @@ depositTransactionsRouter.put(
         try {
             const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
 
-            await pecorino.service.accountTransaction.confirm({
+            await chevre.service.accountTransaction.confirm({
                 ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId },
-                typeOf: pecorino.factory.account.transactionType.Deposit
+                typeOf: chevre.factory.account.transactionType.Deposit
             })({ accountTransaction: transactionRepo });
             debug('transaction confirmed.');
 
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-            const taskRepo = new pecorino.repository.Task(mongoose.connection);
+            const taskRepo = new chevre.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
-            pecorino.service.accountTransaction.exportTasks({
-                status: pecorino.factory.transactionStatusType.Confirmed,
-                typeOf: pecorino.factory.account.transactionType.Deposit
+            chevre.service.accountTransaction.exportTasks({
+                status: chevre.factory.transactionStatusType.Confirmed,
+                typeOf: chevre.factory.account.transactionType.Deposit
             })({
                 task: taskRepo,
                 accountTransaction: transactionRepo
@@ -161,17 +161,17 @@ depositTransactionsRouter.put(
             const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
 
             await transactionRepo.cancel({
-                typeOf: pecorino.factory.account.transactionType.Deposit,
+                typeOf: chevre.factory.account.transactionType.Deposit,
                 ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }
             });
             debug('transaction canceled.');
 
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-            const taskRepo = new pecorino.repository.Task(mongoose.connection);
+            const taskRepo = new chevre.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
-            pecorino.service.accountTransaction.exportTasks({
-                status: pecorino.factory.transactionStatusType.Canceled,
-                typeOf: pecorino.factory.account.transactionType.Deposit
+            chevre.service.accountTransaction.exportTasks({
+                status: chevre.factory.transactionStatusType.Canceled,
+                typeOf: chevre.factory.account.transactionType.Deposit
             })({
                 task: taskRepo,
                 accountTransaction: transactionRepo

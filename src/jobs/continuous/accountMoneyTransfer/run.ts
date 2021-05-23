@@ -1,7 +1,7 @@
 /**
  * 現金転送実行
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as createDebug from 'debug';
 
 import { connectMongo } from '../../../connectMongo';
@@ -26,7 +26,7 @@ export default async () => {
 
             try {
                 debug('count:', count);
-                await pecorino.service.task.executeByName({ name: pecorino.factory.taskName.AccountMoneyTransfer })({
+                await chevre.service.task.executeByName({ name: chevre.factory.taskName.AccountMoneyTransfer })({
                     connection: connection
                 });
             } catch (error) {

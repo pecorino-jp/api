@@ -1,7 +1,7 @@
 /**
  * アクションルーター
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import { Router } from 'express';
 import { query } from 'express-validator';
 import * as mongoose from 'mongoose';
@@ -33,7 +33,7 @@ accountActionsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
+            const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
             const actions = await actionRepo.search({
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
@@ -67,14 +67,14 @@ accountActionsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            const searchConditions: pecorino.factory.account.action.moneyTransfer.ISearchConditions = {
+            const searchConditions: chevre.factory.account.action.moneyTransfer.ISearchConditions = {
                 ...req.query,
                 // tslint:disable-next-line:no-magic-numbers
                 limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
                 page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1
             };
 
-            const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
+            const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
             let actions = await actionRepo.searchTransferActions(searchConditions);
 
             // 互換性維持対応

@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * アクションルーター
  */
-const pecorino = require("@pecorino/domain");
+const chevre = require("@chevre/domain");
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const mongoose = require("mongoose");
@@ -35,7 +35,7 @@ accountActionsRouter.get('', permitScopes_1.default(['admin']), ...[
         .toDate()
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
+        const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
         const actions = yield actionRepo.search(Object.assign(Object.assign({}, req.query), { 
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 }));
@@ -62,7 +62,7 @@ accountActionsRouter.get('/moneyTransfer', permitScopes_1.default(['admin']), ..
         const searchConditions = Object.assign(Object.assign({}, req.query), { 
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 });
-        const actionRepo = new pecorino.repository.AccountAction(mongoose.connection);
+        const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
         let actions = yield actionRepo.searchTransferActions(searchConditions);
         // 互換性維持対応
         actions = actions.map((a) => {

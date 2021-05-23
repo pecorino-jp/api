@@ -1,7 +1,7 @@
 /**
  * タスク中止
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as moment from 'moment';
 
 import { connectMongo } from '../../../connectMongo';
@@ -14,7 +14,7 @@ export default async () => {
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 1000;
     const RETRY_INTERVAL_MINUTES = 10;
-    const taskRepo = new pecorino.repository.Task(connection);
+    const taskRepo = new chevre.repository.Task(connection);
 
     setInterval(
         async () => {
@@ -25,7 +25,7 @@ export default async () => {
             count += 1;
 
             try {
-                await pecorino.service.task.abort({ intervalInMinutes: RETRY_INTERVAL_MINUTES })({ task: taskRepo });
+                await chevre.service.task.abort({ intervalInMinutes: RETRY_INTERVAL_MINUTES })({ task: taskRepo });
 
                 // 過去の不要なタスクを削除
                 await taskRepo.taskModel.deleteMany({
@@ -35,7 +35,7 @@ export default async () => {
                             .add(-7, 'days')
                             .toDate()
                     },
-                    status: { $in: [pecorino.factory.taskStatus.Aborted, pecorino.factory.taskStatus.Executed] }
+                    status: { $in: [chevre.factory.taskStatus.Aborted, chevre.factory.taskStatus.Executed] }
                 })
                     .exec();
             } catch (error) {
