@@ -1,10 +1,9 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * スコープ許可ミドルウェア
- * @module middlewares.permitScopes
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-const pecorino = require("@pecorino/domain");
+const chevre = require("@chevre/domain");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:permitScopes');
 exports.default = (permittedScopes) => {
@@ -24,7 +23,7 @@ exports.default = (permittedScopes) => {
         try {
             debug('checking scope requirements...', permittedScopesWithResourceServerIdentifier);
             if (!isScopesPermitted(req.user.scopes, permittedScopesWithResourceServerIdentifier)) {
-                next(new pecorino.factory.errors.Forbidden('scope requirements not satisfied'));
+                next(new chevre.factory.errors.Forbidden('scope requirements not satisfied'));
             }
             else {
                 next();

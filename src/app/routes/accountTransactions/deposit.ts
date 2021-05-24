@@ -1,7 +1,7 @@
 /**
- * 支払取引ルーター
+ * 入金取引ルーター
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
 import { body } from 'express-validator';
@@ -9,7 +9,7 @@ import { NO_CONTENT } from 'http-status';
 import * as moment from 'moment';
 import * as mongoose from 'mongoose';
 
-const withdrawTransactionsRouter = Router();
+const depositTransactionsRouter = Router();
 
 import authentication from '../../middlewares/authentication';
 import permitScopes from '../../middlewares/permitScopes';
@@ -17,13 +17,13 @@ import validator from '../../middlewares/validator';
 
 const debug = createDebug('pecorino-api:router');
 
-withdrawTransactionsRouter.use(authentication);
+depositTransactionsRouter.use(authentication);
 
-const accountRepo = new pecorino.repository.Account(mongoose.connection);
-const actionRepo = new pecorino.repository.Action(mongoose.connection);
-const transactionRepo = new pecorino.repository.Transaction(mongoose.connection);
+const accountRepo = new chevre.repository.Account(mongoose.connection);
+const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
+const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
-withdrawTransactionsRouter.post(
+depositTransactionsRouter.post(
     '/start',
     permitScopes(['admin']),
     ...[
@@ -41,11 +41,15 @@ withdrawTransactionsRouter.post(
             .isEmpty()
             .withMessage(() => 'required')
             .isISO8601(),
-        body('agent.name')
+        body('agent')
             .not()
             .isEmpty()
             .withMessage(() => 'required'),
         body('agent.typeOf')
+            .not()
+            .isEmpty()
+            .withMessage(() => 'required'),
+        body('agent.name')
             .not()
             .isEmpty()
             .withMessage(() => 'required'),
@@ -66,7 +70,7 @@ withdrawTransactionsRouter.post(
             .isEmpty()
             .withMessage(() => 'required')
             .isInt(),
-        body('fromAccountNumber')
+        body('toAccountNumber')
             .not()
             .isEmpty()
             .withMessage(() => 'required')
@@ -74,9 +78,9 @@ withdrawTransactionsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            const transaction = await pecorino.service.transaction.withdraw.start({
+            const transaction = await chevre.service.accountTransaction.deposit.start({
                 project: req.body.project,
-                typeOf: pecorino.factory.transactionType.Withdraw,
+                typeOf: chevre.factory.account.transactionType.Deposit,
                 agent: {
                     typeOf: req.body.agent.typeOf,
                     id: (req.body.agent.id !== undefined) ? req.body.agent.id : req.user.sub,
@@ -92,8 +96,8 @@ withdrawTransactionsRouter.post(
                 object: {
                     clientUser: req.user,
                     amount: parseInt(req.body.amount, 10),
-                    fromLocation: {
-                        accountNumber: req.body.fromAccountNumber
+                    toLocation: {
+                        accountNumber: req.body.toAccountNumber
                     },
                     description: (req.body.notes !== undefined) ? req.body.notes : ''
                 },
@@ -103,7 +107,7 @@ withdrawTransactionsRouter.post(
                     ? { identifier: req.body.identifier }
                     : undefined,
                 ...(typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined
-            })({ account: accountRepo, action: actionRepo, transaction: transactionRepo });
+            })({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
 
             // tslint:disable-next-line:no-string-literal
             // const host = req.headers['host'];
@@ -115,7 +119,7 @@ withdrawTransactionsRouter.post(
     }
 );
 
-withdrawTransactionsRouter.put(
+depositTransactionsRouter.put(
     '/:transactionId/confirm',
     permitScopes(['admin']),
     validator,
@@ -123,21 +127,21 @@ withdrawTransactionsRouter.put(
         try {
             const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
 
-            await pecorino.service.transaction.confirm({
+            await chevre.service.accountTransaction.confirm({
                 ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId },
-                typeOf: pecorino.factory.transactionType.Withdraw
-            })({ transaction: transactionRepo });
+                typeOf: chevre.factory.account.transactionType.Deposit
+            })({ accountTransaction: transactionRepo });
             debug('transaction confirmed.');
 
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-            const taskRepo = new pecorino.repository.Task(mongoose.connection);
+            const taskRepo = new chevre.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
-            pecorino.service.transaction.exportTasks({
-                status: pecorino.factory.transactionStatusType.Confirmed,
-                typeOf: pecorino.factory.transactionType.Withdraw
+            chevre.service.accountTransaction.exportTasks({
+                status: chevre.factory.transactionStatusType.Confirmed,
+                typeOf: chevre.factory.account.transactionType.Deposit
             })({
                 task: taskRepo,
-                transaction: transactionRepo
+                accountTransaction: transactionRepo
             });
 
             res.status(NO_CONTENT)
@@ -148,7 +152,7 @@ withdrawTransactionsRouter.put(
     }
 );
 
-withdrawTransactionsRouter.put(
+depositTransactionsRouter.put(
     '/:transactionId/cancel',
     permitScopes(['admin']),
     validator,
@@ -157,20 +161,20 @@ withdrawTransactionsRouter.put(
             const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
 
             await transactionRepo.cancel({
-                typeOf: pecorino.factory.transactionType.Withdraw,
+                typeOf: chevre.factory.account.transactionType.Deposit,
                 ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }
             });
             debug('transaction canceled.');
 
             // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-            const taskRepo = new pecorino.repository.Task(mongoose.connection);
+            const taskRepo = new chevre.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
-            pecorino.service.transaction.exportTasks({
-                status: pecorino.factory.transactionStatusType.Canceled,
-                typeOf: pecorino.factory.transactionType.Withdraw
+            chevre.service.accountTransaction.exportTasks({
+                status: chevre.factory.transactionStatusType.Canceled,
+                typeOf: chevre.factory.account.transactionType.Deposit
             })({
                 task: taskRepo,
-                transaction: transactionRepo
+                accountTransaction: transactionRepo
             });
 
             res.status(NO_CONTENT)
@@ -181,36 +185,4 @@ withdrawTransactionsRouter.put(
     }
 );
 
-withdrawTransactionsRouter.put(
-    '/:transactionId/return',
-    permitScopes(['admin']),
-    validator,
-    async (req, res, next) => {
-        try {
-            const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-
-            await transactionRepo.returnMoneyTransfer({
-                typeOf: pecorino.factory.transactionType.Withdraw,
-                ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }
-            });
-
-            // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-            const taskRepo = new pecorino.repository.Task(mongoose.connection);
-            // tslint:disable-next-line:no-floating-promises
-            pecorino.service.transaction.exportTasks({
-                status: pecorino.factory.transactionStatusType.Returned,
-                typeOf: pecorino.factory.transactionType.Withdraw
-            })({
-                task: taskRepo,
-                transaction: transactionRepo
-            });
-
-            res.status(NO_CONTENT)
-                .end();
-        } catch (error) {
-            next(error);
-        }
-    }
-);
-
-export default withdrawTransactionsRouter;
+export default depositTransactionsRouter;

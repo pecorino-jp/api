@@ -6,8 +6,8 @@ import makeTransactionExpired from './continuous/makeTransactionExpired/run';
 import reexportTransactionTasks from './continuous/reexportTransactionTasks/run';
 import retryTasks from './continuous/retryTasks/run';
 
-import cancelMoneyTransfer from './continuous/cancelMoneyTransfer/run';
-import moneyTransfer from './continuous/moneyTransfer/run';
+import accountMoneyTransfer from './continuous/accountMoneyTransfer/run';
+import cancelAccountMoneyTransfer from './continuous/cancelAccountMoneyTransfer/run';
 
 import onDepositCanceled from './continuous/onDepositCanceled/run';
 import onDepositConfirmed from './continuous/onDepositConfirmed/run';
@@ -25,8 +25,8 @@ export default async () => {
     await reexportTransactionTasks();
     await retryTasks();
 
-    await cancelMoneyTransfer();
-    await moneyTransfer();
+    await accountMoneyTransfer();
+    await cancelAccountMoneyTransfer();
 
     await onDepositCanceled();
     await onDepositConfirmed();

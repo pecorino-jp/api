@@ -1,10 +1,9 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 404ハンドラーミドルウェア
- * @module middlewares.notFoundHandler
  */
-Object.defineProperty(exports, "__esModule", { value: true });
-const pecorino = require("@pecorino/domain");
+const chevre = require("@chevre/domain");
 exports.default = (req, __, next) => {
-    next(new pecorino.factory.errors.NotFound(`router for [${req.originalUrl}]`));
+    next(new chevre.factory.errors.NotFound(`router for [${req.originalUrl}]`));
 };

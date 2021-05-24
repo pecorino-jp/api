@@ -1,7 +1,7 @@
 /**
  * 取引タスクエクスポートが実行中のままになっている取引を監視する
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as createDebug from 'debug';
 
 import { connectMongo } from '../../../connectMongo';
@@ -15,7 +15,7 @@ export default async () => {
 
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 1000;
-    const transactionRepo = new pecorino.repository.Transaction(connection);
+    const transactionRepo = new chevre.repository.AccountTransaction(connection);
     const RETRY_INTERVAL_MINUTES = 10;
 
     setInterval(

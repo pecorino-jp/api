@@ -18,6 +18,27 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.8.0 - 2021-05-24
+
+### Changed
+
+- 不要なインターフェースを削除
+- タスク名を再定義
+- アクションを口座アクションに変換
+- 取引を口座取引に変換
+- タスクサービスをchevreに仕様統合
+- @chevre/factoryで再構築
+- Chevreとのリポジトリ名重複を解決
+- 口座アクションのコレクション名変更
+- 口座取引のコレクション名変更
+- 全リポジトリを@chevre/domainからのインポートで再構築
+- 口座取引サービスをaccountTransactionにリネーム
+- @chevre/domainで再構築
+
+### Removed
+
+- 返金タスクを削除
+
 ## v5.7.2 - 2020-12-22
 
 ### Fixed

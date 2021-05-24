@@ -1,7 +1,7 @@
 /**
  * 成立取引監視
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 
 import { connectMongo } from '../../../connectMongo';
 
@@ -12,8 +12,8 @@ export default async () => {
 
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 100;
-    const taskRepo = new pecorino.repository.Task(connection);
-    const transactionRepo = new pecorino.repository.Transaction(connection);
+    const taskRepo = new chevre.repository.Task(connection);
+    const transactionRepo = new chevre.repository.AccountTransaction(connection);
 
     setInterval(
         async () => {
@@ -24,10 +24,10 @@ export default async () => {
             countExecute += 1;
 
             try {
-                await pecorino.service.transaction.exportTasks({
-                    status: pecorino.factory.transactionStatusType.Confirmed,
-                    typeOf: pecorino.factory.transactionType.Withdraw
-                })({ task: taskRepo, transaction: transactionRepo });
+                await chevre.service.accountTransaction.exportTasks({
+                    status: chevre.factory.transactionStatusType.Confirmed,
+                    typeOf: chevre.factory.account.transactionType.Withdraw
+                })({ task: taskRepo, accountTransaction: transactionRepo });
             } catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error(error);

@@ -1,7 +1,7 @@
 /**
- * 現金転送実行
+ * 現金転送取消
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as createDebug from 'debug';
 
 import { connectMongo } from '../../../connectMongo';
@@ -15,7 +15,6 @@ export default async () => {
 
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 100;
-    const taskRepo = new pecorino.repository.Task(connection);
 
     setInterval(
         async () => {
@@ -27,9 +26,9 @@ export default async () => {
 
             try {
                 debug('count:', count);
-                await pecorino.service.task.executeByName(
-                    pecorino.factory.taskName.MoneyTransfer
-                )({ taskRepo: taskRepo, connection: connection });
+                await chevre.service.task.executeByName({ name: chevre.factory.taskName.CancelAccountMoneyTransfer })({
+                    connection: connection
+                });
             } catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error(error);

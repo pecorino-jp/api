@@ -12,25 +12,25 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 中止入金取引監視
  */
-const pecorino = require("@pecorino/domain");
+const chevre = require("@chevre/domain");
 const connectMongo_1 = require("../../../connectMongo");
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     const connection = yield connectMongo_1.connectMongo({ defaultConnection: false });
     let countExecute = 0;
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 100;
-    const taskRepo = new pecorino.repository.Task(connection);
-    const transactionRepo = new pecorino.repository.Transaction(connection);
+    const taskRepo = new chevre.repository.Task(connection);
+    const transactionRepo = new chevre.repository.AccountTransaction(connection);
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         if (countExecute > MAX_NUBMER_OF_PARALLEL_TASKS) {
             return;
         }
         countExecute += 1;
         try {
-            yield pecorino.service.transaction.exportTasks({
-                status: pecorino.factory.transactionStatusType.Canceled,
-                typeOf: pecorino.factory.transactionType.Deposit
-            })({ task: taskRepo, transaction: transactionRepo });
+            yield chevre.service.accountTransaction.exportTasks({
+                status: chevre.factory.transactionStatusType.Canceled,
+                typeOf: chevre.factory.account.transactionType.Deposit
+            })({ task: taskRepo, accountTransaction: transactionRepo });
         }
         catch (error) {
             // tslint:disable-next-line:no-console

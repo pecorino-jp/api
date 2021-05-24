@@ -1,13 +1,13 @@
-import { factory } from '@pecorino/domain';
+import { factory } from '@chevre/domain';
 
 /**
  * アプリケーションエラー
  */
 export class APIError extends Error {
     public readonly code: number;
-    public readonly errors: factory.errors.PECORINO[];
+    public readonly errors: factory.errors.Chevre[];
 
-    constructor(code: number, errors: factory.errors.PECORINO[]) {
+    constructor(code: number, errors: factory.errors.Chevre[]) {
         const message = errors.map((error) => error.message)
             .join('\n');
         super(message);

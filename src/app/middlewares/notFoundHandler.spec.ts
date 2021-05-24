@@ -2,7 +2,7 @@
 /**
  * not foundハンドラーミドルウェアテスト
  */
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as assert from 'assert';
 import * as nock from 'nock';
 import * as sinon from 'sinon';
@@ -31,7 +31,7 @@ describe('notFoundHandler.default()', () => {
             next: () => undefined
         };
 
-        sandbox.mock(params).expects('next').once().withExactArgs(sinon.match.instanceOf(pecorino.factory.errors.NotFound));
+        sandbox.mock(params).expects('next').once().withExactArgs(sinon.match.instanceOf(chevre.factory.errors.NotFound));
 
         const result = await notFoundHandler.default(<any>params.req, <any>params.res, params.next);
         assert.equal(result, undefined);

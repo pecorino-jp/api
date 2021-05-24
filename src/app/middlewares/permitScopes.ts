@@ -1,11 +1,11 @@
 /**
  * スコープ許可ミドルウェア
- * @module middlewares.permitScopes
  */
-
-import * as pecorino from '@pecorino/domain';
+import * as chevre from '@chevre/domain';
 import * as createDebug from 'debug';
 import { NextFunction, Request, Response } from 'express';
+
+import { } from '../../@types/index';
 
 const debug = createDebug('pecorino-api:middlewares:permitScopes');
 
@@ -35,7 +35,7 @@ export default (permittedScopes: IScope[]) => {
         try {
             debug('checking scope requirements...', permittedScopesWithResourceServerIdentifier);
             if (!isScopesPermitted(req.user.scopes, permittedScopesWithResourceServerIdentifier)) {
-                next(new pecorino.factory.errors.Forbidden('scope requirements not satisfied'));
+                next(new chevre.factory.errors.Forbidden('scope requirements not satisfied'));
             } else {
                 next();
             }
