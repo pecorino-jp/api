@@ -10,6 +10,18 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## v5.8.0 - 2021-05-24
+
+### Changed
+
 - 不要なインターフェースを削除
 - タスク名を再定義
 - アクションを口座アクションに変換
@@ -23,15 +35,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - 口座取引サービスをaccountTransactionにリネーム
 - @chevre/domainで再構築
 
-### Deprecated
-
 ### Removed
 
 - 返金タスクを削除
-
-### Fixed
-
-### Security
 
 ## v5.7.2 - 2020-12-22
 
