@@ -20,7 +20,8 @@
     "http-status": "^1.4.2",
     "moment": "^2.24.0",
     "mongoose": "^5.10.11",
-    "redis": "^2.8.0"
+    "redis": "^3.1.1",
+    "snyk": "^1.606.0"
   },
   "description": "Pecorino API Web Application",
   "devDependencies": {
@@ -83,7 +84,10 @@
     "tslint": "tslint --project tsconfig.json -c tslint.json --exclude \"**/*.spec.ts\" \"src/**/*.ts\"",
     "preversion": "npm run clean && npm run build && npm test && npm run doc",
     "version": "git add -A",
-    "postversion": "git push origin --tags"
+    "postversion": "git push origin --tags",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
-  "version": "5.8.0"
+  "version": "5.8.0",
+  "snyk": true
 }
