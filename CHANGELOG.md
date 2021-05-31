@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - 取引の金額型を拡張
 - 取引開始時の旧パラメータ対応を廃止
+- 口座アクション検索の旧amount型に対する互換性維持対応を削除
 
 ### Deprecated
 

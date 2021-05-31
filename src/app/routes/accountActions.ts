@@ -72,21 +72,21 @@ accountActionsRouter.get(
             };
 
             const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
-            let actions = await actionRepo.searchTransferActions(searchConditions);
+            const actions = await actionRepo.searchTransferActions(searchConditions);
 
             // 互換性維持対応
-            actions = actions.map((a) => {
-                return {
-                    ...a,
-                    amount: (typeof a.amount === 'number')
-                        ? {
-                            typeOf: 'MonetaryAmount',
-                            currency: 'Point', // 旧データはPointしかないのでこれで十分
-                            value: a.amount
-                        }
-                        : a.amount
-                };
-            });
+            // actions = actions.map((a) => {
+            //     return {
+            //         ...a,
+            //         amount: (typeof a.amount === 'number')
+            //             ? {
+            //                 typeOf: 'MonetaryAmount',
+            //                 currency: 'Point', // 旧データはPointしかないのでこれで十分
+            //                 value: a.amount
+            //             }
+            //             : a.amount
+            //     };
+            // });
 
             res.json(actions);
         } catch (error) {
