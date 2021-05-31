@@ -26,6 +26,14 @@ const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connec
 withdrawTransactionsRouter.post(
     '/start',
     permitScopes(['admin']),
+    // 互換性維持
+    (req, _, next) => {
+        if (typeof req.body.object?.amount === 'number') {
+            req.body.object.amount = { value: req.body.object.amount };
+        }
+
+        next();
+    },
     ...[
         body('project.typeOf')
             .not()
@@ -61,7 +69,7 @@ withdrawTransactionsRouter.post(
             .not()
             .isEmpty()
             .withMessage(() => 'required'),
-        body('amount')
+        body('object.amount.value')
             .not()
             .isEmpty()
             .withMessage(() => 'required')
@@ -91,11 +99,11 @@ withdrawTransactionsRouter.post(
                 },
                 object: {
                     clientUser: req.user,
-                    amount: parseInt(req.body.amount, 10),
+                    amount: { value: Number(req.body.object.amount.value) },
                     fromLocation: {
                         accountNumber: req.body.fromAccountNumber
                     },
-                    description: (req.body.notes !== undefined) ? req.body.notes : ''
+                    description: (typeof req.body.notes === 'string') ? req.body.notes : ''
                 },
                 expires: moment(req.body.expires)
                     .toDate(),

@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- 取引の金額型を拡張
+
 ### Deprecated
 
 ### Removed

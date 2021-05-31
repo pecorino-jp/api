@@ -28,7 +28,15 @@ transferTransactionsRouter.use(authentication_1.default);
 const accountRepo = new chevre.repository.Account(mongoose.connection);
 const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
 const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
-transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...[
+transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), 
+// 互換性維持
+(req, _, next) => {
+    var _a;
+    if (typeof ((_a = req.body.object) === null || _a === void 0 ? void 0 : _a.amount) === 'number') {
+        req.body.object.amount = { value: req.body.object.amount };
+    }
+    next();
+}, ...[
     express_validator_1.body('project.typeOf')
         .not()
         .isEmpty()
@@ -63,7 +71,7 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    express_validator_1.body('amount')
+    express_validator_1.body('object.amount.value')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
@@ -90,14 +98,14 @@ transferTransactionsRouter.post('/start', permitScopes_1.default(['admin']), ...
                 url: req.body.recipient.url
             }, object: {
                 clientUser: req.user,
-                amount: parseInt(req.body.amount, 10),
+                amount: { value: Number(req.body.object.amount.value) },
                 fromLocation: {
                     accountNumber: req.body.fromAccountNumber
                 },
                 toLocation: {
                     accountNumber: req.body.toAccountNumber
                 },
-                description: (req.body.notes !== undefined) ? req.body.notes : ''
+                description: (typeof req.body.notes === 'string') ? req.body.notes : ''
             }, expires: moment(req.body.expires)
                 .toDate() }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
             ? { identifier: req.body.identifier }
