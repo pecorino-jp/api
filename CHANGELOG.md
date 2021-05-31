@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - 取引の金額型を拡張
+- 取引開始時の旧パラメータ対応を廃止
 
 ### Deprecated
 

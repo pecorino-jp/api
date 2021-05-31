@@ -18,7 +18,6 @@ const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");
 const mongoose = require("mongoose");
-const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
 const accountsRouter = express_1.Router();
@@ -40,7 +39,7 @@ const validations = [
         .not()
         .isEmpty()
         .withMessage(() => 'required')
-        .isIn(['Project']),
+        .isIn([chevre.factory.organizationType.Project]),
     express_validator_1.body('*.project.id')
         .not()
         .isEmpty()
@@ -66,7 +65,6 @@ const validations = [
         .isInt()
         .toInt()
 ];
-accountsRouter.use(authentication_1.default);
 /**
  * 口座開設
  */

@@ -17,14 +17,11 @@ const createDebug = require("debug");
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");
-const moment = require("moment");
 const mongoose = require("mongoose");
 const depositTransactionsRouter = express_1.Router();
-const authentication_1 = require("../../middlewares/authentication");
 const permitScopes_1 = require("../../middlewares/permitScopes");
 const validator_1 = require("../../middlewares/validator");
 const debug = createDebug('pecorino-api:router');
-depositTransactionsRouter.use(authentication_1.default);
 const accountRepo = new chevre.repository.Account(mongoose.connection);
 const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
 const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
@@ -37,11 +34,6 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']),
     }
     next();
 }, ...[
-    express_validator_1.body('project.typeOf')
-        .not()
-        .isEmpty()
-        .withMessage(() => 'required')
-        .isIn(['Project']),
     express_validator_1.body('project.id')
         .not()
         .isEmpty()
@@ -50,28 +42,16 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']),
         .not()
         .isEmpty()
         .withMessage(() => 'required')
-        .isISO8601(),
-    express_validator_1.body('agent')
-        .not()
-        .isEmpty()
-        .withMessage(() => 'required'),
-    express_validator_1.body('agent.typeOf')
-        .not()
-        .isEmpty()
-        .withMessage(() => 'required'),
-    express_validator_1.body('agent.name')
-        .not()
-        .isEmpty()
-        .withMessage(() => 'required'),
-    express_validator_1.body('recipient')
-        .not()
-        .isEmpty()
-        .withMessage(() => 'required'),
-    express_validator_1.body('recipient.typeOf')
-        .not()
-        .isEmpty()
-        .withMessage(() => 'required'),
-    express_validator_1.body('recipient.name')
+        .isISO8601()
+        .toDate(),
+    express_validator_1.body([
+        'agent',
+        'agent.typeOf',
+        'agent.name',
+        'recipient',
+        'recipient.typeOf',
+        'recipient.name'
+    ])
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
@@ -79,16 +59,18 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']),
         .not()
         .isEmpty()
         .withMessage(() => 'required')
-        .isInt(),
-    express_validator_1.body('toAccountNumber')
+        .isInt()
+        .toInt(),
+    express_validator_1.body('object.toLocation.accountNumber')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
-        const transaction = yield chevre.service.accountTransaction.deposit.start(Object.assign(Object.assign({ project: req.body.project, typeOf: chevre.factory.account.transactionType.Deposit, agent: {
+        const transaction = yield chevre.service.accountTransaction.deposit.start(Object.assign(Object.assign({ project: { id: req.body.project.id, typeOf: chevre.factory.organizationType.Project }, typeOf: chevre.factory.account.transactionType.Deposit, agent: {
                 typeOf: req.body.agent.typeOf,
-                id: (req.body.agent.id !== undefined) ? req.body.agent.id : req.user.sub,
+                id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
                 name: req.body.agent.name,
                 url: req.body.agent.url
             }, recipient: {
@@ -98,13 +80,10 @@ depositTransactionsRouter.post('/start', permitScopes_1.default(['admin']),
                 url: req.body.recipient.url
             }, object: {
                 clientUser: req.user,
-                amount: { value: Number(req.body.object.amount.value) },
-                toLocation: {
-                    accountNumber: req.body.toAccountNumber
-                },
-                description: (typeof req.body.notes === 'string') ? req.body.notes : ''
-            }, expires: moment(req.body.expires)
-                .toDate() }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
+                amount: { value: req.body.object.amount.value },
+                toLocation: { accountNumber: req.body.object.toLocation.accountNumber },
+                description: (typeof ((_a = req.body.object) === null || _a === void 0 ? void 0 : _a.description) === 'string') ? req.body.object.description : ''
+            }, expires: req.body.expires }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
             ? { identifier: req.body.identifier }
             : undefined), (typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined))({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
         // tslint:disable-next-line:no-string-literal

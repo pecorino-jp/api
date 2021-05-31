@@ -8,7 +8,6 @@ import { body, query } from 'express-validator';
 import { CREATED, NO_CONTENT } from 'http-status';
 import * as mongoose from 'mongoose';
 
-import authentication from '../middlewares/authentication';
 import permitScopes from '../middlewares/permitScopes';
 import validator from '../middlewares/validator';
 
@@ -34,7 +33,7 @@ const validations: RequestHandler[] = [
         .not()
         .isEmpty()
         .withMessage(() => 'required')
-        .isIn(['Project']),
+        .isIn([chevre.factory.organizationType.Project]),
     body('*.project.id')
         .not()
         .isEmpty()
@@ -60,8 +59,6 @@ const validations: RequestHandler[] = [
         .isInt()
         .toInt()
 ];
-
-accountsRouter.use(authentication);
 
 /**
  * 口座開設

@@ -6,18 +6,14 @@ import * as createDebug from 'debug';
 import { Router } from 'express';
 import { body } from 'express-validator';
 import { NO_CONTENT } from 'http-status';
-import * as moment from 'moment';
 import * as mongoose from 'mongoose';
 
 const depositTransactionsRouter = Router();
 
-import authentication from '../../middlewares/authentication';
 import permitScopes from '../../middlewares/permitScopes';
 import validator from '../../middlewares/validator';
 
 const debug = createDebug('pecorino-api:router');
-
-depositTransactionsRouter.use(authentication);
 
 const accountRepo = new chevre.repository.Account(mongoose.connection);
 const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
@@ -35,11 +31,6 @@ depositTransactionsRouter.post(
         next();
     },
     ...[
-        body('project.typeOf')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required')
-            .isIn(['Project']),
         body('project.id')
             .not()
             .isEmpty()
@@ -48,28 +39,16 @@ depositTransactionsRouter.post(
             .not()
             .isEmpty()
             .withMessage(() => 'required')
-            .isISO8601(),
-        body('agent')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required'),
-        body('agent.typeOf')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required'),
-        body('agent.name')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required'),
-        body('recipient')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required'),
-        body('recipient.typeOf')
-            .not()
-            .isEmpty()
-            .withMessage(() => 'required'),
-        body('recipient.name')
+            .isISO8601()
+            .toDate(),
+        body([
+            'agent',
+            'agent.typeOf',
+            'agent.name',
+            'recipient',
+            'recipient.typeOf',
+            'recipient.name'
+        ])
             .not()
             .isEmpty()
             .withMessage(() => 'required'),
@@ -77,8 +56,9 @@ depositTransactionsRouter.post(
             .not()
             .isEmpty()
             .withMessage(() => 'required')
-            .isInt(),
-        body('toAccountNumber')
+            .isInt()
+            .toInt(),
+        body('object.toLocation.accountNumber')
             .not()
             .isEmpty()
             .withMessage(() => 'required')
@@ -87,11 +67,11 @@ depositTransactionsRouter.post(
     async (req, res, next) => {
         try {
             const transaction = await chevre.service.accountTransaction.deposit.start({
-                project: req.body.project,
+                project: { id: req.body.project.id, typeOf: chevre.factory.organizationType.Project },
                 typeOf: chevre.factory.account.transactionType.Deposit,
                 agent: {
                     typeOf: req.body.agent.typeOf,
-                    id: (req.body.agent.id !== undefined) ? req.body.agent.id : req.user.sub,
+                    id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
                     name: req.body.agent.name,
                     url: req.body.agent.url
                 },
@@ -103,14 +83,11 @@ depositTransactionsRouter.post(
                 },
                 object: {
                     clientUser: req.user,
-                    amount: { value: Number(req.body.object.amount.value) },
-                    toLocation: {
-                        accountNumber: req.body.toAccountNumber
-                    },
-                    description: (typeof req.body.notes === 'string') ? req.body.notes : ''
+                    amount: { value: req.body.object.amount.value },
+                    toLocation: { accountNumber: req.body.object.toLocation.accountNumber },
+                    description: (typeof req.body.object?.description === 'string') ? req.body.object.description : ''
                 },
-                expires: moment(req.body.expires)
-                    .toDate(),
+                expires: req.body.expires,
                 ...(typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                     ? { identifier: req.body.identifier }
                     : undefined,

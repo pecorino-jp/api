@@ -16,11 +16,9 @@ const chevre = require("@chevre/domain");
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const mongoose = require("mongoose");
-const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
 const accountActionsRouter = express_1.Router();
-accountActionsRouter.use(authentication_1.default);
 /**
  * アクション検索
  */
