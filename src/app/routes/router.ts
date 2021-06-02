@@ -12,6 +12,8 @@ import depositTransactionsRouter from './accountTransactions/deposit';
 import transferTransactionsRouter from './accountTransactions/transfer';
 import withdrawTransactionsRouter from './accountTransactions/withdraw';
 
+import authentication from '../middlewares/authentication';
+
 const router = express.Router();
 
 // middleware that is specific to this router
@@ -22,6 +24,9 @@ const router = express.Router();
 
 router.use('/_ah', ahRouter);
 router.use('/health', healthRouter);
+
+// 認証
+router.use(authentication);
 
 router.use('/accounts', accountsRouter);
 router.use('/actions', accountActionsRouter);

@@ -16,11 +16,9 @@ const chevre = require("@chevre/domain");
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const mongoose = require("mongoose");
-const authentication_1 = require("../middlewares/authentication");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
 const accountActionsRouter = express_1.Router();
-accountActionsRouter.use(authentication_1.default);
 /**
  * アクション検索
  */
@@ -63,17 +61,20 @@ accountActionsRouter.get('/moneyTransfer', permitScopes_1.default(['admin']), ..
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 });
         const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
-        let actions = yield actionRepo.searchTransferActions(searchConditions);
+        const actions = yield actionRepo.searchTransferActions(searchConditions);
         // 互換性維持対応
-        actions = actions.map((a) => {
-            return Object.assign(Object.assign({}, a), { amount: (typeof a.amount === 'number')
-                    ? {
-                        typeOf: 'MonetaryAmount',
-                        currency: 'Point',
-                        value: a.amount
-                    }
-                    : a.amount });
-        });
+        // actions = actions.map((a) => {
+        //     return {
+        //         ...a,
+        //         amount: (typeof a.amount === 'number')
+        //             ? {
+        //                 typeOf: 'MonetaryAmount',
+        //                 currency: 'Point', // 旧データはPointしかないのでこれで十分
+        //                 value: a.amount
+        //             }
+        //             : a.amount
+        //     };
+        // });
         res.json(actions);
     }
     catch (error) {
