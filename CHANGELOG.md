@@ -10,8 +10,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- 各リソースのプロジェクトID検索条件指定を最適化($exists: trueを削除)
-
 ### Deprecated
 
 ### Removed
@@ -19,6 +17,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 ### Security
+
+## v5.9.2 - 2021-07-05
+
+### Changed
+
+- 各リソースのプロジェクトID検索条件指定を最適化($exists: trueを削除)
 
 ## v5.9.1 - 2021-06-24
 
