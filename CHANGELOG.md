@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.10.0 - 2021-09-03
+
+### Changed
+
+- 口座アクションクリーニング処理を追加
+
 ## v5.9.2 - 2021-07-05
 
 ### Changed
