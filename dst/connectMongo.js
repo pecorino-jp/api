@@ -13,7 +13,7 @@ exports.connectMongo = void 0;
 /**
  * MongoDBコネクション確立
  */
-const chevre = require("@chevre/domain");
+const domain_1 = require("@cinerino/domain");
 const createDebug = require("debug");
 const mongoose = require("mongoose");
 const debug = createDebug('pecorino-api:connectMongo');
@@ -79,12 +79,12 @@ function connectMongo(params) {
                 yield connection.close();
                 yield connection.openUri(MONGOLAB_URI, connectOptions);
                 debug('MongoDB reconnected!');
-                yield chevre.service.notification.report2developers('api:connectMongo', 'MongoDB connection reestablished!')();
+                yield domain_1.chevre.service.notification.report2developers('api:connectMongo', 'MongoDB connection reestablished!')();
             }
             catch (error) {
                 // tslint:disable-next-line:no-console
                 console.error('mongoose.connect:', error);
-                yield chevre.service.notification.report2developers('api:connectMongo', `MongoDB connection error: ${error.stack}`)();
+                yield domain_1.chevre.service.notification.report2developers('api:connectMongo', `MongoDB connection error: ${error.stack}`)();
             }
         }), PING_INTERVAL);
         return connection;

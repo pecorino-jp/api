@@ -1,7 +1,7 @@
 /**
  * 口座ルーター
  */
-import * as chevre from '@chevre/domain';
+import { chevre } from '@cinerino/domain';
 import * as createDebug from 'debug';
 import { RequestHandler, Router } from 'express';
 import { body, query } from 'express-validator';

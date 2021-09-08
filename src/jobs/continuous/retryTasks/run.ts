@@ -1,7 +1,7 @@
 /**
  * タスクリトライ
  */
-import * as chevre from '@chevre/domain';
+import { chevre } from '@cinerino/domain';
 
 import { connectMongo } from '../../../connectMongo';
 

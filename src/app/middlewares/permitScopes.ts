@@ -1,7 +1,7 @@
 /**
  * スコープ許可ミドルウェア
  */
-import * as chevre from '@chevre/domain';
+import { chevre } from '@cinerino/domain';
 import * as createDebug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 

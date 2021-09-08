@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * タスク中止
  */
-const chevre = require("@chevre/domain");
+const domain_1 = require("@cinerino/domain");
 const moment = require("moment");
 const connectMongo_1 = require("../../../connectMongo");
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -21,14 +21,14 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 1000;
     const RETRY_INTERVAL_MINUTES = 10;
-    const taskRepo = new chevre.repository.Task(connection);
+    const taskRepo = new domain_1.chevre.repository.Task(connection);
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         if (count > MAX_NUBMER_OF_PARALLEL_TASKS) {
             return;
         }
         count += 1;
         try {
-            yield chevre.service.task.abort({ intervalInMinutes: RETRY_INTERVAL_MINUTES })({ task: taskRepo });
+            yield domain_1.chevre.service.task.abort({ intervalInMinutes: RETRY_INTERVAL_MINUTES })({ task: taskRepo });
             // 過去の不要なタスクを削除
             yield taskRepo.taskModel.deleteMany({
                 runsAt: {
@@ -37,7 +37,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
                         .add(-7, 'days')
                         .toDate()
                 },
-                status: { $in: [chevre.factory.taskStatus.Aborted, chevre.factory.taskStatus.Executed] }
+                status: { $in: [domain_1.chevre.factory.taskStatus.Aborted, domain_1.chevre.factory.taskStatus.Executed] }
             })
                 .exec();
         }

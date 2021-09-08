@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * スコープ許可ミドルウェア
  */
-const chevre = require("@chevre/domain");
+const domain_1 = require("@cinerino/domain");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:permitScopes');
 exports.default = (permittedScopes) => {
@@ -23,7 +23,7 @@ exports.default = (permittedScopes) => {
         try {
             debug('checking scope requirements...', permittedScopesWithResourceServerIdentifier);
             if (!isScopesPermitted(req.user.scopes, permittedScopesWithResourceServerIdentifier)) {
-                next(new chevre.factory.errors.Forbidden('scope requirements not satisfied'));
+                next(new domain_1.chevre.factory.errors.Forbidden('scope requirements not satisfied'));
             }
             else {
                 next();

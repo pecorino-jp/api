@@ -1,7 +1,7 @@
 /**
  * アクションルーター
  */
-import * as chevre from '@chevre/domain';
+import { chevre } from '@cinerino/domain';
 import { Router } from 'express';
 import { query } from 'express-validator';
 import * as mongoose from 'mongoose';

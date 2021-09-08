@@ -1,7 +1,7 @@
 /**
  * 中止入金取引監視
  */
-import * as chevre from '@chevre/domain';
+import { chevre } from '@cinerino/domain';
 
 import { connectMongo } from '../../../connectMongo';
 

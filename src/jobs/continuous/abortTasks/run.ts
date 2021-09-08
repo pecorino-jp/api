@@ -1,7 +1,7 @@
 /**
  * タスク中止
  */
-import * as chevre from '@chevre/domain';
+import { chevre } from '@cinerino/domain';
 import * as moment from 'moment';
 
 import { connectMongo } from '../../../connectMongo';

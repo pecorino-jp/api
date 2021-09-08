@@ -1,4 +1,4 @@
-import { factory } from '@chevre/domain';
+import { factory } from '@cinerino/domain';
 
 /**
  * アプリケーションエラー
