@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 取引タスクエクスポートが実行中のままになっている取引を監視する
  */
-const chevre = require("@chevre/domain");
+const domain_1 = require("@cinerino/domain");
 const createDebug = require("debug");
 const connectMongo_1 = require("../../../connectMongo");
 const debug = createDebug('pecorino-api');
@@ -21,7 +21,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
     let countRetry = 0;
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 1000;
-    const transactionRepo = new chevre.repository.AccountTransaction(connection);
+    const transactionRepo = new domain_1.chevre.repository.AccountTransaction(connection);
     const RETRY_INTERVAL_MINUTES = 10;
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         if (countRetry > MAX_NUBMER_OF_PARALLEL_TASKS) {

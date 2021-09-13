@@ -1,7 +1,7 @@
 /**
  * 現金転送実行
  */
-import * as chevre from '@chevre/domain';
+import { chevre } from '@cinerino/domain';
 import * as createDebug from 'debug';
 
 import { connectMongo } from '../../../connectMongo';

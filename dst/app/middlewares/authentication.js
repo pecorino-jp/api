@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * oauthミドルウェア
  */
-const chevre = require("@chevre/domain");
+const domain_1 = require("@cinerino/domain");
 const express_middleware_1 = require("@motionpicture/express-middleware");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:authentication');
@@ -29,16 +29,16 @@ const authentication = express_middleware_1.cognitoAuth({
         catch (error) {
             // AmazonCognitoAPIのレート制限をハンドリング
             if (error.name === 'TooManyRequestsException') {
-                next(new chevre.factory.errors.RateLimitExceeded(`getUser ${error.message}`));
+                next(new domain_1.chevre.factory.errors.RateLimitExceeded(`getUser ${error.message}`));
             }
             else {
-                next(new chevre.factory.errors.Unauthorized(`${error.name}:${error.message}`));
+                next(new domain_1.chevre.factory.errors.Unauthorized(`${error.name}:${error.message}`));
             }
         }
     }),
     unauthorizedHandler: (err, __1, __2, next) => {
         debug('unauthorized err handled', err);
-        next(new chevre.factory.errors.Unauthorized(err.message));
+        next(new domain_1.chevre.factory.errors.Unauthorized(err.message));
     }
 });
 exports.default = authentication;

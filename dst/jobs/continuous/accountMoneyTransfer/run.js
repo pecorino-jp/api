@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * 現金転送実行
  */
-const chevre = require("@chevre/domain");
+const domain_1 = require("@cinerino/domain");
 const createDebug = require("debug");
 const connectMongo_1 = require("../../../connectMongo");
 const debug = createDebug('pecorino-api:jobs');
@@ -28,7 +28,7 @@ exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
         count += 1;
         try {
             debug('count:', count);
-            yield chevre.service.task.executeByName({ name: chevre.factory.taskName.AccountMoneyTransfer })({
+            yield domain_1.chevre.service.task.executeByName({ name: domain_1.chevre.factory.taskName.AccountMoneyTransfer })({
                 connection: connection
             });
         }

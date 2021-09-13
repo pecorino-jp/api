@@ -1,7 +1,7 @@
 /**
  * 期限切れ転送引監視
  */
-import * as chevre from '@chevre/domain';
+import { chevre } from '@cinerino/domain';
 
 import { connectMongo } from '../../../connectMongo';
 

@@ -1,7 +1,7 @@
 /**
  * 取引タスクエクスポートが実行中のままになっている取引を監視する
  */
-import * as chevre from '@chevre/domain';
+import { chevre } from '@cinerino/domain';
 import * as createDebug from 'debug';
 
 import { connectMongo } from '../../../connectMongo';

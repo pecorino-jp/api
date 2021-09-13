@@ -2,7 +2,7 @@
 /**
  * not foundハンドラーミドルウェアテスト
  */
-import * as chevre from '@chevre/domain';
+import { chevre } from '@cinerino/domain';
 import * as assert from 'assert';
 import * as nock from 'nock';
 import * as sinon from 'sinon';
