@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- 口座ルーティングを最適化(:accountTypeを削除)
+
 ### Deprecated
 
 ### Removed

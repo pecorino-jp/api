@@ -28,6 +28,7 @@ router.use('/health', healthRouter);
 // 認証
 router.use(authentication);
 
+router.use('/accounts/Default', accountsRouter);
 router.use('/accounts', accountsRouter);
 router.use('/actions', accountActionsRouter);
 router.use('/transactions/deposit', depositTransactionsRouter);

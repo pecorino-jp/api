@@ -98,10 +98,45 @@ accountsRouter.post(
 );
 
 /**
+ * 口座検索
+ */
+accountsRouter.get(
+    '',
+    permitScopes(['admin']),
+    ...[
+        query('openDate.$gte')
+            .optional()
+            .isISO8601()
+            .toDate(),
+        query('openDate.$lte')
+            .optional()
+            .isISO8601()
+            .toDate()
+    ],
+    validator,
+    async (req, res, next) => {
+        try {
+            const accountRepo = new chevre.repository.Account(mongoose.connection);
+            const searchConditions: chevre.factory.account.ISearchConditions = {
+                ...req.query,
+                // tslint:disable-next-line:no-magic-numbers
+                limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
+                page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1
+            };
+            const accounts = await accountRepo.search(searchConditions);
+
+            res.json(accounts);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+/**
  * 口座編集
  */
 accountsRouter.put(
-    '/:accountType/:accountNumber',
+    '/:accountNumber',
     permitScopes(['admin']),
     ...[
         body('name')
@@ -140,7 +175,7 @@ accountsRouter.put(
  * 冪等性の担保された処理となります。
  */
 accountsRouter.put(
-    '/:accountType/:accountNumber/close',
+    '/:accountNumber/close',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
@@ -160,45 +195,10 @@ accountsRouter.put(
 );
 
 /**
- * 口座検索
- */
-accountsRouter.get(
-    '',
-    permitScopes(['admin']),
-    ...[
-        query('openDate.$gte')
-            .optional()
-            .isISO8601()
-            .toDate(),
-        query('openDate.$lte')
-            .optional()
-            .isISO8601()
-            .toDate()
-    ],
-    validator,
-    async (req, res, next) => {
-        try {
-            const accountRepo = new chevre.repository.Account(mongoose.connection);
-            const searchConditions: chevre.factory.account.ISearchConditions = {
-                ...req.query,
-                // tslint:disable-next-line:no-magic-numbers
-                limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100,
-                page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1
-            };
-            const accounts = await accountRepo.search(searchConditions);
-
-            res.json(accounts);
-        } catch (error) {
-            next(error);
-        }
-    }
-);
-
-/**
  * 取引履歴検索
  */
 accountsRouter.get(
-    '/:accountType/:accountNumber/actions/moneyTransfer',
+    '/:accountNumber/actions/moneyTransfer',
     permitScopes(['admin']),
     ...[
         query('startDate.$gte')
@@ -224,20 +224,6 @@ accountsRouter.get(
                 accountNumber: req.params.accountNumber
             };
             const actions = await actionRepo.searchTransferActions(searchConditions);
-
-            // 互換性維持対応
-            // actions = actions.map((a) => {
-            //     return {
-            //         ...a,
-            //         amount: (typeof a.amount === 'number')
-            //             ? {
-            //                 typeOf: 'MonetaryAmount',
-            //                 currency: 'Point', // 旧データはPointしかないのでこれで十分
-            //                 value: a.amount
-            //             }
-            //             : a.amount
-            //     };
-            // });
 
             res.json(actions);
         } catch (error) {

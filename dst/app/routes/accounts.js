@@ -98,47 +98,6 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...validations, valid
     }
 }));
 /**
- * 口座編集
- */
-accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admin']), ...[
-    express_validator_1.body('name')
-        .not()
-        .isEmpty()
-], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
-        const update = Object.assign({}, (req.body.name !== undefined) ? { name: String(req.body.name) } : undefined);
-        const doc = yield accountRepo.accountModel.findOneAndUpdate({ accountNumber: req.params.accountNumber }, update, { new: true })
-            .exec();
-        if (doc === null) {
-            throw new domain_1.chevre.factory.errors.NotFound('Account');
-        }
-        res.status(http_status_1.NO_CONTENT)
-            .end();
-    }
-    catch (error) {
-        next(error);
-    }
-}));
-/**
- * 口座解約
- * 冪等性の担保された処理となります。
- */
-accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        yield domain_1.chevre.service.account.close({
-            accountNumber: req.params.accountNumber
-        })({
-            account: new domain_1.chevre.repository.Account(mongoose.connection)
-        });
-        res.status(http_status_1.NO_CONTENT)
-            .end();
-    }
-    catch (error) {
-        next(error);
-    }
-}));
-/**
  * 口座検索
  */
 accountsRouter.get('', permitScopes_1.default(['admin']), ...[
@@ -164,9 +123,50 @@ accountsRouter.get('', permitScopes_1.default(['admin']), ...[
     }
 }));
 /**
+ * 口座編集
+ */
+accountsRouter.put('/:accountNumber', permitScopes_1.default(['admin']), ...[
+    express_validator_1.body('name')
+        .not()
+        .isEmpty()
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
+        const update = Object.assign({}, (req.body.name !== undefined) ? { name: String(req.body.name) } : undefined);
+        const doc = yield accountRepo.accountModel.findOneAndUpdate({ accountNumber: req.params.accountNumber }, update, { new: true })
+            .exec();
+        if (doc === null) {
+            throw new domain_1.chevre.factory.errors.NotFound('Account');
+        }
+        res.status(http_status_1.NO_CONTENT)
+            .end();
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+/**
+ * 口座解約
+ * 冪等性の担保された処理となります。
+ */
+accountsRouter.put('/:accountNumber/close', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        yield domain_1.chevre.service.account.close({
+            accountNumber: req.params.accountNumber
+        })({
+            account: new domain_1.chevre.repository.Account(mongoose.connection)
+        });
+        res.status(http_status_1.NO_CONTENT)
+            .end();
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+/**
  * 取引履歴検索
  */
-accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), ...[
+accountsRouter.get('/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), ...[
     express_validator_1.query('startDate.$gte')
         .optional()
         .isISO8601()
@@ -183,19 +183,6 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountNumber: req.params.accountNumber });
         const actions = yield actionRepo.searchTransferActions(searchConditions);
-        // 互換性維持対応
-        // actions = actions.map((a) => {
-        //     return {
-        //         ...a,
-        //         amount: (typeof a.amount === 'number')
-        //             ? {
-        //                 typeOf: 'MonetaryAmount',
-        //                 currency: 'Point', // 旧データはPointしかないのでこれで十分
-        //                 value: a.amount
-        //             }
-        //             : a.amount
-        //     };
-        // });
         res.json(actions);
     }
     catch (error) {

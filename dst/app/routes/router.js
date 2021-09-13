@@ -22,6 +22,7 @@ router.use('/_ah', _ah_1.default);
 router.use('/health', health_1.default);
 // 認証
 router.use(authentication_1.default);
+router.use('/accounts/Default', accounts_1.default);
 router.use('/accounts', accounts_1.default);
 router.use('/actions', accountActions_1.default);
 router.use('/transactions/deposit', deposit_1.default);
