@@ -18,7 +18,7 @@ const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:authentication');
 // 許可発行者リスト
 const ISSUERS = process.env.TOKEN_ISSUERS.split(',');
-const authentication = express_middleware_1.cognitoAuth({
+const authentication = (0, express_middleware_1.cognitoAuth)({
     issuers: ISSUERS,
     authorizedHandler: (user, token, req, __, next) => __awaiter(void 0, void 0, void 0, function* () {
         try {

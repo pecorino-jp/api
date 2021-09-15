@@ -20,7 +20,7 @@ const http_status_1 = require("http-status");
 const mongoose = require("mongoose");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
-const accountsRouter = express_1.Router();
+const accountsRouter = (0, express_1.Router)();
 const debug = createDebug('pecorino-api:router');
 const MAX_NUM_ACCOUNTS_CREATED = 100;
 /**
@@ -32,35 +32,35 @@ const validations = [
         req.body = (Array.isArray(req.body)) ? req.body : [req.body];
         next();
     },
-    express_validator_1.body()
+    (0, express_validator_1.body)()
         .isArray({ max: MAX_NUM_ACCOUNTS_CREATED })
         .withMessage(() => `must be array <= ${MAX_NUM_ACCOUNTS_CREATED}`),
-    express_validator_1.body('*.project.typeOf')
+    (0, express_validator_1.body)('*.project.typeOf')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isIn([domain_1.chevre.factory.organizationType.Project]),
-    express_validator_1.body('*.project.id')
+    (0, express_validator_1.body)('*.project.id')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString(),
-    express_validator_1.body('*.accountType')
+    (0, express_validator_1.body)('*.accountType')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString(),
-    express_validator_1.body('*.accountNumber')
+    (0, express_validator_1.body)('*.accountNumber')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString(),
-    express_validator_1.body('*.name')
+    (0, express_validator_1.body)('*.name')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString(),
-    express_validator_1.body('*.initialBalance')
+    (0, express_validator_1.body)('*.initialBalance')
         .optional()
         .isInt()
         .toInt()
@@ -68,7 +68,7 @@ const validations = [
 /**
  * 口座開設
  */
-accountsRouter.post('', permitScopes_1.default(['admin']), ...validations, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountsRouter.post('', (0, permitScopes_1.default)(['admin']), ...validations, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accounts = yield domain_1.chevre.service.account.open(req.body.map((bodyParams) => {
             var _a, _b;
@@ -100,12 +100,12 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...validations, valid
 /**
  * 口座検索
  */
-accountsRouter.get('', permitScopes_1.default(['admin']), ...[
-    express_validator_1.query('openDate.$gte')
+accountsRouter.get('', (0, permitScopes_1.default)(['admin']), ...[
+    (0, express_validator_1.query)('openDate.$gte')
         .optional()
         .isISO8601()
         .toDate(),
-    express_validator_1.query('openDate.$lte')
+    (0, express_validator_1.query)('openDate.$lte')
         .optional()
         .isISO8601()
         .toDate()
@@ -125,8 +125,8 @@ accountsRouter.get('', permitScopes_1.default(['admin']), ...[
 /**
  * 口座編集
  */
-accountsRouter.put('/:accountNumber', permitScopes_1.default(['admin']), ...[
-    express_validator_1.body('name')
+accountsRouter.put('/:accountNumber', (0, permitScopes_1.default)(['admin']), ...[
+    (0, express_validator_1.body)('name')
         .not()
         .isEmpty()
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -149,7 +149,7 @@ accountsRouter.put('/:accountNumber', permitScopes_1.default(['admin']), ...[
  * 口座解約
  * 冪等性の担保された処理となります。
  */
-accountsRouter.put('/:accountNumber/close', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountsRouter.put('/:accountNumber/close', (0, permitScopes_1.default)(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield domain_1.chevre.service.account.close({
             accountNumber: req.params.accountNumber
@@ -166,12 +166,12 @@ accountsRouter.put('/:accountNumber/close', permitScopes_1.default(['admin']), v
 /**
  * 取引履歴検索
  */
-accountsRouter.get('/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), ...[
-    express_validator_1.query('startDate.$gte')
+accountsRouter.get('/:accountNumber/actions/moneyTransfer', (0, permitScopes_1.default)(['admin']), ...[
+    (0, express_validator_1.query)('startDate.$gte')
         .optional()
         .isISO8601()
         .toDate(),
-    express_validator_1.query('startDate.$lte')
+    (0, express_validator_1.query)('startDate.$lte')
         .optional()
         .isISO8601()
         .toDate()

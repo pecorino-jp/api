@@ -18,7 +18,7 @@ const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");
 const api_1 = require("../error/api");
 exports.default = (req, __, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const validatorResult = express_validator_1.validationResult(req);
+    const validatorResult = (0, express_validator_1.validationResult)(req);
     if (!validatorResult.isEmpty()) {
         const errors = validatorResult.array()
             .map((mappedRrror) => {
