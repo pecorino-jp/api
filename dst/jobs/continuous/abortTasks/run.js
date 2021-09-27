@@ -16,7 +16,7 @@ const domain_1 = require("@cinerino/domain");
 const moment = require("moment");
 const connectMongo_1 = require("../../../connectMongo");
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
-    const connection = yield connectMongo_1.connectMongo({ defaultConnection: false });
+    const connection = yield (0, connectMongo_1.connectMongo)({ defaultConnection: false });
     let count = 0;
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 1000;

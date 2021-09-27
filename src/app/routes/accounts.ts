@@ -73,8 +73,10 @@ accountsRouter.post(
             const accounts = await chevre.service.account.open((<any[]>req.body).map((bodyParams) => {
                 return {
                     project: { id: bodyParams.project?.id, typeOf: bodyParams.project?.typeOf },
-                    // 互換性維持対応として、未指定であれば'Account'
-                    typeOf: (typeof bodyParams.typeOf === 'string' && bodyParams.typeOf.length > 0) ? bodyParams.typeOf : 'Account',
+                    // 互換性維持対応として、未指定であればchevre.factory.accountType.Account
+                    typeOf: (typeof bodyParams.typeOf === 'string' && bodyParams.typeOf.length > 0)
+                        ? bodyParams.typeOf
+                        : chevre.factory.accountType.Account,
                     accountType: bodyParams.accountType,
                     accountNumber: bodyParams.accountNumber,
                     name: bodyParams.name,
@@ -91,68 +93,6 @@ accountsRouter.post(
                 res.status(CREATED)
                     .json(accounts);
             }
-        } catch (error) {
-            next(error);
-        }
-    }
-);
-
-/**
- * 口座編集
- */
-accountsRouter.put(
-    '/:accountType/:accountNumber',
-    permitScopes(['admin']),
-    ...[
-        body('name')
-            .not()
-            .isEmpty()
-    ],
-    validator,
-    async (req, res, next) => {
-        try {
-            const accountRepo = new chevre.repository.Account(mongoose.connection);
-
-            const update = {
-                ...(req.body.name !== undefined) ? { name: String(req.body.name) } : undefined
-            };
-            const doc = await accountRepo.accountModel.findOneAndUpdate(
-                { accountNumber: req.params.accountNumber },
-                update,
-                { new: true }
-            )
-                .exec();
-
-            if (doc === null) {
-                throw new chevre.factory.errors.NotFound('Account');
-            }
-
-            res.status(NO_CONTENT)
-                .end();
-        } catch (error) {
-            next(error);
-        }
-    }
-);
-
-/**
- * 口座解約
- * 冪等性の担保された処理となります。
- */
-accountsRouter.put(
-    '/:accountType/:accountNumber/close',
-    permitScopes(['admin']),
-    validator,
-    async (req, res, next) => {
-        try {
-            await chevre.service.account.close({
-                accountNumber: req.params.accountNumber
-            })({
-                account: new chevre.repository.Account(mongoose.connection)
-            });
-
-            res.status(NO_CONTENT)
-                .end();
         } catch (error) {
             next(error);
         }
@@ -195,10 +135,72 @@ accountsRouter.get(
 );
 
 /**
+ * 口座編集
+ */
+accountsRouter.put(
+    '/:accountNumber',
+    permitScopes(['admin']),
+    ...[
+        body('name')
+            .not()
+            .isEmpty()
+    ],
+    validator,
+    async (req, res, next) => {
+        try {
+            const accountRepo = new chevre.repository.Account(mongoose.connection);
+
+            const update = {
+                ...(req.body.name !== undefined) ? { name: String(req.body.name) } : undefined
+            };
+            const doc = await accountRepo.accountModel.findOneAndUpdate(
+                { accountNumber: req.params.accountNumber },
+                update,
+                { new: true }
+            )
+                .exec();
+
+            if (doc === null) {
+                throw new chevre.factory.errors.NotFound('Account');
+            }
+
+            res.status(NO_CONTENT)
+                .end();
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+/**
+ * 口座解約
+ * 冪等性の担保された処理となります。
+ */
+accountsRouter.put(
+    '/:accountNumber/close',
+    permitScopes(['admin']),
+    validator,
+    async (req, res, next) => {
+        try {
+            await chevre.service.account.close({
+                accountNumber: req.params.accountNumber
+            })({
+                account: new chevre.repository.Account(mongoose.connection)
+            });
+
+            res.status(NO_CONTENT)
+                .end();
+        } catch (error) {
+            next(error);
+        }
+    }
+);
+
+/**
  * 取引履歴検索
  */
 accountsRouter.get(
-    '/:accountType/:accountNumber/actions/moneyTransfer',
+    '/:accountNumber/actions/moneyTransfer',
     permitScopes(['admin']),
     ...[
         query('startDate.$gte')
@@ -224,20 +226,6 @@ accountsRouter.get(
                 accountNumber: req.params.accountNumber
             };
             const actions = await actionRepo.searchTransferActions(searchConditions);
-
-            // 互換性維持対応
-            // actions = actions.map((a) => {
-            //     return {
-            //         ...a,
-            //         amount: (typeof a.amount === 'number')
-            //             ? {
-            //                 typeOf: 'MonetaryAmount',
-            //                 currency: 'Point', // 旧データはPointしかないのでこれで十分
-            //                 value: a.amount
-            //             }
-            //             : a.amount
-            //     };
-            // });
 
             res.json(actions);
         } catch (error) {

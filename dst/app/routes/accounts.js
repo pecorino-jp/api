@@ -20,7 +20,7 @@ const http_status_1 = require("http-status");
 const mongoose = require("mongoose");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
-const accountsRouter = express_1.Router();
+const accountsRouter = (0, express_1.Router)();
 const debug = createDebug('pecorino-api:router');
 const MAX_NUM_ACCOUNTS_CREATED = 100;
 /**
@@ -32,35 +32,35 @@ const validations = [
         req.body = (Array.isArray(req.body)) ? req.body : [req.body];
         next();
     },
-    express_validator_1.body()
+    (0, express_validator_1.body)()
         .isArray({ max: MAX_NUM_ACCOUNTS_CREATED })
         .withMessage(() => `must be array <= ${MAX_NUM_ACCOUNTS_CREATED}`),
-    express_validator_1.body('*.project.typeOf')
+    (0, express_validator_1.body)('*.project.typeOf')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isIn([domain_1.chevre.factory.organizationType.Project]),
-    express_validator_1.body('*.project.id')
+    (0, express_validator_1.body)('*.project.id')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString(),
-    express_validator_1.body('*.accountType')
+    (0, express_validator_1.body)('*.accountType')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString(),
-    express_validator_1.body('*.accountNumber')
+    (0, express_validator_1.body)('*.accountNumber')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString(),
-    express_validator_1.body('*.name')
+    (0, express_validator_1.body)('*.name')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isString(),
-    express_validator_1.body('*.initialBalance')
+    (0, express_validator_1.body)('*.initialBalance')
         .optional()
         .isInt()
         .toInt()
@@ -68,14 +68,16 @@ const validations = [
 /**
  * 口座開設
  */
-accountsRouter.post('', permitScopes_1.default(['admin']), ...validations, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountsRouter.post('', (0, permitScopes_1.default)(['admin']), ...validations, validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accounts = yield domain_1.chevre.service.account.open(req.body.map((bodyParams) => {
             var _a, _b;
             return {
                 project: { id: (_a = bodyParams.project) === null || _a === void 0 ? void 0 : _a.id, typeOf: (_b = bodyParams.project) === null || _b === void 0 ? void 0 : _b.typeOf },
-                // 互換性維持対応として、未指定であれば'Account'
-                typeOf: (typeof bodyParams.typeOf === 'string' && bodyParams.typeOf.length > 0) ? bodyParams.typeOf : 'Account',
+                // 互換性維持対応として、未指定であればchevre.factory.accountType.Account
+                typeOf: (typeof bodyParams.typeOf === 'string' && bodyParams.typeOf.length > 0)
+                    ? bodyParams.typeOf
+                    : domain_1.chevre.factory.accountType.Account,
                 accountType: bodyParams.accountType,
                 accountNumber: bodyParams.accountNumber,
                 name: bodyParams.name,
@@ -98,10 +100,35 @@ accountsRouter.post('', permitScopes_1.default(['admin']), ...validations, valid
     }
 }));
 /**
+ * 口座検索
+ */
+accountsRouter.get('', (0, permitScopes_1.default)(['admin']), ...[
+    (0, express_validator_1.query)('openDate.$gte')
+        .optional()
+        .isISO8601()
+        .toDate(),
+    (0, express_validator_1.query)('openDate.$lte')
+        .optional()
+        .isISO8601()
+        .toDate()
+], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
+        const searchConditions = Object.assign(Object.assign({}, req.query), { 
+            // tslint:disable-next-line:no-magic-numbers
+            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 });
+        const accounts = yield accountRepo.search(searchConditions);
+        res.json(accounts);
+    }
+    catch (error) {
+        next(error);
+    }
+}));
+/**
  * 口座編集
  */
-accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admin']), ...[
-    express_validator_1.body('name')
+accountsRouter.put('/:accountNumber', (0, permitScopes_1.default)(['admin']), ...[
+    (0, express_validator_1.body)('name')
         .not()
         .isEmpty()
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -124,7 +151,7 @@ accountsRouter.put('/:accountType/:accountNumber', permitScopes_1.default(['admi
  * 口座解約
  * 冪等性の担保された処理となります。
  */
-accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountsRouter.put('/:accountNumber/close', (0, permitScopes_1.default)(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         yield domain_1.chevre.service.account.close({
             accountNumber: req.params.accountNumber
@@ -139,39 +166,14 @@ accountsRouter.put('/:accountType/:accountNumber/close', permitScopes_1.default(
     }
 }));
 /**
- * 口座検索
- */
-accountsRouter.get('', permitScopes_1.default(['admin']), ...[
-    express_validator_1.query('openDate.$gte')
-        .optional()
-        .isISO8601()
-        .toDate(),
-    express_validator_1.query('openDate.$lte')
-        .optional()
-        .isISO8601()
-        .toDate()
-], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
-        const searchConditions = Object.assign(Object.assign({}, req.query), { 
-            // tslint:disable-next-line:no-magic-numbers
-            limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 });
-        const accounts = yield accountRepo.search(searchConditions);
-        res.json(accounts);
-    }
-    catch (error) {
-        next(error);
-    }
-}));
-/**
  * 取引履歴検索
  */
-accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitScopes_1.default(['admin']), ...[
-    express_validator_1.query('startDate.$gte')
+accountsRouter.get('/:accountNumber/actions/moneyTransfer', (0, permitScopes_1.default)(['admin']), ...[
+    (0, express_validator_1.query)('startDate.$gte')
         .optional()
         .isISO8601()
         .toDate(),
-    express_validator_1.query('startDate.$lte')
+    (0, express_validator_1.query)('startDate.$lte')
         .optional()
         .isISO8601()
         .toDate()
@@ -183,19 +185,6 @@ accountsRouter.get('/:accountType/:accountNumber/actions/moneyTransfer', permitS
             // tslint:disable-next-line:no-magic-numbers
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1, accountNumber: req.params.accountNumber });
         const actions = yield actionRepo.searchTransferActions(searchConditions);
-        // 互換性維持対応
-        // actions = actions.map((a) => {
-        //     return {
-        //         ...a,
-        //         amount: (typeof a.amount === 'number')
-        //             ? {
-        //                 typeOf: 'MonetaryAmount',
-        //                 currency: 'Point', // 旧データはPointしかないのでこれで十分
-        //                 value: a.amount
-        //             }
-        //             : a.amount
-        //     };
-        // });
         res.json(actions);
     }
     catch (error) {

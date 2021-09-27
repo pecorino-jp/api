@@ -18,16 +18,16 @@ const express_validator_1 = require("express-validator");
 const mongoose = require("mongoose");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
-const accountActionsRouter = express_1.Router();
+const accountActionsRouter = (0, express_1.Router)();
 /**
  * アクション検索
  */
-accountActionsRouter.get('', permitScopes_1.default(['admin']), ...[
-    express_validator_1.query('startDateFrom')
+accountActionsRouter.get('', (0, permitScopes_1.default)(['admin']), ...[
+    (0, express_validator_1.query)('startDateFrom')
         .optional()
         .isISO8601()
         .toDate(),
-    express_validator_1.query('startDateThrough')
+    (0, express_validator_1.query)('startDateThrough')
         .optional()
         .isISO8601()
         .toDate()
@@ -46,12 +46,12 @@ accountActionsRouter.get('', permitScopes_1.default(['admin']), ...[
 /**
  * 転送アクション検索
  */
-accountActionsRouter.get('/moneyTransfer', permitScopes_1.default(['admin']), ...[
-    express_validator_1.query('startDate.$gte')
+accountActionsRouter.get('/moneyTransfer', (0, permitScopes_1.default)(['admin']), ...[
+    (0, express_validator_1.query)('startDate.$gte')
         .optional()
         .isISO8601()
         .toDate(),
-    express_validator_1.query('startDate.$lte')
+    (0, express_validator_1.query)('startDate.$lte')
         .optional()
         .isISO8601()
         .toDate()
@@ -62,19 +62,6 @@ accountActionsRouter.get('/moneyTransfer', permitScopes_1.default(['admin']), ..
             limit: (req.query.limit !== undefined) ? Math.min(req.query.limit, 100) : 100, page: (req.query.page !== undefined) ? Math.max(req.query.page, 1) : 1 });
         const actionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
         const actions = yield actionRepo.searchTransferActions(searchConditions);
-        // 互換性維持対応
-        // actions = actions.map((a) => {
-        //     return {
-        //         ...a,
-        //         amount: (typeof a.amount === 'number')
-        //             ? {
-        //                 typeOf: 'MonetaryAmount',
-        //                 currency: 'Point', // 旧データはPointしかないのでこれで十分
-        //                 value: a.amount
-        //             }
-        //             : a.amount
-        //     };
-        // });
         res.json(actions);
     }
     catch (error) {

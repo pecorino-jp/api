@@ -8,15 +8,15 @@ const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:permitScopes');
 exports.default = (permittedScopes) => {
     return (req, __, next) => {
-        if (process.env.RESOURECE_SERVER_IDENTIFIER === undefined) {
-            next(new Error('RESOURECE_SERVER_IDENTIFIER undefined'));
+        if (process.env.RESOURCE_SERVER_IDENTIFIER === undefined) {
+            next(new Error('RESOURCE_SERVER_IDENTIFIER undefined'));
             return;
         }
         debug('req.user.scopes:', req.user.scopes);
         // ドメインつきのスコープリストも許容するように変更
         const permittedScopesWithResourceServerIdentifier = [
-            ...permittedScopes.map((permittedScope) => `${process.env.RESOURECE_SERVER_IDENTIFIER}/${permittedScope}`),
-            ...permittedScopes.map((permittedScope) => `${process.env.RESOURECE_SERVER_IDENTIFIER}/auth/${permittedScope}`)
+            ...permittedScopes.map((permittedScope) => `${process.env.RESOURCE_SERVER_IDENTIFIER}/${permittedScope}`),
+            ...permittedScopes.map((permittedScope) => `${process.env.RESOURCE_SERVER_IDENTIFIER}/auth/${permittedScope}`)
         ];
         debug('permittedScopesWithResourceServerIdentifier:', permittedScopesWithResourceServerIdentifier);
         // スコープチェック

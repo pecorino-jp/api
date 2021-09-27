@@ -18,14 +18,14 @@ const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");
 const mongoose = require("mongoose");
-const withdrawTransactionsRouter = express_1.Router();
+const withdrawTransactionsRouter = (0, express_1.Router)();
 const permitScopes_1 = require("../../middlewares/permitScopes");
 const validator_1 = require("../../middlewares/validator");
 const debug = createDebug('pecorino-api:router');
 const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
 const actionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
 const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
-withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']), 
+withdrawTransactionsRouter.post('/start', (0, permitScopes_1.default)(['admin']), 
 // 互換性維持
 (req, _, next) => {
     var _a;
@@ -34,17 +34,17 @@ withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']),
     }
     next();
 }, ...[
-    express_validator_1.body('project.id')
+    (0, express_validator_1.body)('project.id')
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    express_validator_1.body('expires')
+    (0, express_validator_1.body)('expires')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isISO8601()
         .toDate(),
-    express_validator_1.body([
+    (0, express_validator_1.body)([
         'agent',
         'agent.typeOf',
         'agent.name',
@@ -55,13 +55,13 @@ withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']),
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    express_validator_1.body('object.amount.value')
+    (0, express_validator_1.body)('object.amount.value')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
         .isInt()
         .toInt(),
-    express_validator_1.body('object.fromLocation.accountNumber')
+    (0, express_validator_1.body)('object.fromLocation.accountNumber')
         .not()
         .isEmpty()
         .withMessage(() => 'required')
@@ -95,7 +95,7 @@ withdrawTransactionsRouter.post('/start', permitScopes_1.default(['admin']),
         next(error);
     }
 }));
-withdrawTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+withdrawTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.default)(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
         yield domain_1.chevre.service.accountTransaction.confirm(Object.assign(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }), { typeOf: domain_1.chevre.factory.account.transactionType.Withdraw }))({ accountTransaction: transactionRepo });
@@ -117,7 +117,7 @@ withdrawTransactionsRouter.put('/:transactionId/confirm', permitScopes_1.default
         next(error);
     }
 }));
-withdrawTransactionsRouter.put('/:transactionId/cancel', permitScopes_1.default(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+withdrawTransactionsRouter.put('/:transactionId/cancel', (0, permitScopes_1.default)(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
         yield transactionRepo.cancel(Object.assign({ typeOf: domain_1.chevre.factory.account.transactionType.Withdraw }, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));

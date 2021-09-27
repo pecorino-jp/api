@@ -11,13 +11,13 @@
 
 ### Environment variables
 
-| Name                          | Required | Value          | Purpose                                |
-| ----------------------------- | -------- | -------------- | -------------------------------------- |
-| `DEBUG`                       | false    | pecorino-api:* | Debug                                  |
-| `MONGOLAB_URI`                | true     |                | MongoDB connection settings            |
-| `TOKEN_ISSUERS`               | true     |                | Cognito token issuers(comma separated) |
-| `RESOURECE_SERVER_IDENTIFIER` | true     |                | Resource server identifier             |
-| `JOBS_STOPPED`                | true     | 1 or 0         | Asynchronous tasks stopped or not      |
+| Name                         | Required | Value          | Purpose                                |
+| ---------------------------- | -------- | -------------- | -------------------------------------- |
+| `DEBUG`                      | false    | pecorino-api:* | Debug                                  |
+| `MONGOLAB_URI`               | true     |                | MongoDB connection settings            |
+| `TOKEN_ISSUERS`              | true     |                | Cognito token issuers(comma separated) |
+| `RESOURCE_SERVER_IDENTIFIER` | true     |                | Resource server identifier             |
+| `JOBS_STOPPED`               | true     | 1 or 0         | Asynchronous tasks stopped or not      |
 
 ## License
 

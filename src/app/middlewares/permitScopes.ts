@@ -16,8 +16,8 @@ type IScope = string;
 
 export default (permittedScopes: IScope[]) => {
     return (req: Request, __: Response, next: NextFunction) => {
-        if (process.env.RESOURECE_SERVER_IDENTIFIER === undefined) {
-            next(new Error('RESOURECE_SERVER_IDENTIFIER undefined'));
+        if (process.env.RESOURCE_SERVER_IDENTIFIER === undefined) {
+            next(new Error('RESOURCE_SERVER_IDENTIFIER undefined'));
 
             return;
         }
@@ -26,8 +26,8 @@ export default (permittedScopes: IScope[]) => {
 
         // ドメインつきのスコープリストも許容するように変更
         const permittedScopesWithResourceServerIdentifier = [
-            ...permittedScopes.map((permittedScope) => `${process.env.RESOURECE_SERVER_IDENTIFIER}/${permittedScope}`),
-            ...permittedScopes.map((permittedScope) => `${process.env.RESOURECE_SERVER_IDENTIFIER}/auth/${permittedScope}`)
+            ...permittedScopes.map((permittedScope) => `${process.env.RESOURCE_SERVER_IDENTIFIER}/${permittedScope}`),
+            ...permittedScopes.map((permittedScope) => `${process.env.RESOURCE_SERVER_IDENTIFIER}/auth/${permittedScope}`)
         ];
         debug('permittedScopesWithResourceServerIdentifier:', permittedScopesWithResourceServerIdentifier);
 

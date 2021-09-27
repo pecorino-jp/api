@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.11.0 - 2021-09-27
+
+### Changed
+
+- 口座ルーティングを最適化(:accountTypeを削除)
+
 ## v5.10.1 - 2021-09-13
 
 ### Changed

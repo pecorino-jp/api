@@ -17,7 +17,7 @@ const createDebug = require("debug");
 const connectMongo_1 = require("../../../connectMongo");
 const debug = createDebug('pecorino-api:jobs');
 exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
-    const connection = yield connectMongo_1.connectMongo({ defaultConnection: false });
+    const connection = yield (0, connectMongo_1.connectMongo)({ defaultConnection: false });
     let count = 0;
     const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
     const INTERVAL_MILLISECONDS = 100;
