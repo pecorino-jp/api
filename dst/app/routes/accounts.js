@@ -74,8 +74,10 @@ accountsRouter.post('', (0, permitScopes_1.default)(['admin']), ...validations, 
             var _a, _b;
             return {
                 project: { id: (_a = bodyParams.project) === null || _a === void 0 ? void 0 : _a.id, typeOf: (_b = bodyParams.project) === null || _b === void 0 ? void 0 : _b.typeOf },
-                // 互換性維持対応として、未指定であれば'Account'
-                typeOf: (typeof bodyParams.typeOf === 'string' && bodyParams.typeOf.length > 0) ? bodyParams.typeOf : 'Account',
+                // 互換性維持対応として、未指定であればchevre.factory.accountType.Account
+                typeOf: (typeof bodyParams.typeOf === 'string' && bodyParams.typeOf.length > 0)
+                    ? bodyParams.typeOf
+                    : domain_1.chevre.factory.accountType.Account,
                 accountType: bodyParams.accountType,
                 accountNumber: bodyParams.accountNumber,
                 name: bodyParams.name,

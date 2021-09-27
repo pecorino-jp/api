@@ -73,8 +73,10 @@ accountsRouter.post(
             const accounts = await chevre.service.account.open((<any[]>req.body).map((bodyParams) => {
                 return {
                     project: { id: bodyParams.project?.id, typeOf: bodyParams.project?.typeOf },
-                    // 互換性維持対応として、未指定であれば'Account'
-                    typeOf: (typeof bodyParams.typeOf === 'string' && bodyParams.typeOf.length > 0) ? bodyParams.typeOf : 'Account',
+                    // 互換性維持対応として、未指定であればchevre.factory.accountType.Account
+                    typeOf: (typeof bodyParams.typeOf === 'string' && bodyParams.typeOf.length > 0)
+                        ? bodyParams.typeOf
+                        : chevre.factory.accountType.Account,
                     accountType: bodyParams.accountType,
                     accountNumber: bodyParams.accountNumber,
                     name: bodyParams.name,
