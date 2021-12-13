@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Removed
 
+- 口座ルーターを廃止
+- 口座アクションルーターを廃止
+
 ### Fixed
 
 ### Security
