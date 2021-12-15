@@ -15,7 +15,7 @@ const permitsRouter = Router();
 // TODO findByAccessCodeで発行されたトークンでの照会が適切かもしれない
 permitsRouter.post(
     '/findByIdentifier',
-    permitScopes([]),
+    permitScopes(['admin']),
     ...[
         body('project.id')
             .not()
@@ -60,7 +60,7 @@ permitsRouter.post(
  */
 permitsRouter.post(
     '/findByAccessCode',
-    permitScopes([]),
+    permitScopes(['admin']),
     ...[
         body('project.id')
             .not()

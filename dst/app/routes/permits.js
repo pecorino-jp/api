@@ -21,7 +21,7 @@ const validator_1 = require("../middlewares/validator");
 const permitsRouter = (0, express_1.Router)();
 // tslint:disable-next-line:no-suspicious-comment
 // TODO findByAccessCodeで発行されたトークンでの照会が適切かもしれない
-permitsRouter.post('/findByIdentifier', (0, permitScopes_1.default)([]), ...[
+permitsRouter.post('/findByIdentifier', (0, permitScopes_1.default)(['admin']), ...[
     (0, express_validator_1.body)('project.id')
         .not()
         .isEmpty()
@@ -56,7 +56,7 @@ permitsRouter.post('/findByIdentifier', (0, permitScopes_1.default)([]), ...[
 /**
  * accessCodeで照会
  */
-permitsRouter.post('/findByAccessCode', (0, permitScopes_1.default)([]), ...[
+permitsRouter.post('/findByAccessCode', (0, permitScopes_1.default)(['admin']), ...[
     (0, express_validator_1.body)('project.id')
         .not()
         .isEmpty()
