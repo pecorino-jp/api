@@ -11,6 +11,7 @@ const _ah_1 = require("./_ah");
 const deposit_1 = require("./accountTransactions/deposit");
 const transfer_1 = require("./accountTransactions/transfer");
 const withdraw_1 = require("./accountTransactions/withdraw");
+const permits_1 = require("./permits");
 const authentication_1 = require("../middlewares/authentication");
 const router = express.Router();
 // middleware that is specific to this router
@@ -27,4 +28,5 @@ router.use(authentication_1.default);
 router.use('/transactions/deposit', deposit_1.default);
 router.use('/transactions/withdraw', withdraw_1.default);
 router.use('/transactions/transfer', transfer_1.default);
+router.use('/permits', permits_1.default);
 exports.default = router;

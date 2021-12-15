@@ -11,6 +11,7 @@ import ahRouter from './_ah';
 import depositTransactionsRouter from './accountTransactions/deposit';
 import transferTransactionsRouter from './accountTransactions/transfer';
 import withdrawTransactionsRouter from './accountTransactions/withdraw';
+import permitsRouter from './permits';
 
 import authentication from '../middlewares/authentication';
 
@@ -33,5 +34,6 @@ router.use(authentication);
 router.use('/transactions/deposit', depositTransactionsRouter);
 router.use('/transactions/withdraw', withdrawTransactionsRouter);
 router.use('/transactions/transfer', transferTransactionsRouter);
+router.use('/permits', permitsRouter);
 
 export default router;
