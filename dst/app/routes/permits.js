@@ -13,11 +13,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * 許可証ルーター
  */
 const domain_1 = require("@cinerino/domain");
+const createDebug = require("debug");
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const mongoose = require("mongoose");
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
+const debug = createDebug('pecorino-api:router');
 const permitsRouter = (0, express_1.Router)();
 // tslint:disable-next-line:no-suspicious-comment
 // TODO findByAccessCodeで発行されたトークンでの照会が適切かもしれない
@@ -37,6 +39,7 @@ permitsRouter.post('/findByIdentifier', (0, permitScopes_1.default)(['admin']), 
         .isIn([domain_1.chevre.factory.product.ProductType.MembershipService, domain_1.chevre.factory.product.ProductType.PaymentCard])
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        debug('permits findByIdentifier processing...body:', req.body);
         const permitRepo = new domain_1.chevre.repository.Permit(mongoose.connection);
         const permit = yield permitRepo.findByIdentifier({
             project: { id: { $eq: req.body.project.id } },

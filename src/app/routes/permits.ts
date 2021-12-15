@@ -2,12 +2,15 @@
  * 許可証ルーター
  */
 import { chevre } from '@cinerino/domain';
+import * as createDebug from 'debug';
 import { Router } from 'express';
 import { body } from 'express-validator';
 import * as mongoose from 'mongoose';
 
 import permitScopes from '../middlewares/permitScopes';
 import validator from '../middlewares/validator';
+
+const debug = createDebug('pecorino-api:router');
 
 const permitsRouter = Router();
 
@@ -34,6 +37,7 @@ permitsRouter.post(
     validator,
     async (req, res, next) => {
         try {
+            debug('permits findByIdentifier processing...body:', req.body);
             const permitRepo = new chevre.repository.Permit(mongoose.connection);
             const permit = await permitRepo.findByIdentifier(
                 {
