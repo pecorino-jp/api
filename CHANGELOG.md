@@ -18,6 +18,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.12.0 - 2022-02-18
+
+### Added
+
+- Permitサービスを追加
+
+### Removed
+
+- 口座ルーターを廃止
+- 口座アクションルーターを廃止
+
 ## v5.11.1 - 2021-10-31
 
 - update @cinerino/domain
