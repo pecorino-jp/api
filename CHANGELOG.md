@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- spread operatorによるオブジェクト展開を厳密なコーディングに変換
+
 ### Deprecated
 
 ### Removed
