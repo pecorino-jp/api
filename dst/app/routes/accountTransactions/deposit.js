@@ -55,6 +55,12 @@ depositTransactionsRouter.post('/start', (0, permitScopes_1.default)(['admin']),
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
+    (0, express_validator_1.body)([
+        'agent.url',
+        'recipient.url'
+    ])
+        .optional()
+        .isString(),
     (0, express_validator_1.body)('object.amount.value')
         .not()
         .isEmpty()
@@ -68,17 +74,7 @@ depositTransactionsRouter.post('/start', (0, permitScopes_1.default)(['admin']),
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const transaction = yield domain_1.chevre.service.accountTransaction.deposit.start(Object.assign(Object.assign({ project: { id: req.body.project.id, typeOf: domain_1.chevre.factory.organizationType.Project }, typeOf: domain_1.chevre.factory.account.transactionType.Deposit, agent: {
-                typeOf: req.body.agent.typeOf,
-                id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
-                name: req.body.agent.name,
-                url: req.body.agent.url
-            }, recipient: {
-                typeOf: req.body.recipient.typeOf,
-                id: req.body.recipient.id,
-                name: req.body.recipient.name,
-                url: req.body.recipient.url
-            }, object: {
+        const transaction = yield domain_1.chevre.service.accountTransaction.deposit.start(Object.assign(Object.assign({ project: { id: req.body.project.id, typeOf: domain_1.chevre.factory.organizationType.Project }, typeOf: domain_1.chevre.factory.account.transactionType.Deposit, agent: Object.assign({ typeOf: req.body.agent.typeOf, id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub, name: req.body.agent.name }, (typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined), recipient: Object.assign({ typeOf: req.body.recipient.typeOf, id: req.body.recipient.id, name: req.body.recipient.name }, (typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined), object: {
                 clientUser: req.user,
                 amount: { value: req.body.object.amount.value },
                 toLocation: { accountNumber: req.body.object.toLocation.accountNumber },

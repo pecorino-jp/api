@@ -52,6 +52,12 @@ withdrawTransactionsRouter.post(
             .not()
             .isEmpty()
             .withMessage(() => 'required'),
+        body([
+            'agent.url',
+            'recipient.url'
+        ])
+            .optional()
+            .isString(),
         body('object.amount.value')
             .not()
             .isEmpty()
@@ -73,13 +79,13 @@ withdrawTransactionsRouter.post(
                     typeOf: req.body.agent.typeOf,
                     id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
                     name: req.body.agent.name,
-                    url: req.body.agent.url
+                    ...(typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined
                 },
                 recipient: {
                     typeOf: req.body.recipient.typeOf,
                     id: req.body.recipient.id,
                     name: req.body.recipient.name,
-                    url: req.body.recipient.url
+                    ...(typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined
                 },
                 object: {
                     clientUser: req.user,
