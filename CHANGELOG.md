@@ -18,6 +18,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.12.1 - 2022-04-06
+
+### Changed
+
+- spread operatorによるオブジェクト展開を厳密なコーディングに変換
+
 ## v5.12.0 - 2022-02-18
 
 ### Added
