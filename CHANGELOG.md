@@ -16,9 +16,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Fixed
 
-- 転送アクションのagent.urlとrecipient.urlがnullになる状態を解消
-
 ### Security
+
+## v5.12.2 - 2022-04-06
+
+### Fixed
+
+- 転送アクションのagent.urlとrecipient.urlがnullになる状態を解消
 
 ## v5.12.1 - 2022-04-06
 
