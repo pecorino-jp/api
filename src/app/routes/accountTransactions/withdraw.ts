@@ -67,7 +67,11 @@ withdrawTransactionsRouter.post(
         body('object.fromLocation.accountNumber')
             .not()
             .isEmpty()
-            .withMessage(() => 'required')
+            .withMessage(() => 'required'),
+        body('object.force')
+            .optional()
+            .isBoolean()
+            .toBoolean()
     ],
     validator,
     async (req, res, next) => {
@@ -91,7 +95,8 @@ withdrawTransactionsRouter.post(
                     clientUser: req.user,
                     amount: { value: req.body.object.amount.value },
                     fromLocation: { accountNumber: req.body.object.fromLocation.accountNumber },
-                    description: (typeof req.body.object?.description === 'string') ? req.body.object.description : ''
+                    description: (typeof req.body.object?.description === 'string') ? req.body.object.description : '',
+                    force: req.body.object.force === true
                 },
                 expires: req.body.expires,
                 ...(typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
