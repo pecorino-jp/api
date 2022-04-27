@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - 出金取引開始パラメータにforceを追加
+- update @cinerino/domain
 
 ### Deprecated
 
