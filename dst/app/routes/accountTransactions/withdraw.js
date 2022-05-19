@@ -70,7 +70,11 @@ withdrawTransactionsRouter.post('/start', (0, permitScopes_1.default)(['admin'])
     (0, express_validator_1.body)('object.fromLocation.accountNumber')
         .not()
         .isEmpty()
-        .withMessage(() => 'required')
+        .withMessage(() => 'required'),
+    (0, express_validator_1.body)('object.force')
+        .optional()
+        .isBoolean()
+        .toBoolean()
 ], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
@@ -78,7 +82,8 @@ withdrawTransactionsRouter.post('/start', (0, permitScopes_1.default)(['admin'])
                 clientUser: req.user,
                 amount: { value: req.body.object.amount.value },
                 fromLocation: { accountNumber: req.body.object.fromLocation.accountNumber },
-                description: (typeof ((_a = req.body.object) === null || _a === void 0 ? void 0 : _a.description) === 'string') ? req.body.object.description : ''
+                description: (typeof ((_a = req.body.object) === null || _a === void 0 ? void 0 : _a.description) === 'string') ? req.body.object.description : '',
+                force: req.body.object.force === true
             }, expires: req.body.expires }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
             ? { identifier: req.body.identifier }
             : undefined), (typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined))({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
