@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- 各コレクションのproject.idへ再インデックス
+- update mongoose
+
 ### Deprecated
 
 ### Removed
