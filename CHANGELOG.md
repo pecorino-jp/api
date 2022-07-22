@@ -10,9 +10,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
-- 各コレクションのproject.idへ再インデックス
-- update mongoose
-
 ### Deprecated
 
 ### Removed
@@ -20,6 +17,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 ### Security
+
+## v5.14.0 - 2022-07-22
+
+### Changed
+
+- 各コレクションのproject.idへ再インデックス
+- update mongoose
 
 ## v5.13.0 - 2022-05-19
 
