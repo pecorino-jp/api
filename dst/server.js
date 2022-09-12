@@ -33,6 +33,9 @@ const server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+// Server has a 5 seconds keep-alive timeout by default
+// tslint:disable-next-line:no-magic-numbers
+server.keepAliveTimeout = (typeof process.env.NODE_KEEP_ALIVE_TIMEOUT === 'string') ? Number(process.env.NODE_KEEP_ALIVE_TIMEOUT) : 10000;
 /**
  * Normalize a port into a number, string, or false.
  */

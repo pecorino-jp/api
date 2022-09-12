@@ -8,9 +8,12 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- NODE_KEEP_ALIVE_TIMEOUT設定を追加
+
 ### Changed
 
 - no-default-export: true
+- update @cinerino/domain
 
 ### Deprecated
 
