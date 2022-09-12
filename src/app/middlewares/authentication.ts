@@ -33,4 +33,4 @@ const authentication = cognitoAuth({
     }
 });
 
-export default authentication;
+export { authentication };

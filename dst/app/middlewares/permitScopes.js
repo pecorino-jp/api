@@ -1,12 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.permitScopes = void 0;
 /**
  * スコープ許可ミドルウェア
  */
 const domain_1 = require("@cinerino/domain");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:permitScopes');
-exports.default = (permittedScopes) => {
+function permitScopes(permittedScopes) {
     return (req, __, next) => {
         if (process.env.RESOURCE_SERVER_IDENTIFIER === undefined) {
             next(new Error('RESOURCE_SERVER_IDENTIFIER undefined'));
@@ -33,7 +34,8 @@ exports.default = (permittedScopes) => {
             next(error);
         }
     };
-};
+}
+exports.permitScopes = permitScopes;
 /**
  * 所有スコープが許可されたスコープかどうか
  *

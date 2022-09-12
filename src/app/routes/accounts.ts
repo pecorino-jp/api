@@ -235,4 +235,4 @@ const accountsRouter = Router();
 //     }
 // );
 
-export default accountsRouter;
+export { accountsRouter };

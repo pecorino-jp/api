@@ -3,17 +3,17 @@
  */
 import * as express from 'express';
 
-import healthRouter from './health';
-import ahRouter from './_ah';
+import { healthRouter } from './health';
+import { ahRouter } from './_ah';
 
 // import accountActionsRouter from './accountActions';
 // import accountsRouter from './accounts';
-import depositTransactionsRouter from './accountTransactions/deposit';
-import transferTransactionsRouter from './accountTransactions/transfer';
-import withdrawTransactionsRouter from './accountTransactions/withdraw';
-import permitsRouter from './permits';
+import { depositTransactionsRouter } from './accountTransactions/deposit';
+import { transferTransactionsRouter } from './accountTransactions/transfer';
+import { withdrawTransactionsRouter } from './accountTransactions/withdraw';
+import { permitsRouter } from './permits';
 
-import authentication from '../middlewares/authentication';
+import { authentication } from '../middlewares/authentication';
 
 const router = express.Router();
 
@@ -36,4 +36,4 @@ router.use('/transactions/withdraw', withdrawTransactionsRouter);
 router.use('/transactions/transfer', transferTransactionsRouter);
 router.use('/permits', permitsRouter);
 
-export default router;
+export { router };

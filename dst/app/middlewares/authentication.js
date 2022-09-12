@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.authentication = void 0;
 /**
  * oauthミドルウェア
  */
@@ -41,4 +42,4 @@ const authentication = (0, express_middleware_1.cognitoAuth)({
         next(new domain_1.chevre.factory.errors.Unauthorized(err.message));
     }
 });
-exports.default = authentication;
+exports.authentication = authentication;

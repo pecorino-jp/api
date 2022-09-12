@@ -10,8 +10,8 @@ import * as mongoose from 'mongoose';
 
 const transferTransactionsRouter = Router();
 
-import permitScopes from '../../middlewares/permitScopes';
-import validator from '../../middlewares/validator';
+import { permitScopes } from '../../middlewares/permitScopes';
+import { validator } from '../../middlewares/validator';
 
 const debug = createDebug('pecorino-api:router');
 
@@ -181,4 +181,4 @@ transferTransactionsRouter.put(
     }
 );
 
-export default transferTransactionsRouter;
+export { transferTransactionsRouter };

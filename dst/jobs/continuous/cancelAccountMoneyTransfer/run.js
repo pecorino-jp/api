@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.cancelAccountMoneyTransfer = void 0;
 /**
  * 現金転送取消
  */
@@ -16,26 +17,29 @@ const domain_1 = require("@cinerino/domain");
 const createDebug = require("debug");
 const connectMongo_1 = require("../../../connectMongo");
 const debug = createDebug('pecorino-api:jobs');
-exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
-    const connection = yield (0, connectMongo_1.connectMongo)({ defaultConnection: false });
-    let count = 0;
-    const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
-    const INTERVAL_MILLISECONDS = 100;
-    setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-        if (count > MAX_NUBMER_OF_PARALLEL_TASKS) {
-            return;
-        }
-        count += 1;
-        try {
-            debug('count:', count);
-            yield domain_1.chevre.service.task.executeByName({ name: domain_1.chevre.factory.taskName.CancelAccountMoneyTransfer })({
-                connection: connection
-            });
-        }
-        catch (error) {
-            // tslint:disable-next-line:no-console
-            console.error(error);
-        }
-        count -= 1;
-    }), INTERVAL_MILLISECONDS);
-});
+function cancelAccountMoneyTransfer() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const connection = yield (0, connectMongo_1.connectMongo)({ defaultConnection: false });
+        let count = 0;
+        const MAX_NUBMER_OF_PARALLEL_TASKS = 10;
+        const INTERVAL_MILLISECONDS = 100;
+        setInterval(() => __awaiter(this, void 0, void 0, function* () {
+            if (count > MAX_NUBMER_OF_PARALLEL_TASKS) {
+                return;
+            }
+            count += 1;
+            try {
+                debug('count:', count);
+                yield domain_1.chevre.service.task.executeByName({ name: domain_1.chevre.factory.taskName.CancelAccountMoneyTransfer })({
+                    connection: connection
+                });
+            }
+            catch (error) {
+                // tslint:disable-next-line:no-console
+                console.error(error);
+            }
+            count -= 1;
+        }), INTERVAL_MILLISECONDS);
+    });
+}
+exports.cancelAccountMoneyTransfer = cancelAccountMoneyTransfer;

@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.validator = void 0;
 /**
  * バリデーターミドルウェア
  * リクエストのパラメータ(query strings or body parameters)に対するバリデーション
@@ -17,16 +18,19 @@ const domain_1 = require("@cinerino/domain");
 const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");
 const api_1 = require("../error/api");
-exports.default = (req, __, next) => __awaiter(void 0, void 0, void 0, function* () {
-    const validatorResult = (0, express_validator_1.validationResult)(req);
-    if (!validatorResult.isEmpty()) {
-        const errors = validatorResult.array()
-            .map((mappedRrror) => {
-            return new domain_1.chevre.factory.errors.Argument(mappedRrror.param, mappedRrror.msg);
-        });
-        next(new api_1.APIError(http_status_1.BAD_REQUEST, errors));
-    }
-    else {
-        next();
-    }
-});
+function validator(req, __, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const validatorResult = (0, express_validator_1.validationResult)(req);
+        if (!validatorResult.isEmpty()) {
+            const errors = validatorResult.array()
+                .map((mappedRrror) => {
+                return new domain_1.chevre.factory.errors.Argument(mappedRrror.param, mappedRrror.msg);
+            });
+            next(new api_1.APIError(http_status_1.BAD_REQUEST, errors));
+        }
+        else {
+            next();
+        }
+    });
+}
+exports.validator = validator;

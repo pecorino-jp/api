@@ -14,7 +14,7 @@ const debug = createDebug('pecorino-api:middlewares:permitScopes');
  */
 type IScope = string;
 
-export default (permittedScopes: IScope[]) => {
+export function permitScopes(permittedScopes: IScope[]) {
     return (req: Request, __: Response, next: NextFunction) => {
         if (process.env.RESOURCE_SERVER_IDENTIFIER === undefined) {
             next(new Error('RESOURCE_SERVER_IDENTIFIER undefined'));
@@ -43,7 +43,7 @@ export default (permittedScopes: IScope[]) => {
             next(error);
         }
     };
-};
+}
 
 /**
  * 所有スコープが許可されたスコープかどうか

@@ -9,11 +9,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ahRouter = void 0;
 /**
  * ahルーター
  */
 const express = require("express");
 const ahRouter = express.Router();
+exports.ahRouter = ahRouter;
 ahRouter.get('/warmup', (_, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         res.send('warmup done!');
@@ -22,4 +24,3 @@ ahRouter.get('/warmup', (_, res, next) => __awaiter(void 0, void 0, void 0, func
         next(error);
     }
 }));
-exports.default = ahRouter;

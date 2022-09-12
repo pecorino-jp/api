@@ -9,7 +9,7 @@ import * as nock from 'nock';
 import * as sinon from 'sinon';
 
 import { APIError } from '../error/api';
-import * as errorHandler from './errorHandler';
+import { errorHandler } from './errorHandler';
 
 // let scope: nock.Scope;
 let sandbox: sinon.SinonSandbox;
@@ -35,9 +35,12 @@ describe('エラーハンドラーミドルウェア', () => {
             next: () => undefined
         };
 
-        sandbox.mock(params).expects('next').once().withExactArgs(sinon.match.instanceOf(Error));
+        sandbox.mock(params)
+            .expects('next')
+            .once()
+            .withExactArgs(sinon.match.instanceOf(Error));
 
-        const result = await errorHandler.default(params.err, <any>params.req, <any>params.res, params.next);
+        const result = await errorHandler(params.err, <any>params.req, <any>params.res, params.next);
         assert.equal(result, undefined);
         sandbox.verify();
     });
@@ -54,11 +57,20 @@ describe('エラーハンドラーミドルウェア', () => {
             next: () => undefined
         };
 
-        sandbox.mock(params).expects('next').never();
-        sandbox.mock(params.res).expects('status').once().returns(params.res);
-        sandbox.mock(params.res).expects('json').once().withExactArgs({ error: params.err.toObject() }).returns(params.res);
+        sandbox.mock(params)
+            .expects('next')
+            .never();
+        sandbox.mock(params.res)
+            .expects('status')
+            .once()
+            .returns(params.res);
+        sandbox.mock(params.res)
+            .expects('json')
+            .once()
+            .withExactArgs({ error: params.err.toObject() })
+            .returns(params.res);
 
-        const result = await errorHandler.default(params.err, <any>params.req, <any>params.res, params.next);
+        const result = await errorHandler(params.err, <any>params.req, <any>params.res, params.next);
         assert.equal(result, undefined);
         sandbox.verify();
     });
@@ -86,12 +98,24 @@ describe('エラーハンドラーミドルウェア', () => {
             };
             const body = {};
 
-            sandbox.mock(params).expects('next').never();
-            sandbox.mock(APIError.prototype).expects('toObject').once().returns(body);
-            sandbox.mock(params.res).expects('status').once().returns(params.res);
-            sandbox.mock(params.res).expects('json').once().withExactArgs({ error: body }).returns(params.res);
+            sandbox.mock(params)
+                .expects('next')
+                .never();
+            sandbox.mock(APIError.prototype)
+                .expects('toObject')
+                .once()
+                .returns(body);
+            sandbox.mock(params.res)
+                .expects('status')
+                .once()
+                .returns(params.res);
+            sandbox.mock(params.res)
+                .expects('json')
+                .once()
+                .withExactArgs({ error: body })
+                .returns(params.res);
 
-            const result = await errorHandler.default(params.err, <any>params.req, <any>params.res, params.next);
+            const result = await errorHandler(params.err, <any>params.req, <any>params.res, params.next);
             assert.equal(result, undefined);
             sandbox.verify();
         });
@@ -121,12 +145,24 @@ describe('エラーハンドラーミドルウェア', () => {
             };
             const body = {};
 
-            sandbox.mock(params).expects('next').never();
-            sandbox.mock(APIError.prototype).expects('toObject').once().returns(body);
-            sandbox.mock(params.res).expects('status').once().returns(params.res);
-            sandbox.mock(params.res).expects('json').once().withExactArgs({ error: body }).returns(params.res);
+            sandbox.mock(params)
+                .expects('next')
+                .never();
+            sandbox.mock(APIError.prototype)
+                .expects('toObject')
+                .once()
+                .returns(body);
+            sandbox.mock(params.res)
+                .expects('status')
+                .once()
+                .returns(params.res);
+            sandbox.mock(params.res)
+                .expects('json')
+                .once()
+                .withExactArgs({ error: body })
+                .returns(params.res);
 
-            const result = await errorHandler.default(params.err, <any>params.req, <any>params.res, params.next);
+            const result = await errorHandler(params.err, <any>params.req, <any>params.res, params.next);
             assert.equal(result, undefined);
             sandbox.verify();
         });

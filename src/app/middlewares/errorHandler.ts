@@ -20,7 +20,7 @@ import { APIError } from '../error/api';
 
 const debug = createDebug('pecorino-api:middlewares:errorHandler');
 
-export default (err: any, __: Request, res: Response, next: NextFunction) => {
+export function errorHandler(err: any, __: Request, res: Response, next: NextFunction) {
     debug(err);
 
     if (res.headersSent) {
@@ -48,7 +48,7 @@ export default (err: any, __: Request, res: Response, next: NextFunction) => {
         .json({
             error: apiError.toObject()
         });
-};
+}
 
 /**
  * PECORINOエラーをHTTPステータスコードへ変換する

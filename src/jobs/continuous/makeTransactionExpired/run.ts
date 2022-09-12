@@ -8,7 +8,7 @@ import { connectMongo } from '../../../connectMongo';
 
 const debug = createDebug('pecorino-api');
 
-export default async () => {
+export async function makeTransactionExpired() {
     const connection = await connectMongo({ defaultConnection: false });
 
     let count = 0;
@@ -37,4 +37,4 @@ export default async () => {
         },
         INTERVAL_MILLISECONDS
     );
-};
+}

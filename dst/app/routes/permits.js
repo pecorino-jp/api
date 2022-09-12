@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.permitsRouter = void 0;
 /**
  * 許可証ルーター
  */
@@ -21,9 +22,10 @@ const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
 const debug = createDebug('pecorino-api:router');
 const permitsRouter = (0, express_1.Router)();
+exports.permitsRouter = permitsRouter;
 // tslint:disable-next-line:no-suspicious-comment
 // TODO findByAccessCodeで発行されたトークンでの照会が適切かもしれない
-permitsRouter.post('/findByIdentifier', (0, permitScopes_1.default)(['admin']), ...[
+permitsRouter.post('/findByIdentifier', (0, permitScopes_1.permitScopes)(['admin']), ...[
     (0, express_validator_1.body)('project.id')
         .not()
         .isEmpty()
@@ -37,7 +39,7 @@ permitsRouter.post('/findByIdentifier', (0, permitScopes_1.default)(['admin']), 
         .isEmpty()
         .isString()
         .isIn([domain_1.chevre.factory.product.ProductType.MembershipService, domain_1.chevre.factory.product.ProductType.PaymentCard])
-], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         debug('permits findByIdentifier processing...body:', req.body);
         const permitRepo = new domain_1.chevre.repository.Permit(mongoose.connection);
@@ -59,7 +61,7 @@ permitsRouter.post('/findByIdentifier', (0, permitScopes_1.default)(['admin']), 
 /**
  * accessCodeで照会
  */
-permitsRouter.post('/findByAccessCode', (0, permitScopes_1.default)(['admin']), ...[
+permitsRouter.post('/findByAccessCode', (0, permitScopes_1.permitScopes)(['admin']), ...[
     (0, express_validator_1.body)('project.id')
         .not()
         .isEmpty()
@@ -77,7 +79,7 @@ permitsRouter.post('/findByAccessCode', (0, permitScopes_1.default)(['admin']), 
         .isEmpty()
         .isString()
         .isIn([domain_1.chevre.factory.product.ProductType.MembershipService, domain_1.chevre.factory.product.ProductType.PaymentCard])
-], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const permitRepo = new domain_1.chevre.repository.Permit(mongoose.connection);
         const permit = yield permitRepo.findByIdentifierAndAccessCode({
@@ -96,4 +98,3 @@ permitsRouter.post('/findByAccessCode', (0, permitScopes_1.default)(['admin']), 
         next(error);
     }
 }));
-exports.default = permitsRouter;

@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.runJobs = void 0;
 /**
  * 非同期ジョブ
  */
@@ -27,20 +28,23 @@ const run_12 = require("./continuous/onTransferExpired/run");
 const run_13 = require("./continuous/onWithdrawCanceled/run");
 const run_14 = require("./continuous/onWithdrawConfirmed/run");
 const run_15 = require("./continuous/onWithdrawExpired/run");
-exports.default = () => __awaiter(void 0, void 0, void 0, function* () {
-    yield (0, run_1.default)();
-    yield (0, run_2.default)();
-    yield (0, run_3.default)();
-    yield (0, run_4.default)();
-    yield (0, run_5.default)();
-    yield (0, run_6.default)();
-    yield (0, run_7.default)();
-    yield (0, run_8.default)();
-    yield (0, run_9.default)();
-    yield (0, run_10.default)();
-    yield (0, run_11.default)();
-    yield (0, run_12.default)();
-    yield (0, run_13.default)();
-    yield (0, run_14.default)();
-    yield (0, run_15.default)();
-});
+function runJobs() {
+    return __awaiter(this, void 0, void 0, function* () {
+        yield (0, run_1.abortTasks)();
+        yield (0, run_2.makeTransactionExpired)();
+        yield (0, run_3.reexportTransactionTasks)();
+        yield (0, run_4.retryTasks)();
+        yield (0, run_5.accountMoneyTransfer)();
+        yield (0, run_6.cancelAccountMoneyTransfer)();
+        yield (0, run_7.onDepositCanceled)();
+        yield (0, run_8.onDepositConfirmed)();
+        yield (0, run_9.onDepositExpired)();
+        yield (0, run_10.onTransferCanceled)();
+        yield (0, run_11.onTransferConfirmed)();
+        yield (0, run_12.onTransferExpired)();
+        yield (0, run_13.onWithdrawCanceled)();
+        yield (0, run_14.onWithdrawConfirmed)();
+        yield (0, run_15.onWithdrawExpired)();
+    });
+}
+exports.runJobs = runJobs;
