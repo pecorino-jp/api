@@ -16,4 +16,4 @@ ahRouter.get(
     }
 );
 
-export default ahRouter;
+export { ahRouter };

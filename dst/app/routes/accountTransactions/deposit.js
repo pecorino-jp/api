@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.depositTransactionsRouter = void 0;
 /**
  * 入金取引ルーター
  */
@@ -19,13 +20,14 @@ const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");
 const mongoose = require("mongoose");
 const depositTransactionsRouter = (0, express_1.Router)();
+exports.depositTransactionsRouter = depositTransactionsRouter;
 const permitScopes_1 = require("../../middlewares/permitScopes");
 const validator_1 = require("../../middlewares/validator");
 const debug = createDebug('pecorino-api:router');
 const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
 const actionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
 const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
-depositTransactionsRouter.post('/start', (0, permitScopes_1.default)(['admin']), 
+depositTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admin']), 
 // 互換性維持
 (req, _, next) => {
     var _a;
@@ -71,7 +73,7 @@ depositTransactionsRouter.post('/start', (0, permitScopes_1.default)(['admin']),
         .not()
         .isEmpty()
         .withMessage(() => 'required')
-], validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
         const transaction = yield domain_1.chevre.service.accountTransaction.deposit.start(Object.assign(Object.assign({ project: { id: req.body.project.id, typeOf: domain_1.chevre.factory.organizationType.Project }, typeOf: domain_1.chevre.factory.account.transactionType.Deposit, agent: Object.assign({ typeOf: req.body.agent.typeOf, id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub, name: req.body.agent.name }, (typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined), recipient: Object.assign({ typeOf: req.body.recipient.typeOf, id: req.body.recipient.id, name: req.body.recipient.name }, (typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined), object: {
@@ -91,7 +93,7 @@ depositTransactionsRouter.post('/start', (0, permitScopes_1.default)(['admin']),
         next(error);
     }
 }));
-depositTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.default)(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+depositTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
         yield domain_1.chevre.service.accountTransaction.confirm(Object.assign(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }), { typeOf: domain_1.chevre.factory.account.transactionType.Deposit }))({ accountTransaction: transactionRepo });
@@ -113,7 +115,7 @@ depositTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.defa
         next(error);
     }
 }));
-depositTransactionsRouter.put('/:transactionId/cancel', (0, permitScopes_1.default)(['admin']), validator_1.default, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+depositTransactionsRouter.put('/:transactionId/cancel', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
         yield transactionRepo.cancel(Object.assign({ typeOf: domain_1.chevre.factory.account.transactionType.Deposit }, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
@@ -135,4 +137,3 @@ depositTransactionsRouter.put('/:transactionId/cancel', (0, permitScopes_1.defau
         next(error);
     }
 }));
-exports.default = depositTransactionsRouter;

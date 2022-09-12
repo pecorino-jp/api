@@ -5,7 +5,7 @@ import { chevre } from '@cinerino/domain';
 
 import { connectMongo } from '../../../connectMongo';
 
-export default async () => {
+export async function onDepositExpired() {
     const connection = await connectMongo({ defaultConnection: false });
 
     let countExecute = 0;
@@ -37,4 +37,4 @@ export default async () => {
         },
         INTERVAL_MILLISECONDS
     );
-};
+}

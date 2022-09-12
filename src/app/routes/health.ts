@@ -69,4 +69,4 @@ healthRouter.get(
     }
 );
 
-export default healthRouter;
+export { healthRouter };

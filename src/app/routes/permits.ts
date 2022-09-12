@@ -7,8 +7,8 @@ import { Router } from 'express';
 import { body } from 'express-validator';
 import * as mongoose from 'mongoose';
 
-import permitScopes from '../middlewares/permitScopes';
-import validator from '../middlewares/validator';
+import { permitScopes } from '../middlewares/permitScopes';
+import { validator } from '../middlewares/validator';
 
 const debug = createDebug('pecorino-api:router');
 
@@ -109,4 +109,4 @@ permitsRouter.post(
     }
 );
 
-export default permitsRouter;
+export { permitsRouter };

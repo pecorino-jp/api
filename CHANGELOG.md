@@ -18,6 +18,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.15.0 - 2022-09-13
+
+### Added
+
+- NODE_KEEP_ALIVE_TIMEOUT設定を追加
+
+### Changed
+
+- no-default-export: true
+- update @cinerino/domain
+
 ## v5.14.0 - 2022-07-22
 
 ### Changed

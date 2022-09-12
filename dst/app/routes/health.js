@@ -9,12 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.healthRouter = void 0;
 /**
  * ヘルスチェックルーター
  */
 const express = require("express");
 const mongoose = require("mongoose");
 const healthRouter = express.Router();
+exports.healthRouter = healthRouter;
 const http_status_1 = require("http-status");
 // 接続確認をあきらめる時間(ミリ秒)
 const TIMEOUT_GIVE_UP_CHECKING_IN_MILLISECONDS = 3000;
@@ -61,4 +63,3 @@ healthRouter.get('', (_, res, next) => __awaiter(void 0, void 0, void 0, functio
         next(error);
     }
 }));
-exports.default = healthRouter;

@@ -8,9 +8,9 @@ import * as helmet from 'helmet';
 
 import { connectMongo } from '../connectMongo';
 
-import errorHandler from './middlewares/errorHandler';
-import notFoundHandler from './middlewares/notFoundHandler';
-import router from './routes/router';
+import { errorHandler } from './middlewares/errorHandler';
+import { notFoundHandler } from './middlewares/notFoundHandler';
+import { router } from './routes/router';
 
 const app = express();
 

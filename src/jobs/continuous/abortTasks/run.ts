@@ -6,7 +6,7 @@ import * as moment from 'moment';
 
 import { connectMongo } from '../../../connectMongo';
 
-export default async () => {
+export async function abortTasks() {
     const connection = await connectMongo({ defaultConnection: false });
 
     let count = 0;
@@ -47,4 +47,4 @@ export default async () => {
         },
         INTERVAL_MILLISECONDS
     );
-};
+}

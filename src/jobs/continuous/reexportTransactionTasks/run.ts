@@ -8,7 +8,7 @@ import { connectMongo } from '../../../connectMongo';
 
 const debug = createDebug('pecorino-api');
 
-export default async () => {
+export async function reexportTransactionTasks() {
     const connection = await connectMongo({ defaultConnection: false });
 
     let countRetry = 0;
@@ -38,4 +38,4 @@ export default async () => {
         },
         INTERVAL_MILLISECONDS
     );
-};
+}

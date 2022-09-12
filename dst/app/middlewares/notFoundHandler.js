@@ -1,9 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.notFoundHandler = void 0;
 /**
  * 404ハンドラーミドルウェア
  */
 const domain_1 = require("@cinerino/domain");
-exports.default = (req, __, next) => {
+function notFoundHandler(req, __, next) {
     next(new domain_1.chevre.factory.errors.NotFound(`router for [${req.originalUrl}]`));
-};
+}
+exports.notFoundHandler = notFoundHandler;

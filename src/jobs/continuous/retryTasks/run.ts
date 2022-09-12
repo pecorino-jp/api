@@ -5,7 +5,7 @@ import { chevre } from '@cinerino/domain';
 
 import { connectMongo } from '../../../connectMongo';
 
-export default async () => {
+export async function retryTasks() {
     const connection = await connectMongo({ defaultConnection: false });
 
     let count = 0;
@@ -34,4 +34,4 @@ export default async () => {
         },
         INTERVAL_MILLISECONDS
     );
-};
+}

@@ -49,9 +49,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
     process.exit(1);
 });
 // routers
-app.use('/', router_1.default);
+app.use('/', router_1.router);
 // 404
-app.use(notFoundHandler_1.default);
+app.use(notFoundHandler_1.notFoundHandler);
 // error handlers
-app.use(errorHandler_1.default);
+app.use(errorHandler_1.errorHandler);
 module.exports = app;

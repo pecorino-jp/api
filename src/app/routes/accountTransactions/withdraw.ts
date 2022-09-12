@@ -10,8 +10,8 @@ import * as mongoose from 'mongoose';
 
 const withdrawTransactionsRouter = Router();
 
-import permitScopes from '../../middlewares/permitScopes';
-import validator from '../../middlewares/validator';
+import { permitScopes } from '../../middlewares/permitScopes';
+import { validator } from '../../middlewares/validator';
 
 const debug = createDebug('pecorino-api:router');
 
@@ -213,4 +213,4 @@ withdrawTransactionsRouter.put(
 //     }
 // );
 
-export default withdrawTransactionsRouter;
+export { withdrawTransactionsRouter };

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.errorHandler = void 0;
 /**
  * error handler
  * エラーハンドラーミドルウェア
@@ -9,7 +10,7 @@ const createDebug = require("debug");
 const http_status_1 = require("http-status");
 const api_1 = require("../error/api");
 const debug = createDebug('pecorino-api:middlewares:errorHandler');
-exports.default = (err, __, res, next) => {
+function errorHandler(err, __, res, next) {
     debug(err);
     if (res.headersSent) {
         next(err);
@@ -36,7 +37,8 @@ exports.default = (err, __, res, next) => {
         .json({
         error: apiError.toObject()
     });
-};
+}
+exports.errorHandler = errorHandler;
 /**
  * PECORINOエラーをHTTPステータスコードへ変換する
  */

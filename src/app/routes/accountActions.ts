@@ -81,4 +81,4 @@ const accountActionsRouter = Router();
 //     }
 // );
 
-export default accountActionsRouter;
+export { accountActionsRouter };
