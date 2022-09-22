@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - 取引タイプごとの口座取引タスクエクスポート処理を統合
+- update @motionpicture/express-middleware
 
 ### Deprecated
 
