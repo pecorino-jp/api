@@ -9,13 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onWithdrawCanceled = void 0;
-/**
- * 中止取引監視
- */
+exports.onAccountTransactionExpired = void 0;
 const domain_1 = require("@cinerino/domain");
 const connectMongo_1 = require("../../../connectMongo");
-function onWithdrawCanceled() {
+function onAccountTransactionExpired() {
     return __awaiter(this, void 0, void 0, function* () {
         const connection = yield (0, connectMongo_1.connectMongo)({ defaultConnection: false });
         let countExecute = 0;
@@ -30,8 +27,7 @@ function onWithdrawCanceled() {
             countExecute += 1;
             try {
                 yield domain_1.chevre.service.accountTransaction.exportTasks({
-                    status: domain_1.chevre.factory.transactionStatusType.Canceled,
-                    typeOf: domain_1.chevre.factory.account.transactionType.Withdraw
+                    status: domain_1.chevre.factory.transactionStatusType.Expired
                 })({ task: taskRepo, accountTransaction: transactionRepo });
             }
             catch (error) {
@@ -42,4 +38,4 @@ function onWithdrawCanceled() {
         }), INTERVAL_MILLISECONDS);
     });
 }
-exports.onWithdrawCanceled = onWithdrawCanceled;
+exports.onAccountTransactionExpired = onAccountTransactionExpired;

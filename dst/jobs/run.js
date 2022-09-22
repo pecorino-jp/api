@@ -19,15 +19,9 @@ const run_3 = require("./continuous/reexportTransactionTasks/run");
 const run_4 = require("./continuous/retryTasks/run");
 const run_5 = require("./continuous/accountMoneyTransfer/run");
 const run_6 = require("./continuous/cancelAccountMoneyTransfer/run");
-const run_7 = require("./continuous/onDepositCanceled/run");
-const run_8 = require("./continuous/onDepositConfirmed/run");
-const run_9 = require("./continuous/onDepositExpired/run");
-const run_10 = require("./continuous/onTransferCanceled/run");
-const run_11 = require("./continuous/onTransferConfirmed/run");
-const run_12 = require("./continuous/onTransferExpired/run");
-const run_13 = require("./continuous/onWithdrawCanceled/run");
-const run_14 = require("./continuous/onWithdrawConfirmed/run");
-const run_15 = require("./continuous/onWithdrawExpired/run");
+const run_7 = require("./continuous/onAccountTransactionCanceled/run");
+const run_8 = require("./continuous/onAccountTransactionConfirmed/run");
+const run_9 = require("./continuous/onAccountTransactionExpired/run");
 function runJobs() {
     return __awaiter(this, void 0, void 0, function* () {
         yield (0, run_1.abortTasks)();
@@ -36,15 +30,9 @@ function runJobs() {
         yield (0, run_4.retryTasks)();
         yield (0, run_5.accountMoneyTransfer)();
         yield (0, run_6.cancelAccountMoneyTransfer)();
-        yield (0, run_7.onDepositCanceled)();
-        yield (0, run_8.onDepositConfirmed)();
-        yield (0, run_9.onDepositExpired)();
-        yield (0, run_10.onTransferCanceled)();
-        yield (0, run_11.onTransferConfirmed)();
-        yield (0, run_12.onTransferExpired)();
-        yield (0, run_13.onWithdrawCanceled)();
-        yield (0, run_14.onWithdrawConfirmed)();
-        yield (0, run_15.onWithdrawExpired)();
+        yield (0, run_7.onAccountTransactionCanceled)();
+        yield (0, run_8.onAccountTransactionConfirmed)();
+        yield (0, run_9.onAccountTransactionExpired)();
     });
 }
 exports.runJobs = runJobs;

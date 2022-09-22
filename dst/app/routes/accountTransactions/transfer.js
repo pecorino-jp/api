@@ -107,8 +107,7 @@ transferTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.per
         const taskRepo = new domain_1.chevre.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
         domain_1.chevre.service.accountTransaction.exportTasks({
-            status: domain_1.chevre.factory.transactionStatusType.Confirmed,
-            typeOf: domain_1.chevre.factory.account.transactionType.Transfer
+            status: domain_1.chevre.factory.transactionStatusType.Confirmed
         })({
             task: taskRepo,
             accountTransaction: transactionRepo
@@ -129,8 +128,7 @@ transferTransactionsRouter.put('/:transactionId/cancel', (0, permitScopes_1.perm
         const taskRepo = new domain_1.chevre.repository.Task(mongoose.connection);
         // tslint:disable-next-line:no-floating-promises
         domain_1.chevre.service.accountTransaction.exportTasks({
-            status: domain_1.chevre.factory.transactionStatusType.Canceled,
-            typeOf: domain_1.chevre.factory.account.transactionType.Transfer
+            status: domain_1.chevre.factory.transactionStatusType.Canceled
         })({
             task: taskRepo,
             accountTransaction: transactionRepo

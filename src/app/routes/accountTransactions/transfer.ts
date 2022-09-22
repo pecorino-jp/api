@@ -133,8 +133,7 @@ transferTransactionsRouter.put(
             const taskRepo = new chevre.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
             chevre.service.accountTransaction.exportTasks({
-                status: chevre.factory.transactionStatusType.Confirmed,
-                typeOf: chevre.factory.account.transactionType.Transfer
+                status: chevre.factory.transactionStatusType.Confirmed
             })({
                 task: taskRepo,
                 accountTransaction: transactionRepo
@@ -166,8 +165,7 @@ transferTransactionsRouter.put(
             const taskRepo = new chevre.repository.Task(mongoose.connection);
             // tslint:disable-next-line:no-floating-promises
             chevre.service.accountTransaction.exportTasks({
-                status: chevre.factory.transactionStatusType.Canceled,
-                typeOf: chevre.factory.account.transactionType.Transfer
+                status: chevre.factory.transactionStatusType.Canceled
             })({
                 task: taskRepo,
                 accountTransaction: transactionRepo

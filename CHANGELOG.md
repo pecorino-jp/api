@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- 取引タイプごとの口座取引タスクエクスポート処理を統合
+
 ### Deprecated
 
 ### Removed
