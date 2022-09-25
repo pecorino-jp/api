@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- 汎用口座取引開始を追加
 - 汎用口座取引確定を追加
 - 汎用口座取引中止を追加
 
