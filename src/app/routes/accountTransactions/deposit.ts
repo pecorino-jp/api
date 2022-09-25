@@ -31,10 +31,14 @@ depositTransactionsRouter.post(
         next();
     },
     ...[
-        body('project.id')
+        body([
+            'project.id',
+            'transactionNumber'
+        ])
             .not()
             .isEmpty()
-            .withMessage(() => 'required'),
+            .withMessage(() => 'required')
+            .isString(),
         body('expires')
             .not()
             .isEmpty()
@@ -75,6 +79,7 @@ depositTransactionsRouter.post(
             const transaction = await chevre.service.accountTransaction.deposit.start({
                 project: { id: req.body.project.id, typeOf: chevre.factory.organizationType.Project },
                 typeOf: chevre.factory.account.transactionType.Deposit,
+                transactionNumber: String(req.body.transactionNumber),
                 agent: {
                     typeOf: req.body.agent.typeOf,
                     id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
@@ -88,7 +93,6 @@ depositTransactionsRouter.post(
                     ...(typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined
                 },
                 object: {
-                    clientUser: req.user,
                     amount: { value: req.body.object.amount.value },
                     toLocation: { accountNumber: req.body.object.toLocation.accountNumber },
                     description: (typeof req.body.object?.description === 'string') ? req.body.object.description : ''
@@ -96,8 +100,7 @@ depositTransactionsRouter.post(
                 expires: req.body.expires,
                 ...(typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                     ? { identifier: req.body.identifier }
-                    : undefined,
-                ...(typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined
+                    : undefined
             })({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
 
             // tslint:disable-next-line:no-string-literal

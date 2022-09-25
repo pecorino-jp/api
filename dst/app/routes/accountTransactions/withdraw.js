@@ -36,10 +36,14 @@ withdrawTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['adm
     }
     next();
 }, ...[
-    (0, express_validator_1.body)('project.id')
+    (0, express_validator_1.body)([
+        'project.id',
+        'transactionNumber'
+    ])
         .not()
         .isEmpty()
-        .withMessage(() => 'required'),
+        .withMessage(() => 'required')
+        .isString(),
     (0, express_validator_1.body)('expires')
         .not()
         .isEmpty()
@@ -80,15 +84,14 @@ withdrawTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['adm
 ], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     try {
-        const transaction = yield domain_1.chevre.service.accountTransaction.withdraw.start(Object.assign(Object.assign({ project: { id: req.body.project.id, typeOf: domain_1.chevre.factory.organizationType.Project }, typeOf: domain_1.chevre.factory.account.transactionType.Withdraw, agent: Object.assign({ typeOf: req.body.agent.typeOf, id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub, name: req.body.agent.name }, (typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined), recipient: Object.assign({ typeOf: req.body.recipient.typeOf, id: req.body.recipient.id, name: req.body.recipient.name }, (typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined), object: {
-                clientUser: req.user,
+        const transaction = yield domain_1.chevre.service.accountTransaction.withdraw.start(Object.assign({ project: { id: req.body.project.id, typeOf: domain_1.chevre.factory.organizationType.Project }, typeOf: domain_1.chevre.factory.account.transactionType.Withdraw, transactionNumber: String(req.body.transactionNumber), agent: Object.assign({ typeOf: req.body.agent.typeOf, id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub, name: req.body.agent.name }, (typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined), recipient: Object.assign({ typeOf: req.body.recipient.typeOf, id: req.body.recipient.id, name: req.body.recipient.name }, (typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined), object: {
                 amount: { value: req.body.object.amount.value },
                 fromLocation: { accountNumber: req.body.object.fromLocation.accountNumber },
                 description: (typeof ((_a = req.body.object) === null || _a === void 0 ? void 0 : _a.description) === 'string') ? req.body.object.description : '',
                 force: req.body.object.force === true
             }, expires: req.body.expires }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
             ? { identifier: req.body.identifier }
-            : undefined), (typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined))({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
+            : undefined))({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
         // tslint:disable-next-line:no-string-literal
         // const host = req.headers['host'];
         // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);

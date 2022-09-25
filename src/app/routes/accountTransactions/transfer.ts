@@ -31,10 +31,14 @@ transferTransactionsRouter.post(
         next();
     },
     ...[
-        body('project.id')
+        body([
+            'project.id',
+            'transactionNumber'
+        ])
             .not()
             .isEmpty()
-            .withMessage(() => 'required'),
+            .withMessage(() => 'required')
+            .isString(),
         body('expires')
             .not()
             .isEmpty()
@@ -79,6 +83,7 @@ transferTransactionsRouter.post(
             const transaction = await chevre.service.accountTransaction.transfer.start({
                 project: { id: req.body.project.id, typeOf: chevre.factory.organizationType.Project },
                 typeOf: chevre.factory.account.transactionType.Transfer,
+                transactionNumber: String(req.body.transactionNumber),
                 agent: {
                     typeOf: req.body.agent.typeOf,
                     id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
@@ -92,7 +97,6 @@ transferTransactionsRouter.post(
                     ...(typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined
                 },
                 object: {
-                    clientUser: req.user,
                     amount: { value: req.body.object.amount.value },
                     fromLocation: { accountNumber: req.body.object.fromLocation.accountNumber },
                     toLocation: { accountNumber: req.body.object.toLocation.accountNumber },
@@ -101,8 +105,7 @@ transferTransactionsRouter.post(
                 expires: req.body.expires,
                 ...(typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                     ? { identifier: req.body.identifier }
-                    : undefined,
-                ...(typeof req.body.transactionNumber === 'string') ? { transactionNumber: req.body.transactionNumber } : undefined
+                    : undefined
             })({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
 
             // tslint:disable-next-line:no-string-literal
