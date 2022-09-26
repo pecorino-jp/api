@@ -15,14 +15,20 @@ describe('connectMongo', () => {
     });
 
     it('MongoDBに接続できるはず', async () => {
-        sinon.mock(mongoose).expects('connect').once().resolves();
+        sinon.mock(mongoose)
+            .expects('connect')
+            .once()
+            .resolves();
 
         await connectMongo({ defaultConnection: true });
         sandbox.verify();
     });
 
     it('デフォルトコネクションがfalseでもMongoDBに接続できるはず', async () => {
-        sinon.mock(mongoose).expects('createConnection').once().resolves({});
+        sinon.mock(mongoose)
+            .expects('createConnection')
+            .once()
+            .resolves({});
 
         await connectMongo({ defaultConnection: false });
         sandbox.verify();
