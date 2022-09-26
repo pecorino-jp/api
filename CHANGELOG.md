@@ -22,6 +22,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Removed
 
+- 取引タイプ別口座取引サービスを削除
+
 ### Fixed
 
 ### Security

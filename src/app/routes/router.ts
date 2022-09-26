@@ -7,9 +7,9 @@ import { healthRouter } from './health';
 import { ahRouter } from './_ah';
 
 import { accountTransactionsRouter } from './accountTransactions';
-import { depositTransactionsRouter } from './accountTransactions/deposit';
-import { transferTransactionsRouter } from './accountTransactions/transfer';
-import { withdrawTransactionsRouter } from './accountTransactions/withdraw';
+// import { depositTransactionsRouter } from './accountTransactions/deposit';
+// import { transferTransactionsRouter } from './accountTransactions/transfer';
+// import { withdrawTransactionsRouter } from './accountTransactions/withdraw';
 import { permitsRouter } from './permits';
 
 import { authentication } from '../middlewares/authentication';
@@ -29,9 +29,9 @@ router.use('/health', healthRouter);
 router.use(authentication);
 
 router.use('/accountTransactions', accountTransactionsRouter);
-router.use('/transactions/deposit', depositTransactionsRouter);
-router.use('/transactions/withdraw', withdrawTransactionsRouter);
-router.use('/transactions/transfer', transferTransactionsRouter);
+// router.use('/transactions/deposit', depositTransactionsRouter);
+// router.use('/transactions/withdraw', withdrawTransactionsRouter);
+// router.use('/transactions/transfer', transferTransactionsRouter);
 router.use('/permits', permitsRouter);
 
 export { router };
