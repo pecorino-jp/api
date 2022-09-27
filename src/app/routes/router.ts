@@ -7,9 +7,6 @@ import { healthRouter } from './health';
 import { ahRouter } from './_ah';
 
 import { accountTransactionsRouter } from './accountTransactions';
-// import { depositTransactionsRouter } from './accountTransactions/deposit';
-// import { transferTransactionsRouter } from './accountTransactions/transfer';
-// import { withdrawTransactionsRouter } from './accountTransactions/withdraw';
 import { permitsRouter } from './permits';
 
 import { authentication } from '../middlewares/authentication';
@@ -22,6 +19,12 @@ const router = express.Router();
 //   next()
 // })
 
+router.get(
+    '',
+    (__, res) => {
+        res.send('hello!');
+    }
+);
 router.use('/_ah', ahRouter);
 router.use('/health', healthRouter);
 
@@ -29,9 +32,6 @@ router.use('/health', healthRouter);
 router.use(authentication);
 
 router.use('/accountTransactions', accountTransactionsRouter);
-// router.use('/transactions/deposit', depositTransactionsRouter);
-// router.use('/transactions/withdraw', withdrawTransactionsRouter);
-// router.use('/transactions/transfer', transferTransactionsRouter);
 router.use('/permits', permitsRouter);
 
 export { router };
