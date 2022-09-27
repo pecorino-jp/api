@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## v5.16.0 - 2022-09-28
+
+### Added
+
 - 汎用口座取引開始を追加
 - 汎用口座取引確定を追加
 - 汎用口座取引中止を追加
@@ -19,15 +33,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - 口座取引の取引番号指定を必須化
 - 口座転送アクション実行後に口座取引クリーン処理を追加
 
-### Deprecated
-
 ### Removed
 
 - 取引タイプ別口座取引サービスを削除
-
-### Fixed
-
-### Security
 
 ## v5.15.0 - 2022-09-13
 
