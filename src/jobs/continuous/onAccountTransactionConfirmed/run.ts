@@ -1,11 +1,8 @@
-/**
- * 成立入金取引監視
- */
 import { chevre } from '@cinerino/domain';
 
 import { connectMongo } from '../../../connectMongo';
 
-export async function onDepositConfirmed() {
+export async function onAccountTransactionConfirmed() {
     const connection = await connectMongo({ defaultConnection: false });
 
     let countExecute = 0;
@@ -25,8 +22,7 @@ export async function onDepositConfirmed() {
 
             try {
                 await chevre.service.accountTransaction.exportTasks({
-                    status: chevre.factory.transactionStatusType.Confirmed,
-                    typeOf: chevre.factory.account.transactionType.Deposit
+                    status: chevre.factory.transactionStatusType.Confirmed
                 })({ task: taskRepo, accountTransaction: transactionRepo });
             } catch (error) {
                 // tslint:disable-next-line:no-console

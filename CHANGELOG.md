@@ -18,6 +18,25 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.16.0 - 2022-09-28
+
+### Added
+
+- 汎用口座取引開始を追加
+- 汎用口座取引確定を追加
+- 汎用口座取引中止を追加
+
+### Changed
+
+- 取引タイプごとの口座取引タスクエクスポート処理を統合
+- update @motionpicture/express-middleware
+- 口座取引の取引番号指定を必須化
+- 口座転送アクション実行後に口座取引クリーン処理を追加
+
+### Removed
+
+- 取引タイプ別口座取引サービスを削除
+
 ## v5.15.0 - 2022-09-13
 
 ### Added

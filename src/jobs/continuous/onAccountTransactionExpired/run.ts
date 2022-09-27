@@ -1,11 +1,8 @@
-/**
- * 中止取引監視
- */
 import { chevre } from '@cinerino/domain';
 
 import { connectMongo } from '../../../connectMongo';
 
-export async function onWithdrawCanceled() {
+export async function onAccountTransactionExpired() {
     const connection = await connectMongo({ defaultConnection: false });
 
     let countExecute = 0;
@@ -25,8 +22,7 @@ export async function onWithdrawCanceled() {
 
             try {
                 await chevre.service.accountTransaction.exportTasks({
-                    status: chevre.factory.transactionStatusType.Canceled,
-                    typeOf: chevre.factory.account.transactionType.Withdraw
+                    status: chevre.factory.transactionStatusType.Expired
                 })({ task: taskRepo, accountTransaction: transactionRepo });
             } catch (error) {
                 // tslint:disable-next-line:no-console

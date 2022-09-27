@@ -9,13 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.onDepositConfirmed = void 0;
-/**
- * 成立入金取引監視
- */
+exports.onAccountTransactionConfirmed = void 0;
 const domain_1 = require("@cinerino/domain");
 const connectMongo_1 = require("../../../connectMongo");
-function onDepositConfirmed() {
+function onAccountTransactionConfirmed() {
     return __awaiter(this, void 0, void 0, function* () {
         const connection = yield (0, connectMongo_1.connectMongo)({ defaultConnection: false });
         let countExecute = 0;
@@ -30,8 +27,7 @@ function onDepositConfirmed() {
             countExecute += 1;
             try {
                 yield domain_1.chevre.service.accountTransaction.exportTasks({
-                    status: domain_1.chevre.factory.transactionStatusType.Confirmed,
-                    typeOf: domain_1.chevre.factory.account.transactionType.Deposit
+                    status: domain_1.chevre.factory.transactionStatusType.Confirmed
                 })({ task: taskRepo, accountTransaction: transactionRepo });
             }
             catch (error) {
@@ -42,4 +38,4 @@ function onDepositConfirmed() {
         }), INTERVAL_MILLISECONDS);
     });
 }
-exports.onDepositConfirmed = onDepositConfirmed;
+exports.onAccountTransactionConfirmed = onAccountTransactionConfirmed;
