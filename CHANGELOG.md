@@ -17,6 +17,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - 取引タイプごとの口座取引タスクエクスポート処理を統合
 - update @motionpicture/express-middleware
 - 口座取引の取引番号指定を必須化
+- 口座転送アクション実行後に口座取引クリーン処理を追加
 
 ### Deprecated
 
