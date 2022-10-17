@@ -3,7 +3,7 @@
  */
 import { chevre } from '@cinerino/domain';
 import { Router } from 'express';
-import { body, Meta } from 'express-validator';
+import { body, Meta, query } from 'express-validator';
 import { NO_CONTENT } from 'http-status';
 import * as mongoose from 'mongoose';
 
@@ -11,6 +11,47 @@ const accountTransactionsRouter = Router();
 
 import { permitScopes } from '../middlewares/permitScopes';
 import { validator } from '../middlewares/validator';
+
+accountTransactionsRouter.get(
+    '',
+    permitScopes(['admin']),
+    ...[
+        query('limit')
+            .optional()
+            .isInt()
+            .toInt(),
+        query('page')
+            .optional()
+            .isInt()
+            .toInt(),
+        query('project.id.$eq')
+            .not()
+            .isEmpty()
+            .isString()
+    ],
+    validator,
+    async (req, res, next) => {
+        try {
+            const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
+
+            const searchConditions: chevre.factory.account.transaction.ISearchConditions = {
+                ...req.query,
+                project: { id: { $eq: String(req.query.project?.id?.$eq) } },
+                // tslint:disable-next-line:no-magic-numbers
+                limit: (typeof req.query.limit === 'number') ? Math.min(req.query.limit, 100) : 100,
+                page: (typeof req.query.page === 'number') ? Math.max(req.query.page, 1) : 1,
+                sort: (req.query.sort !== undefined && req.query.sort !== null)
+                    ? req.query.sort
+                    : { startDate: chevre.factory.sortType.Ascending }
+            };
+            const accountTransactions = await transactionRepo.search(searchConditions);
+
+            res.json(accountTransactions);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 accountTransactionsRouter.post(
     '/start',
