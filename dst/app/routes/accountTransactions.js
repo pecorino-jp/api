@@ -34,7 +34,15 @@ accountTransactionsRouter.get('', (0, permitScopes_1.permitScopes)(['admin']), .
     (0, express_validator_1.query)('project.id.$eq')
         .not()
         .isEmpty()
-        .isString()
+        .isString(),
+    (0, express_validator_1.query)('startDate.$gte')
+        .optional()
+        .isISO8601()
+        .toDate(),
+    (0, express_validator_1.query)('startDate.$lte')
+        .optional()
+        .isISO8601()
+        .toDate()
 ], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     try {

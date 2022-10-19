@@ -27,7 +27,15 @@ accountTransactionsRouter.get(
         query('project.id.$eq')
             .not()
             .isEmpty()
-            .isString()
+            .isString(),
+        query('startDate.$gte')
+            .optional()
+            .isISO8601()
+            .toDate(),
+        query('startDate.$lte')
+            .optional()
+            .isISO8601()
+            .toDate()
     ],
     validator,
     async (req, res, next) => {
