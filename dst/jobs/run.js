@@ -13,26 +13,22 @@ exports.runJobs = void 0;
 /**
  * 非同期ジョブ
  */
-const run_1 = require("./continuous/abortTasks/run");
-const run_2 = require("./continuous/makeTransactionExpired/run");
-const run_3 = require("./continuous/reexportTransactionTasks/run");
-const run_4 = require("./continuous/retryTasks/run");
-const run_5 = require("./continuous/accountMoneyTransfer/run");
-const run_6 = require("./continuous/cancelAccountMoneyTransfer/run");
-const run_7 = require("./continuous/onAccountTransactionCanceled/run");
-const run_8 = require("./continuous/onAccountTransactionConfirmed/run");
-const run_9 = require("./continuous/onAccountTransactionExpired/run");
+const run_1 = require("./continuous/makeTransactionExpired/run");
+const run_2 = require("./continuous/reexportTransactionTasks/run");
+const run_3 = require("./continuous/accountMoneyTransfer/run");
+const run_4 = require("./continuous/cancelAccountMoneyTransfer/run");
+const run_5 = require("./continuous/onAccountTransactionCanceled/run");
+const run_6 = require("./continuous/onAccountTransactionConfirmed/run");
+const run_7 = require("./continuous/onAccountTransactionExpired/run");
 function runJobs() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield (0, run_1.abortTasks)();
-        yield (0, run_2.makeTransactionExpired)();
-        yield (0, run_3.reexportTransactionTasks)();
-        yield (0, run_4.retryTasks)();
-        yield (0, run_5.accountMoneyTransfer)();
-        yield (0, run_6.cancelAccountMoneyTransfer)();
-        yield (0, run_7.onAccountTransactionCanceled)();
-        yield (0, run_8.onAccountTransactionConfirmed)();
-        yield (0, run_9.onAccountTransactionExpired)();
+        yield (0, run_1.makeTransactionExpired)();
+        yield (0, run_2.reexportTransactionTasks)();
+        yield (0, run_3.accountMoneyTransfer)();
+        yield (0, run_4.cancelAccountMoneyTransfer)();
+        yield (0, run_5.onAccountTransactionCanceled)();
+        yield (0, run_6.onAccountTransactionConfirmed)();
+        yield (0, run_7.onAccountTransactionExpired)();
     });
 }
 exports.runJobs = runJobs;
