@@ -1,0 +1,18 @@
+cron:
+# - description: "cleanUpDatabase"
+#   url: /cron/cleanUpDatabase
+#   target: jobs
+#   schedule: every day 4:00
+#   timezone: Asia/Tokyo
+
+- description: "makeTransactionExpires"
+  url: /cron/makeTransactionExpires
+  target: jobs
+  schedule: every 1 minutes from 00:00 to 23:00
+  timezone: Asia/Tokyo
+
+- description: "reexportTransactionTasks"
+  url: /cron/reexportTransactionTasks
+  target: jobs
+  schedule: every 5 minutes from 00:00 to 23:00
+  timezone: Asia/Tokyo

@@ -1,4 +1,9 @@
 "use strict";
+/**
+ * 非同期ジョブ
+ */
+// import { makeTransactionExpired } from './continuous/makeTransactionExpired/run';
+// import { reexportTransactionTasks } from './continuous/reexportTransactionTasks/run';
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -10,25 +15,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runJobs = void 0;
-/**
- * 非同期ジョブ
- */
-const run_1 = require("./continuous/makeTransactionExpired/run");
-const run_2 = require("./continuous/reexportTransactionTasks/run");
-const run_3 = require("./continuous/accountMoneyTransfer/run");
-const run_4 = require("./continuous/cancelAccountMoneyTransfer/run");
-const run_5 = require("./continuous/onAccountTransactionCanceled/run");
-const run_6 = require("./continuous/onAccountTransactionConfirmed/run");
-const run_7 = require("./continuous/onAccountTransactionExpired/run");
+const run_1 = require("./continuous/accountMoneyTransfer/run");
+const run_2 = require("./continuous/cancelAccountMoneyTransfer/run");
+const run_3 = require("./continuous/onAccountTransactionCanceled/run");
+const run_4 = require("./continuous/onAccountTransactionConfirmed/run");
+const run_5 = require("./continuous/onAccountTransactionExpired/run");
 function runJobs() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield (0, run_1.makeTransactionExpired)();
-        yield (0, run_2.reexportTransactionTasks)();
-        yield (0, run_3.accountMoneyTransfer)();
-        yield (0, run_4.cancelAccountMoneyTransfer)();
-        yield (0, run_5.onAccountTransactionCanceled)();
-        yield (0, run_6.onAccountTransactionConfirmed)();
-        yield (0, run_7.onAccountTransactionExpired)();
+        // await makeTransactionExpired();
+        // await reexportTransactionTasks();
+        yield (0, run_1.accountMoneyTransfer)();
+        yield (0, run_2.cancelAccountMoneyTransfer)();
+        yield (0, run_3.onAccountTransactionCanceled)();
+        yield (0, run_4.onAccountTransactionConfirmed)();
+        yield (0, run_5.onAccountTransactionExpired)();
     });
 }
 exports.runJobs = runJobs;

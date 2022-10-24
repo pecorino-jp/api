@@ -1,8 +1,8 @@
 /**
  * 非同期ジョブ
  */
-import { makeTransactionExpired } from './continuous/makeTransactionExpired/run';
-import { reexportTransactionTasks } from './continuous/reexportTransactionTasks/run';
+// import { makeTransactionExpired } from './continuous/makeTransactionExpired/run';
+// import { reexportTransactionTasks } from './continuous/reexportTransactionTasks/run';
 
 import { accountMoneyTransfer } from './continuous/accountMoneyTransfer/run';
 import { cancelAccountMoneyTransfer } from './continuous/cancelAccountMoneyTransfer/run';
@@ -12,8 +12,8 @@ import { onAccountTransactionConfirmed } from './continuous/onAccountTransaction
 import { onAccountTransactionExpired } from './continuous/onAccountTransactionExpired/run';
 
 export async function runJobs() {
-    await makeTransactionExpired();
-    await reexportTransactionTasks();
+    // await makeTransactionExpired();
+    // await reexportTransactionTasks();
 
     await accountMoneyTransfer();
     await cancelAccountMoneyTransfer();

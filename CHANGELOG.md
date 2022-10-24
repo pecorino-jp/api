@@ -16,6 +16,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - ACCOUNT_TRANSACTION_STORAGE_PERIOD_IN_MONTH設定を追加
 - accountTransactionsコレクションのindex最適化
+- makeExpires,reexportTasksをcron化
 
 ### Deprecated
 

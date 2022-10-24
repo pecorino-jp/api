@@ -7,6 +7,7 @@ import { healthRouter } from './health';
 import { ahRouter } from './_ah';
 
 import { accountTransactionsRouter } from './accountTransactions';
+import { cronRouter } from './cron';
 import { permitsRouter } from './permits';
 
 import { authentication } from '../middlewares/authentication';
@@ -26,6 +27,7 @@ router.get(
     }
 );
 router.use('/_ah', ahRouter);
+router.use('/cron', cronRouter);
 router.use('/health', healthRouter);
 
 // 認証
