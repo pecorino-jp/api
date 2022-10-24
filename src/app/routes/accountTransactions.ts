@@ -233,9 +233,6 @@ accountTransactionsRouter.post(
                     throw new chevre.factory.errors.ArgumentNull('typeOf');
             }
 
-            // tslint:disable-next-line:no-string-literal
-            // const host = req.headers['host'];
-            // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
             res.json(transaction);
         } catch (error) {
             next(error);
@@ -244,7 +241,7 @@ accountTransactionsRouter.post(
 );
 
 accountTransactionsRouter.put(
-    '/:transactionId/confirm',
+    '/:transactionNumber/confirm',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
@@ -253,10 +250,8 @@ accountTransactionsRouter.put(
             const accountActionRepo = new chevre.repository.AccountAction(mongoose.connection);
             const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
-            const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-
             const accountTransaction = await chevre.service.accountTransaction.confirm({
-                ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }
+                transactionNumber: req.params.transactionNumber
             })({ accountTransaction: transactionRepo });
 
             // syncバージョンを実装(2022-10-26~)
@@ -293,7 +288,7 @@ accountTransactionsRouter.put(
 );
 
 accountTransactionsRouter.put(
-    '/:transactionId/cancel',
+    '/:transactionNumber/cancel',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
@@ -302,11 +297,7 @@ accountTransactionsRouter.put(
             const accountActionRepo = new chevre.repository.AccountAction(mongoose.connection);
             const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
-            const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-
-            const accountTransaction = await transactionRepo.cancel({
-                ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }
-            });
+            const accountTransaction = await transactionRepo.cancel({ transactionNumber: req.params.transactionNumber });
 
             // syncバージョンを実装(2022-10-26~)
             const sync: boolean = String(req.query.sync) === '1';

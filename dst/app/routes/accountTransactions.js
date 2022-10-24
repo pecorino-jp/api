@@ -189,23 +189,21 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
             default:
                 throw new domain_1.chevre.factory.errors.ArgumentNull('typeOf');
         }
-        // tslint:disable-next-line:no-string-literal
-        // const host = req.headers['host'];
-        // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
         res.json(transaction);
     }
     catch (error) {
         next(error);
     }
 }));
-accountTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountTransactionsRouter.put('/:transactionNumber/confirm', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _f;
     try {
         const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
         const accountActionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
-        const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        const accountTransaction = yield domain_1.chevre.service.accountTransaction.confirm(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }))({ accountTransaction: transactionRepo });
+        const accountTransaction = yield domain_1.chevre.service.accountTransaction.confirm({
+            transactionNumber: req.params.transactionNumber
+        })({ accountTransaction: transactionRepo });
         // syncバージョンを実装(2022-10-26~)
         const sync = String(req.query.sync) === '1';
         if (sync) {
@@ -237,13 +235,12 @@ accountTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.perm
         next(error);
     }
 }));
-accountTransactionsRouter.put('/:transactionId/cancel', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountTransactionsRouter.put('/:transactionNumber/cancel', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
         const accountActionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
-        const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        const accountTransaction = yield transactionRepo.cancel(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
+        const accountTransaction = yield transactionRepo.cancel({ transactionNumber: req.params.transactionNumber });
         // syncバージョンを実装(2022-10-26~)
         const sync = String(req.query.sync) === '1';
         if (sync) {
