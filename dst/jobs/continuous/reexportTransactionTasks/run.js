@@ -32,7 +32,7 @@ function reexportTransactionTasks() {
             countRetry += 1;
             try {
                 debug('reexporting tasks...');
-                yield transactionRepo.reexportTasks(RETRY_INTERVAL_MINUTES);
+                yield transactionRepo.reexportTasks({ intervalInMinutes: RETRY_INTERVAL_MINUTES });
             }
             catch (error) {
                 // tslint:disable-next-line:no-console

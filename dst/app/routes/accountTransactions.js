@@ -199,19 +199,37 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
     }
 }));
 accountTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _f;
     try {
+        const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
+        const accountActionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        yield domain_1.chevre.service.accountTransaction.confirm(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }))({ accountTransaction: transactionRepo });
-        // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-        const taskRepo = new domain_1.chevre.repository.Task(mongoose.connection);
-        // tslint:disable-next-line:no-floating-promises
-        domain_1.chevre.service.accountTransaction.exportTasks({
-            status: domain_1.chevre.factory.transactionStatusType.Confirmed
-        })({
-            task: taskRepo,
-            accountTransaction: transactionRepo
-        });
+        const accountTransaction = yield domain_1.chevre.service.accountTransaction.confirm(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }))({ accountTransaction: transactionRepo });
+        // syncバージョンを実装(2022-10-26~)
+        const sync = String(req.query.sync) === '1';
+        if (sync) {
+            const moneyTransferActionAttributes = (_f = accountTransaction.potentialActions) === null || _f === void 0 ? void 0 : _f.moneyTransfer;
+            if (typeof (moneyTransferActionAttributes === null || moneyTransferActionAttributes === void 0 ? void 0 : moneyTransferActionAttributes.typeOf) !== 'string') {
+                throw new domain_1.chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
+            }
+            yield domain_1.chevre.service.account.transferMoney(moneyTransferActionAttributes)({
+                account: accountRepo,
+                accountAction: accountActionRepo,
+                accountTransaction: transactionRepo
+            });
+        }
+        else {
+            // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
+            const taskRepo = new domain_1.chevre.repository.Task(mongoose.connection);
+            // tslint:disable-next-line:no-floating-promises
+            domain_1.chevre.service.accountTransaction.exportTasks({
+                status: domain_1.chevre.factory.transactionStatusType.Confirmed
+            })({
+                task: taskRepo,
+                accountTransaction: transactionRepo
+            });
+        }
         res.status(http_status_1.NO_CONTENT)
             .end();
     }
@@ -221,18 +239,36 @@ accountTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.perm
 }));
 accountTransactionsRouter.put('/:transactionId/cancel', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
+        const accountActionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
         const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        yield transactionRepo.cancel(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
-        // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-        const taskRepo = new domain_1.chevre.repository.Task(mongoose.connection);
-        // tslint:disable-next-line:no-floating-promises
-        domain_1.chevre.service.accountTransaction.exportTasks({
-            status: domain_1.chevre.factory.transactionStatusType.Canceled
-        })({
-            task: taskRepo,
-            accountTransaction: transactionRepo
-        });
+        const accountTransaction = yield transactionRepo.cancel(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
+        // syncバージョンを実装(2022-10-26~)
+        const sync = String(req.query.sync) === '1';
+        if (sync) {
+            yield domain_1.chevre.service.account.cancelMoneyTransfer({
+                transaction: {
+                    typeOf: accountTransaction.typeOf,
+                    id: accountTransaction.id
+                }
+            })({
+                account: accountRepo,
+                accountAction: accountActionRepo,
+                accountTransaction: transactionRepo
+            });
+        }
+        else {
+            // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
+            const taskRepo = new domain_1.chevre.repository.Task(mongoose.connection);
+            // tslint:disable-next-line:no-floating-promises
+            domain_1.chevre.service.accountTransaction.exportTasks({
+                status: domain_1.chevre.factory.transactionStatusType.Canceled
+            })({
+                task: taskRepo,
+                accountTransaction: transactionRepo
+            });
+        }
         res.status(http_status_1.NO_CONTENT)
             .end();
     }

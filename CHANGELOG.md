@@ -9,6 +9,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - 口座取引検索を追加
+- 口座取引確定サービスにsyncオプションを追加
+- 口座取引中止サービスにsyncオプションを追加
 
 ### Changed
 
