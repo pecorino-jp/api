@@ -1,24 +1,21 @@
 node_modules/
-npm-debug.log*
 iisnode/
+npm-debug.log*
+.vscode/
 .env*
 app.yaml*
-.vscode/
+cron.yaml*
+**/*.log
 coverage/
 .nyc_output/
+docs/
+
+.googleappengine/*
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
 
 !.gitignore
 !.gitkeep
-
-# Elastic Beanstalk Files
-
-.elasticbeanstalk/*
-
-!.elasticbeanstalk/*.cfg.yml
-
-!.elasticbeanstalk/*.global.yml
-
-*.js.map
-
-# GCP
-app.yaml
