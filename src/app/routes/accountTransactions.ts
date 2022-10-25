@@ -262,7 +262,7 @@ accountTransactionsRouter.put(
                     throw new chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
                 }
 
-                await chevre.service.account.transferMoney(moneyTransferActionAttributes)({
+                await chevre.service.account.transferMoney(moneyTransferActionAttributes, false)({
                     account: accountRepo,
                     accountAction: accountActionRepo,
                     accountTransaction: transactionRepo
@@ -306,7 +306,8 @@ accountTransactionsRouter.put(
                     transaction: {
                         typeOf: accountTransaction.typeOf,
                         id: accountTransaction.id
-                    }
+                    },
+                    potentialActions: false
                 })({
                     account: accountRepo,
                     accountAction: accountActionRepo,

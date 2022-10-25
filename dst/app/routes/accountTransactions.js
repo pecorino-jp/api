@@ -211,7 +211,7 @@ accountTransactionsRouter.put('/:transactionNumber/confirm', (0, permitScopes_1.
             if (typeof (moneyTransferActionAttributes === null || moneyTransferActionAttributes === void 0 ? void 0 : moneyTransferActionAttributes.typeOf) !== 'string') {
                 throw new domain_1.chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
             }
-            yield domain_1.chevre.service.account.transferMoney(moneyTransferActionAttributes)({
+            yield domain_1.chevre.service.account.transferMoney(moneyTransferActionAttributes, false)({
                 account: accountRepo,
                 accountAction: accountActionRepo,
                 accountTransaction: transactionRepo
@@ -248,7 +248,8 @@ accountTransactionsRouter.put('/:transactionNumber/cancel', (0, permitScopes_1.p
                 transaction: {
                     typeOf: accountTransaction.typeOf,
                     id: accountTransaction.id
-                }
+                },
+                potentialActions: false
             })({
                 account: accountRepo,
                 accountAction: accountActionRepo,
