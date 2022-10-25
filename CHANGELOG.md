@@ -26,6 +26,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - abortTasksを削除
 - retryTasksを削除
+- onAccountTransactionConfirmedを廃止
+- onAccountTransactionCanceledを廃止
 
 ### Fixed
 

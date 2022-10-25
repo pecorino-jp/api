@@ -11,14 +11,20 @@ import { onAccountTransactionCanceled } from './continuous/onAccountTransactionC
 import { onAccountTransactionConfirmed } from './continuous/onAccountTransactionConfirmed/run';
 import { onAccountTransactionExpired } from './continuous/onAccountTransactionExpired/run';
 
+const USE_EXPORT_TRANSACTION_TASKS = process.env.USE_EXPORT_TRANSACTION_TASKS === '1';
+
 export async function runJobs() {
     // await makeTransactionExpired();
     // await reexportTransactionTasks();
 
-    await accountMoneyTransfer();
     await cancelAccountMoneyTransfer();
 
-    await onAccountTransactionCanceled();
-    await onAccountTransactionConfirmed();
     await onAccountTransactionExpired();
+
+    if (USE_EXPORT_TRANSACTION_TASKS) {
+        await accountMoneyTransfer();
+
+        await onAccountTransactionCanceled();
+        await onAccountTransactionConfirmed();
+    }
 }

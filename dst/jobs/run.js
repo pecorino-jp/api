@@ -20,15 +20,18 @@ const run_2 = require("./continuous/cancelAccountMoneyTransfer/run");
 const run_3 = require("./continuous/onAccountTransactionCanceled/run");
 const run_4 = require("./continuous/onAccountTransactionConfirmed/run");
 const run_5 = require("./continuous/onAccountTransactionExpired/run");
+const USE_EXPORT_TRANSACTION_TASKS = process.env.USE_EXPORT_TRANSACTION_TASKS === '1';
 function runJobs() {
     return __awaiter(this, void 0, void 0, function* () {
         // await makeTransactionExpired();
         // await reexportTransactionTasks();
-        yield (0, run_1.accountMoneyTransfer)();
         yield (0, run_2.cancelAccountMoneyTransfer)();
-        yield (0, run_3.onAccountTransactionCanceled)();
-        yield (0, run_4.onAccountTransactionConfirmed)();
         yield (0, run_5.onAccountTransactionExpired)();
+        if (USE_EXPORT_TRANSACTION_TASKS) {
+            yield (0, run_1.accountMoneyTransfer)();
+            yield (0, run_3.onAccountTransactionCanceled)();
+            yield (0, run_4.onAccountTransactionConfirmed)();
+        }
     });
 }
 exports.runJobs = runJobs;
