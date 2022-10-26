@@ -28,6 +28,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - retryTasksを削除
 - onAccountTransactionConfirmedを廃止
 - onAccountTransactionCanceledを廃止
+- onAccountTransactionExpiredを廃止
 
 ### Fixed
 

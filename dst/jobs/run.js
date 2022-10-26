@@ -25,12 +25,12 @@ function runJobs() {
     return __awaiter(this, void 0, void 0, function* () {
         // await makeTransactionExpired();
         // await reexportTransactionTasks();
-        yield (0, run_2.cancelAccountMoneyTransfer)();
-        yield (0, run_5.onAccountTransactionExpired)();
         if (USE_EXPORT_TRANSACTION_TASKS) {
             yield (0, run_1.accountMoneyTransfer)();
+            yield (0, run_2.cancelAccountMoneyTransfer)();
             yield (0, run_3.onAccountTransactionCanceled)();
             yield (0, run_4.onAccountTransactionConfirmed)();
+            yield (0, run_5.onAccountTransactionExpired)();
         }
     });
 }

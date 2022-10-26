@@ -17,14 +17,12 @@ export async function runJobs() {
     // await makeTransactionExpired();
     // await reexportTransactionTasks();
 
-    await cancelAccountMoneyTransfer();
-
-    await onAccountTransactionExpired();
-
     if (USE_EXPORT_TRANSACTION_TASKS) {
         await accountMoneyTransfer();
+        await cancelAccountMoneyTransfer();
 
         await onAccountTransactionCanceled();
         await onAccountTransactionConfirmed();
+        await onAccountTransactionExpired();
     }
 }
