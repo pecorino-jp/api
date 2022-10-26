@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - 口座取引検索を追加
 - 口座取引確定サービスにsyncオプションを追加
 - 口座取引中止サービスにsyncオプションを追加
+- cleanUpDatabaseをcron化
 
 ### Changed
 
@@ -19,6 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - makeExpires,reexportTasksをcron化
 - IDによる口座取引確定を廃止
 - IDによる口座取引中止を廃止
+- 口座取引開始前にfromLocationの利用可能残高検証を追加
 
 ### Deprecated
 

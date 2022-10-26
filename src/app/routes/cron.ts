@@ -4,8 +4,13 @@
 import { chevre } from '@cinerino/domain';
 import * as express from 'express';
 import { NO_CONTENT } from 'http-status';
-// import * as moment from 'moment';
+import * as moment from 'moment';
 import * as mongoose from 'mongoose';
+
+const ACCOUNT_TRANSACTION_STORAGE_PERIOD_IN_MONTH = (typeof process.env.ACCOUNT_TRANSACTION_STORAGE_PERIOD_IN_MONTH === 'string')
+    ? Number(process.env.ACCOUNT_TRANSACTION_STORAGE_PERIOD_IN_MONTH)
+    // tslint:disable-next-line:no-magic-numbers
+    : 12;
 
 const cronRouter = express.Router();
 
@@ -13,21 +18,32 @@ cronRouter.get(
     '/cleanUpDatabase',
     async (_, res, next) => {
         try {
-            // const now = new Date();
-            // const actionRepo = new chevre.repository.Action(mongoose.connection);
+            const now = new Date();
+            const accountActionRepo = new chevre.repository.AccountAction(mongoose.connection);
+            const accountTransactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
-            // // actions
-            // try {
-            //     await actionRepo.deleteEndDatePassedCertainPeriod({
-            //         $lt: moment(now)
-            //             // tslint:disable-next-line:no-magic-numbers
-            //             .add(-24, 'months')
-            //             .toDate()
-            //     });
-            // } catch (error) {
-            //     // tslint:disable-next-line:no-console
-            //     console.error('actionRepo.deleteEndDatePassedCertainPeriod throws', error);
-            // }
+            try {
+                await accountActionRepo.clean({
+                    // 1年以上前に開始したもの
+                    startDate: {
+                        $lt: moment(now)
+                            .add(-ACCOUNT_TRANSACTION_STORAGE_PERIOD_IN_MONTH, 'months')
+                            .toDate()
+                    }
+                });
+
+                await accountTransactionRepo.clean({
+                    // 終了日時を一定期間過ぎたもの
+                    endDate: {
+                        $lt: moment(now)
+                            .add(-ACCOUNT_TRANSACTION_STORAGE_PERIOD_IN_MONTH, 'months')
+                            .toDate()
+                    }
+                });
+            } catch (error) {
+                // tslint:disable-next-line:no-console
+                console.error('accountActionRepo.clean or accountTransactionRepo.clean throws', error);
+            }
 
             res.status(NO_CONTENT)
                 .end();
