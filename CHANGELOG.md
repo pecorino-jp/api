@@ -31,6 +31,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - onAccountTransactionConfirmedを廃止
 - onAccountTransactionCanceledを廃止
 - onAccountTransactionExpiredを廃止
+- jobsを削除
 
 ### Fixed
 
