@@ -58,27 +58,3 @@ cronRouter.get('/cleanUpDatabase', (_, res, next) => __awaiter(void 0, void 0, v
         next(error);
     }
 }));
-cronRouter.get('/makeTransactionExpires', (_, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const now = new Date();
-        const accountTransactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
-        yield accountTransactionRepo.makeExpired({ expires: now });
-        res.status(http_status_1.NO_CONTENT)
-            .end();
-    }
-    catch (error) {
-        next(error);
-    }
-}));
-const REEXPORT_TRANSACTION_TASK_INTERVAL_MINUTES = 10;
-cronRouter.get('/reexportTransactionTasks', (_, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const accountTransactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
-        yield accountTransactionRepo.reexportTasks({ intervalInMinutes: REEXPORT_TRANSACTION_TASK_INTERVAL_MINUTES });
-        res.status(http_status_1.NO_CONTENT)
-            .end();
-    }
-    catch (error) {
-        next(error);
-    }
-}));

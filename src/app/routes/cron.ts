@@ -53,40 +53,40 @@ cronRouter.get(
     }
 );
 
-cronRouter.get(
-    '/makeTransactionExpires',
-    async (_, res, next) => {
-        try {
-            const now = new Date();
+// cronRouter.get(
+//     '/makeTransactionExpires',
+//     async (_, res, next) => {
+//         try {
+//             const now = new Date();
 
-            const accountTransactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
+//             const accountTransactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
-            await accountTransactionRepo.makeExpired({ expires: now });
+//             await accountTransactionRepo.makeExpired({ expires: now });
 
-            res.status(NO_CONTENT)
-                .end();
-        } catch (error) {
-            next(error);
-        }
-    }
-);
+//             res.status(NO_CONTENT)
+//                 .end();
+//         } catch (error) {
+//             next(error);
+//         }
+//     }
+// );
 
-const REEXPORT_TRANSACTION_TASK_INTERVAL_MINUTES = 10;
+// const REEXPORT_TRANSACTION_TASK_INTERVAL_MINUTES = 10;
 
-cronRouter.get(
-    '/reexportTransactionTasks',
-    async (_, res, next) => {
-        try {
-            const accountTransactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
+// cronRouter.get(
+//     '/reexportTransactionTasks',
+//     async (_, res, next) => {
+//         try {
+//             const accountTransactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
-            await accountTransactionRepo.reexportTasks({ intervalInMinutes: REEXPORT_TRANSACTION_TASK_INTERVAL_MINUTES });
+//             await accountTransactionRepo.reexportTasks({ intervalInMinutes: REEXPORT_TRANSACTION_TASK_INTERVAL_MINUTES });
 
-            res.status(NO_CONTENT)
-                .end();
-        } catch (error) {
-            next(error);
-        }
-    }
-);
+//             res.status(NO_CONTENT)
+//                 .end();
+//         } catch (error) {
+//             next(error);
+//         }
+//     }
+// );
 
 export { cronRouter };

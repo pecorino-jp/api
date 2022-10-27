@@ -204,30 +204,15 @@ accountTransactionsRouter.put('/:transactionNumber/confirm', (0, permitScopes_1.
         const accountTransaction = yield domain_1.chevre.service.accountTransaction.confirm({
             transactionNumber: req.params.transactionNumber
         })({ accountTransaction: transactionRepo });
-        // syncバージョンを実装(2022-10-26~)
-        const sync = String(req.query.sync) === '1';
-        if (sync) {
-            const moneyTransferActionAttributes = (_f = accountTransaction.potentialActions) === null || _f === void 0 ? void 0 : _f.moneyTransfer;
-            if (typeof (moneyTransferActionAttributes === null || moneyTransferActionAttributes === void 0 ? void 0 : moneyTransferActionAttributes.typeOf) !== 'string') {
-                throw new domain_1.chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
-            }
-            yield domain_1.chevre.service.account.transferMoney(moneyTransferActionAttributes, false)({
-                account: accountRepo,
-                accountAction: accountActionRepo,
-                accountTransaction: transactionRepo
-            });
+        const moneyTransferActionAttributes = (_f = accountTransaction.potentialActions) === null || _f === void 0 ? void 0 : _f.moneyTransfer;
+        if (typeof (moneyTransferActionAttributes === null || moneyTransferActionAttributes === void 0 ? void 0 : moneyTransferActionAttributes.typeOf) !== 'string') {
+            throw new domain_1.chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
         }
-        else {
-            // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-            const taskRepo = new domain_1.chevre.repository.Task(mongoose.connection);
-            // tslint:disable-next-line:no-floating-promises
-            domain_1.chevre.service.accountTransaction.exportTasks({
-                status: domain_1.chevre.factory.transactionStatusType.Confirmed
-            })({
-                task: taskRepo,
-                accountTransaction: transactionRepo
-            });
-        }
+        yield domain_1.chevre.service.account.transferMoney(moneyTransferActionAttributes)({
+            account: accountRepo,
+            accountAction: accountActionRepo,
+            accountTransaction: transactionRepo
+        });
         res.status(http_status_1.NO_CONTENT)
             .end();
     }
@@ -241,32 +226,16 @@ accountTransactionsRouter.put('/:transactionNumber/cancel', (0, permitScopes_1.p
         const accountActionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
         const accountTransaction = yield transactionRepo.cancel({ transactionNumber: req.params.transactionNumber });
-        // syncバージョンを実装(2022-10-26~)
-        const sync = String(req.query.sync) === '1';
-        if (sync) {
-            yield domain_1.chevre.service.account.cancelMoneyTransfer({
-                transaction: {
-                    typeOf: accountTransaction.typeOf,
-                    id: accountTransaction.id
-                },
-                potentialActions: false
-            })({
-                account: accountRepo,
-                accountAction: accountActionRepo,
-                accountTransaction: transactionRepo
-            });
-        }
-        else {
-            // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-            const taskRepo = new domain_1.chevre.repository.Task(mongoose.connection);
-            // tslint:disable-next-line:no-floating-promises
-            domain_1.chevre.service.accountTransaction.exportTasks({
-                status: domain_1.chevre.factory.transactionStatusType.Canceled
-            })({
-                task: taskRepo,
-                accountTransaction: transactionRepo
-            });
-        }
+        yield domain_1.chevre.service.account.cancelMoneyTransfer({
+            transaction: {
+                typeOf: accountTransaction.typeOf,
+                id: accountTransaction.id
+            }
+        })({
+            account: accountRepo,
+            accountAction: accountActionRepo,
+            accountTransaction: transactionRepo
+        });
         res.status(http_status_1.NO_CONTENT)
             .end();
     }

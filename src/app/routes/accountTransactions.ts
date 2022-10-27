@@ -254,30 +254,16 @@ accountTransactionsRouter.put(
                 transactionNumber: req.params.transactionNumber
             })({ accountTransaction: transactionRepo });
 
-            // syncバージョンを実装(2022-10-26~)
-            const sync: boolean = String(req.query.sync) === '1';
-            if (sync) {
-                const moneyTransferActionAttributes = accountTransaction.potentialActions?.moneyTransfer;
-                if (typeof moneyTransferActionAttributes?.typeOf !== 'string') {
-                    throw new chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
-                }
-
-                await chevre.service.account.transferMoney(moneyTransferActionAttributes, false)({
-                    account: accountRepo,
-                    accountAction: accountActionRepo,
-                    accountTransaction: transactionRepo
-                });
-            } else {
-                // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-                const taskRepo = new chevre.repository.Task(mongoose.connection);
-                // tslint:disable-next-line:no-floating-promises
-                chevre.service.accountTransaction.exportTasks({
-                    status: chevre.factory.transactionStatusType.Confirmed
-                })({
-                    task: taskRepo,
-                    accountTransaction: transactionRepo
-                });
+            const moneyTransferActionAttributes = accountTransaction.potentialActions?.moneyTransfer;
+            if (typeof moneyTransferActionAttributes?.typeOf !== 'string') {
+                throw new chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
             }
+
+            await chevre.service.account.transferMoney(moneyTransferActionAttributes)({
+                account: accountRepo,
+                accountAction: accountActionRepo,
+                accountTransaction: transactionRepo
+            });
 
             res.status(NO_CONTENT)
                 .end();
@@ -299,31 +285,16 @@ accountTransactionsRouter.put(
 
             const accountTransaction = await transactionRepo.cancel({ transactionNumber: req.params.transactionNumber });
 
-            // syncバージョンを実装(2022-10-26~)
-            const sync: boolean = String(req.query.sync) === '1';
-            if (sync) {
-                await chevre.service.account.cancelMoneyTransfer({
-                    transaction: {
-                        typeOf: accountTransaction.typeOf,
-                        id: accountTransaction.id
-                    },
-                    potentialActions: false
-                })({
-                    account: accountRepo,
-                    accountAction: accountActionRepo,
-                    accountTransaction: transactionRepo
-                });
-            } else {
-                // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-                const taskRepo = new chevre.repository.Task(mongoose.connection);
-                // tslint:disable-next-line:no-floating-promises
-                chevre.service.accountTransaction.exportTasks({
-                    status: chevre.factory.transactionStatusType.Canceled
-                })({
-                    task: taskRepo,
-                    accountTransaction: transactionRepo
-                });
-            }
+            await chevre.service.account.cancelMoneyTransfer({
+                transaction: {
+                    typeOf: accountTransaction.typeOf,
+                    id: accountTransaction.id
+                }
+            })({
+                account: accountRepo,
+                accountAction: accountActionRepo,
+                accountTransaction: transactionRepo
+            });
 
             res.status(NO_CONTENT)
                 .end();
