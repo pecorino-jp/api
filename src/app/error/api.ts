@@ -1,4 +1,4 @@
-import { chevre } from '@cinerino/domain';
+import { chevre } from '@chevre/domain';
 
 /**
  * アプリケーションエラー

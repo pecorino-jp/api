@@ -4,7 +4,7 @@ exports.permitScopes = void 0;
 /**
  * スコープ許可ミドルウェア
  */
-const domain_1 = require("@cinerino/domain");
+const domain_1 = require("@chevre/domain");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:permitScopes');
 function permitScopes(permittedScopes) {

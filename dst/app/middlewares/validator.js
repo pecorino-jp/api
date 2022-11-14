@@ -14,7 +14,7 @@ exports.validator = void 0;
  * バリデーターミドルウェア
  * リクエストのパラメータ(query strings or body parameters)に対するバリデーション
  */
-const domain_1 = require("@cinerino/domain");
+const domain_1 = require("@chevre/domain");
 const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");
 const api_1 = require("../error/api");

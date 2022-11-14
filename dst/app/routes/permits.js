@@ -13,7 +13,7 @@ exports.permitsRouter = void 0;
 /**
  * 許可証ルーター
  */
-const domain_1 = require("@cinerino/domain");
+const domain_1 = require("@chevre/domain");
 const createDebug = require("debug");
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");

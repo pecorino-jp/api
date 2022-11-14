@@ -1,7 +1,7 @@
 /**
  * 許可証ルーター
  */
-import { chevre } from '@cinerino/domain';
+import { chevre } from '@chevre/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
 import { body } from 'express-validator';

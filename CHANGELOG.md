@@ -18,6 +18,33 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v5.17.0 - 2022-11-15
+
+### Added
+
+- 口座取引検索を追加
+- cleanUpDatabaseをcron化
+
+### Changed
+
+- ACCOUNT_TRANSACTION_STORAGE_PERIOD_IN_MONTH設定を追加
+- accountTransactionsコレクションのindex最適化
+- 口座取引確定サービスを同期型に変更
+- 口座取引中止サービスを同期型に変更
+- IDによる口座取引確定を廃止
+- IDによる口座取引中止を廃止
+- 口座取引開始前にfromLocationの利用可能残高検証を追加
+- @chevre/domainで再実装
+
+### Removed
+
+- abortTasksを削除
+- retryTasksを削除
+- onAccountTransactionConfirmedを廃止
+- onAccountTransactionCanceledを廃止
+- onAccountTransactionExpiredを廃止
+- jobsを削除
+
 ## v5.16.0 - 2022-09-28
 
 ### Added

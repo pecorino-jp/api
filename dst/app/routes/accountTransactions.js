@@ -13,7 +13,7 @@ exports.accountTransactionsRouter = void 0;
 /**
  * 口座取引ルーター
  */
-const domain_1 = require("@cinerino/domain");
+const domain_1 = require("@chevre/domain");
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");
@@ -22,6 +22,43 @@ const accountTransactionsRouter = (0, express_1.Router)();
 exports.accountTransactionsRouter = accountTransactionsRouter;
 const permitScopes_1 = require("../middlewares/permitScopes");
 const validator_1 = require("../middlewares/validator");
+accountTransactionsRouter.get('', (0, permitScopes_1.permitScopes)(['admin']), ...[
+    (0, express_validator_1.query)('limit')
+        .optional()
+        .isInt()
+        .toInt(),
+    (0, express_validator_1.query)('page')
+        .optional()
+        .isInt()
+        .toInt(),
+    (0, express_validator_1.query)('project.id.$eq')
+        .not()
+        .isEmpty()
+        .isString(),
+    (0, express_validator_1.query)('startDate.$gte')
+        .optional()
+        .isISO8601()
+        .toDate(),
+    (0, express_validator_1.query)('startDate.$lte')
+        .optional()
+        .isISO8601()
+        .toDate()
+], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    try {
+        const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
+        const searchConditions = Object.assign(Object.assign({}, req.query), { project: { id: { $eq: String((_b = (_a = req.query.project) === null || _a === void 0 ? void 0 : _a.id) === null || _b === void 0 ? void 0 : _b.$eq) } }, 
+            // tslint:disable-next-line:no-magic-numbers
+            limit: (typeof req.query.limit === 'number') ? Math.min(req.query.limit, 100) : 100, page: (typeof req.query.page === 'number') ? Math.max(req.query.page, 1) : 1, sort: (req.query.sort !== undefined && req.query.sort !== null)
+                ? req.query.sort
+                : { startDate: domain_1.chevre.factory.sortType.Ascending } });
+        const accountTransactions = yield transactionRepo.search(searchConditions);
+        res.json(accountTransactions);
+    }
+    catch (error) {
+        next(error);
+    }
+}));
 accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admin']), 
 // 互換性維持
 (req, _, next) => {
@@ -104,7 +141,7 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
 ], validator_1.validator, 
 // tslint:disable-next-line:cyclomatic-complexity max-func-body-length
 (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _c, _d, _e;
     try {
         const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
         const actionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
@@ -120,7 +157,7 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
                     recipient, object: {
                         amount: { value: req.body.object.amount.value },
                         toLocation: { accountNumber: req.body.object.toLocation.accountNumber },
-                        description: (typeof ((_a = req.body.object) === null || _a === void 0 ? void 0 : _a.description) === 'string') ? req.body.object.description : ''
+                        description: (typeof ((_c = req.body.object) === null || _c === void 0 ? void 0 : _c.description) === 'string') ? req.body.object.description : ''
                     }, expires: req.body.expires }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                     ? { identifier: req.body.identifier }
                     : undefined))({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
@@ -132,7 +169,7 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
                         amount: { value: req.body.object.amount.value },
                         fromLocation: { accountNumber: req.body.object.fromLocation.accountNumber },
                         toLocation: { accountNumber: req.body.object.toLocation.accountNumber },
-                        description: (typeof ((_b = req.body.object) === null || _b === void 0 ? void 0 : _b.description) === 'string') ? req.body.object.description : ''
+                        description: (typeof ((_d = req.body.object) === null || _d === void 0 ? void 0 : _d.description) === 'string') ? req.body.object.description : ''
                     }, expires: req.body.expires }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                     ? { identifier: req.body.identifier }
                     : undefined))({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
@@ -143,7 +180,7 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
                     recipient, object: {
                         amount: { value: req.body.object.amount.value },
                         fromLocation: { accountNumber: req.body.object.fromLocation.accountNumber },
-                        description: (typeof ((_c = req.body.object) === null || _c === void 0 ? void 0 : _c.description) === 'string') ? req.body.object.description : '',
+                        description: (typeof ((_e = req.body.object) === null || _e === void 0 ? void 0 : _e.description) === 'string') ? req.body.object.description : '',
                         force: req.body.object.force === true
                     }, expires: req.body.expires }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                     ? { identifier: req.body.identifier }
@@ -152,27 +189,28 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
             default:
                 throw new domain_1.chevre.factory.errors.ArgumentNull('typeOf');
         }
-        // tslint:disable-next-line:no-string-literal
-        // const host = req.headers['host'];
-        // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
         res.json(transaction);
     }
     catch (error) {
         next(error);
     }
 }));
-accountTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountTransactionsRouter.put('/:transactionNumber/confirm', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _f;
     try {
+        const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
+        const accountActionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
-        const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        yield domain_1.chevre.service.accountTransaction.confirm(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }))({ accountTransaction: transactionRepo });
-        // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-        const taskRepo = new domain_1.chevre.repository.Task(mongoose.connection);
-        // tslint:disable-next-line:no-floating-promises
-        domain_1.chevre.service.accountTransaction.exportTasks({
-            status: domain_1.chevre.factory.transactionStatusType.Confirmed
-        })({
-            task: taskRepo,
+        const accountTransaction = yield domain_1.chevre.service.accountTransaction.confirm({
+            transactionNumber: req.params.transactionNumber
+        })({ accountTransaction: transactionRepo });
+        const moneyTransferActionAttributes = (_f = accountTransaction.potentialActions) === null || _f === void 0 ? void 0 : _f.moneyTransfer;
+        if (typeof (moneyTransferActionAttributes === null || moneyTransferActionAttributes === void 0 ? void 0 : moneyTransferActionAttributes.typeOf) !== 'string') {
+            throw new domain_1.chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
+        }
+        yield domain_1.chevre.service.account.transferMoney(moneyTransferActionAttributes)({
+            account: accountRepo,
+            accountAction: accountActionRepo,
             accountTransaction: transactionRepo
         });
         res.status(http_status_1.NO_CONTENT)
@@ -182,18 +220,20 @@ accountTransactionsRouter.put('/:transactionId/confirm', (0, permitScopes_1.perm
         next(error);
     }
 }));
-accountTransactionsRouter.put('/:transactionId/cancel', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+accountTransactionsRouter.put('/:transactionNumber/cancel', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
+        const accountActionRepo = new domain_1.chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
-        const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-        yield transactionRepo.cancel(Object.assign({}, (transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }));
-        // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-        const taskRepo = new domain_1.chevre.repository.Task(mongoose.connection);
-        // tslint:disable-next-line:no-floating-promises
-        domain_1.chevre.service.accountTransaction.exportTasks({
-            status: domain_1.chevre.factory.transactionStatusType.Canceled
+        const accountTransaction = yield transactionRepo.cancel({ transactionNumber: req.params.transactionNumber });
+        yield domain_1.chevre.service.account.cancelMoneyTransfer({
+            transaction: {
+                typeOf: accountTransaction.typeOf,
+                id: accountTransaction.id
+            }
         })({
-            task: taskRepo,
+            account: accountRepo,
+            accountAction: accountActionRepo,
             accountTransaction: transactionRepo
         });
         res.status(http_status_1.NO_CONTENT)

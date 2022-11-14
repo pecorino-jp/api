@@ -1,9 +1,9 @@
 /**
  * 口座取引ルーター
  */
-import { chevre } from '@cinerino/domain';
+import { chevre } from '@chevre/domain';
 import { Router } from 'express';
-import { body, Meta } from 'express-validator';
+import { body, Meta, query } from 'express-validator';
 import { NO_CONTENT } from 'http-status';
 import * as mongoose from 'mongoose';
 
@@ -11,6 +11,55 @@ const accountTransactionsRouter = Router();
 
 import { permitScopes } from '../middlewares/permitScopes';
 import { validator } from '../middlewares/validator';
+
+accountTransactionsRouter.get(
+    '',
+    permitScopes(['admin']),
+    ...[
+        query('limit')
+            .optional()
+            .isInt()
+            .toInt(),
+        query('page')
+            .optional()
+            .isInt()
+            .toInt(),
+        query('project.id.$eq')
+            .not()
+            .isEmpty()
+            .isString(),
+        query('startDate.$gte')
+            .optional()
+            .isISO8601()
+            .toDate(),
+        query('startDate.$lte')
+            .optional()
+            .isISO8601()
+            .toDate()
+    ],
+    validator,
+    async (req, res, next) => {
+        try {
+            const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
+
+            const searchConditions: chevre.factory.account.transaction.ISearchConditions = {
+                ...req.query,
+                project: { id: { $eq: String(req.query.project?.id?.$eq) } },
+                // tslint:disable-next-line:no-magic-numbers
+                limit: (typeof req.query.limit === 'number') ? Math.min(req.query.limit, 100) : 100,
+                page: (typeof req.query.page === 'number') ? Math.max(req.query.page, 1) : 1,
+                sort: (req.query.sort !== undefined && req.query.sort !== null)
+                    ? req.query.sort
+                    : { startDate: chevre.factory.sortType.Ascending }
+            };
+            const accountTransactions = await transactionRepo.search(searchConditions);
+
+            res.json(accountTransactions);
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 
 accountTransactionsRouter.post(
     '/start',
@@ -184,9 +233,6 @@ accountTransactionsRouter.post(
                     throw new chevre.factory.errors.ArgumentNull('typeOf');
             }
 
-            // tslint:disable-next-line:no-string-literal
-            // const host = req.headers['host'];
-            // res.setHeader('Location', `https://${host}/transactions/${transaction.id}`);
             res.json(transaction);
         } catch (error) {
             next(error);
@@ -195,26 +241,27 @@ accountTransactionsRouter.post(
 );
 
 accountTransactionsRouter.put(
-    '/:transactionId/confirm',
+    '/:transactionNumber/confirm',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
         try {
+            const accountRepo = new chevre.repository.Account(mongoose.connection);
+            const accountActionRepo = new chevre.repository.AccountAction(mongoose.connection);
             const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
-            const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
-
-            await chevre.service.accountTransaction.confirm({
-                ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }
+            const accountTransaction = await chevre.service.accountTransaction.confirm({
+                transactionNumber: req.params.transactionNumber
             })({ accountTransaction: transactionRepo });
 
-            // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-            const taskRepo = new chevre.repository.Task(mongoose.connection);
-            // tslint:disable-next-line:no-floating-promises
-            chevre.service.accountTransaction.exportTasks({
-                status: chevre.factory.transactionStatusType.Confirmed
-            })({
-                task: taskRepo,
+            const moneyTransferActionAttributes = accountTransaction.potentialActions?.moneyTransfer;
+            if (typeof moneyTransferActionAttributes?.typeOf !== 'string') {
+                throw new chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
+            }
+
+            await chevre.service.account.transferMoney(moneyTransferActionAttributes)({
+                account: accountRepo,
+                accountAction: accountActionRepo,
                 accountTransaction: transactionRepo
             });
 
@@ -227,26 +274,25 @@ accountTransactionsRouter.put(
 );
 
 accountTransactionsRouter.put(
-    '/:transactionId/cancel',
+    '/:transactionNumber/cancel',
     permitScopes(['admin']),
     validator,
     async (req, res, next) => {
         try {
+            const accountRepo = new chevre.repository.Account(mongoose.connection);
+            const accountActionRepo = new chevre.repository.AccountAction(mongoose.connection);
             const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
-            const transactionNumberSpecified = String(req.query.transactionNumber) === '1';
+            const accountTransaction = await transactionRepo.cancel({ transactionNumber: req.params.transactionNumber });
 
-            await transactionRepo.cancel({
-                ...(transactionNumberSpecified) ? { transactionNumber: req.params.transactionId } : { id: req.params.transactionId }
-            });
-
-            // 非同期でタスクエクスポート(APIレスポンスタイムに影響を与えないように)
-            const taskRepo = new chevre.repository.Task(mongoose.connection);
-            // tslint:disable-next-line:no-floating-promises
-            chevre.service.accountTransaction.exportTasks({
-                status: chevre.factory.transactionStatusType.Canceled
+            await chevre.service.account.cancelMoneyTransfer({
+                transaction: {
+                    typeOf: accountTransaction.typeOf,
+                    id: accountTransaction.id
+                }
             })({
-                task: taskRepo,
+                account: accountRepo,
+                accountAction: accountActionRepo,
                 accountTransaction: transactionRepo
             });
 
