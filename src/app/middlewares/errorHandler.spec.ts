@@ -2,7 +2,7 @@
 /**
  * エラーハンドラーミドルウェアテスト
  */
-import { chevre } from '@cinerino/domain';
+import { chevre } from '@chevre/domain';
 import * as assert from 'assert';
 import { INTERNAL_SERVER_ERROR } from 'http-status';
 import * as nock from 'nock';

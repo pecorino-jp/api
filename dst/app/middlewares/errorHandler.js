@@ -5,7 +5,7 @@ exports.errorHandler = void 0;
  * error handler
  * エラーハンドラーミドルウェア
  */
-const domain_1 = require("@cinerino/domain");
+const domain_1 = require("@chevre/domain");
 const createDebug = require("debug");
 const http_status_1 = require("http-status");
 const api_1 = require("../error/api");

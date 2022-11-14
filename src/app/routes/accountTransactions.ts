@@ -1,7 +1,7 @@
 /**
  * 口座取引ルーター
  */
-import { chevre } from '@cinerino/domain';
+import { chevre } from '@chevre/domain';
 import { Router } from 'express';
 import { body, Meta, query } from 'express-validator';
 import { NO_CONTENT } from 'http-status';

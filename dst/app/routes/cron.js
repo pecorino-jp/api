@@ -13,7 +13,7 @@ exports.cronRouter = void 0;
 /**
  * cronルーター
  */
-const domain_1 = require("@cinerino/domain");
+const domain_1 = require("@chevre/domain");
 const express = require("express");
 const http_status_1 = require("http-status");
 const moment = require("moment");

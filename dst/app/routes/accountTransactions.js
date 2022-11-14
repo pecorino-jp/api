@@ -13,7 +13,7 @@ exports.accountTransactionsRouter = void 0;
 /**
  * 口座取引ルーター
  */
-const domain_1 = require("@cinerino/domain");
+const domain_1 = require("@chevre/domain");
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
 const http_status_1 = require("http-status");

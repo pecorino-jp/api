@@ -13,7 +13,7 @@ exports.authentication = void 0;
 /**
  * oauthミドルウェア
  */
-const domain_1 = require("@cinerino/domain");
+const domain_1 = require("@chevre/domain");
 const express_middleware_1 = require("@motionpicture/express-middleware");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:authentication');

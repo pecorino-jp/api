@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - IDによる口座取引確定を廃止
 - IDによる口座取引中止を廃止
 - 口座取引開始前にfromLocationの利用可能残高検証を追加
+- @chevre/domainで再実装
 
 ### Deprecated
 

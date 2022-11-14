@@ -1,7 +1,7 @@
 /**
  * cronルーター
  */
-import { chevre } from '@cinerino/domain';
+import { chevre } from '@chevre/domain';
 import * as express from 'express';
 import { NO_CONTENT } from 'http-status';
 import * as moment from 'moment';
