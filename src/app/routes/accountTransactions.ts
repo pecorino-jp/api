@@ -107,12 +107,6 @@ accountTransactionsRouter.post(
             .not()
             .isEmpty()
             .withMessage(() => 'required'),
-        body([
-            'agent.url',
-            'recipient.url'
-        ])
-            .optional()
-            .isString(),
         body('object.amount.value')
             .not()
             .isEmpty()
@@ -157,15 +151,15 @@ accountTransactionsRouter.post(
             let transaction: chevre.factory.account.transaction.ITransaction<typeof req.body.typeOf>;
             const agent: chevre.factory.account.transaction.IAgent = {
                 typeOf: req.body.agent.typeOf,
-                id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
-                name: req.body.agent.name,
-                ...(typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined
+                // id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
+                name: req.body.agent.name
+                // ...(typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined
             };
             const recipient: chevre.factory.account.transaction.IRecipient = {
                 typeOf: req.body.recipient.typeOf,
-                id: req.body.recipient.id,
-                name: req.body.recipient.name,
-                ...(typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined
+                // id: req.body.recipient.id,
+                name: req.body.recipient.name
+                // ...(typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined
             };
             const transactionNumber = String(req.body.transactionNumber);
 

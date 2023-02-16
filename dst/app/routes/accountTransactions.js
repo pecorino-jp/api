@@ -102,12 +102,6 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
         .not()
         .isEmpty()
         .withMessage(() => 'required'),
-    (0, express_validator_1.body)([
-        'agent.url',
-        'recipient.url'
-    ])
-        .optional()
-        .isString(),
     (0, express_validator_1.body)('object.amount.value')
         .not()
         .isEmpty()
@@ -147,8 +141,18 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
         // const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
         let transaction;
-        const agent = Object.assign({ typeOf: req.body.agent.typeOf, id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub, name: req.body.agent.name }, (typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined);
-        const recipient = Object.assign({ typeOf: req.body.recipient.typeOf, id: req.body.recipient.id, name: req.body.recipient.name }, (typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined);
+        const agent = {
+            typeOf: req.body.agent.typeOf,
+            // id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
+            name: req.body.agent.name
+            // ...(typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined
+        };
+        const recipient = {
+            typeOf: req.body.recipient.typeOf,
+            // id: req.body.recipient.id,
+            name: req.body.recipient.name
+            // ...(typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined
+        };
         const transactionNumber = String(req.body.transactionNumber);
         switch (req.body.typeOf) {
             case domain_1.chevre.factory.account.transactionType.Deposit:

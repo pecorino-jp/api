@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - 口座取引におけるAccountAction管理を廃止
+- 口座からstatusを廃止
 
 ### Deprecated
 
