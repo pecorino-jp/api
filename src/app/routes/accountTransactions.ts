@@ -239,7 +239,11 @@ accountTransactionsRouter.post(
                     throw new chevre.factory.errors.ArgumentNull('typeOf');
             }
 
-            res.json(transaction);
+            res.json({
+                id: transaction.id,
+                transactionNumber: transaction.transactionNumber,
+                typeOf: transaction.typeOf
+            });
         } catch (error) {
             next(error);
         }

@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 - 口座取引におけるAccountAction管理を廃止
 - 口座からstatusを廃止
+- 口座取開始レスポンス最適化
 
 ### Deprecated
 
