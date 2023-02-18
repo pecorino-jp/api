@@ -205,11 +205,7 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
             default:
                 throw new domain_1.chevre.factory.errors.ArgumentNull('typeOf');
         }
-        res.json({
-            id: transaction.id,
-            transactionNumber: transaction.transactionNumber,
-            typeOf: transaction.typeOf
-        });
+        res.json(Object.assign({ id: transaction.id, transactionNumber: transaction.transactionNumber, typeOf: transaction.typeOf }, (typeof transaction.identifier === 'string') ? { identifier: transaction.identifier } : undefined));
     }
     catch (error) {
         next(error);
