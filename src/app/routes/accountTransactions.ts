@@ -242,8 +242,7 @@ accountTransactionsRouter.post(
             res.json({
                 id: transaction.id,
                 transactionNumber: transaction.transactionNumber,
-                typeOf: transaction.typeOf,
-                ...(typeof transaction.identifier === 'string') ? { identifier: transaction.identifier } : undefined
+                typeOf: transaction.typeOf
             });
         } catch (error) {
             next(error);
