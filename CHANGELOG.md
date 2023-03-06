@@ -18,6 +18,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v6.0.0 - 2023-03-06
+
+### Changed
+
+- 口座取引におけるAccountAction管理を廃止
+- 口座からstatusを廃止
+- 口座取開始レスポンス最適化
+
 ## v5.17.0 - 2022-11-15
 
 ### Added

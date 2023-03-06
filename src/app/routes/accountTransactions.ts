@@ -107,12 +107,6 @@ accountTransactionsRouter.post(
             .not()
             .isEmpty()
             .withMessage(() => 'required'),
-        body([
-            'agent.url',
-            'recipient.url'
-        ])
-            .optional()
-            .isString(),
         body('object.amount.value')
             .not()
             .isEmpty()
@@ -151,21 +145,16 @@ accountTransactionsRouter.post(
     async (req, res, next) => {
         try {
             const accountRepo = new chevre.repository.Account(mongoose.connection);
-            const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
             const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
             let transaction: chevre.factory.account.transaction.ITransaction<typeof req.body.typeOf>;
             const agent: chevre.factory.account.transaction.IAgent = {
                 typeOf: req.body.agent.typeOf,
-                id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
-                name: req.body.agent.name,
-                ...(typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined
+                name: req.body.agent.name
             };
             const recipient: chevre.factory.account.transaction.IRecipient = {
                 typeOf: req.body.recipient.typeOf,
-                id: req.body.recipient.id,
-                name: req.body.recipient.name,
-                ...(typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined
+                name: req.body.recipient.name
             };
             const transactionNumber = String(req.body.transactionNumber);
 
@@ -186,7 +175,10 @@ accountTransactionsRouter.post(
                         ...(typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                             ? { identifier: req.body.identifier }
                             : undefined
-                    })({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
+                    })({
+                        account: accountRepo,
+                        accountTransaction: transactionRepo
+                    });
 
                     break;
                 case chevre.factory.account.transactionType.Transfer:
@@ -206,7 +198,10 @@ accountTransactionsRouter.post(
                         ...(typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                             ? { identifier: req.body.identifier }
                             : undefined
-                    })({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
+                    })({
+                        account: accountRepo,
+                        accountTransaction: transactionRepo
+                    });
 
                     break;
                 case chevre.factory.account.transactionType.Withdraw:
@@ -226,14 +221,21 @@ accountTransactionsRouter.post(
                         ...(typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                             ? { identifier: req.body.identifier }
                             : undefined
-                    })({ account: accountRepo, accountAction: actionRepo, accountTransaction: transactionRepo });
+                    })({
+                        account: accountRepo,
+                        accountTransaction: transactionRepo
+                    });
 
                     break;
                 default:
                     throw new chevre.factory.errors.ArgumentNull('typeOf');
             }
 
-            res.json(transaction);
+            res.json({
+                id: transaction.id,
+                transactionNumber: transaction.transactionNumber,
+                typeOf: transaction.typeOf
+            });
         } catch (error) {
             next(error);
         }
@@ -247,7 +249,6 @@ accountTransactionsRouter.put(
     async (req, res, next) => {
         try {
             const accountRepo = new chevre.repository.Account(mongoose.connection);
-            const accountActionRepo = new chevre.repository.AccountAction(mongoose.connection);
             const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
             const accountTransaction = await chevre.service.accountTransaction.confirm({
@@ -260,9 +261,7 @@ accountTransactionsRouter.put(
             }
 
             await chevre.service.account.transferMoney(moneyTransferActionAttributes)({
-                account: accountRepo,
-                accountAction: accountActionRepo,
-                accountTransaction: transactionRepo
+                account: accountRepo
             });
 
             res.status(NO_CONTENT)
@@ -280,7 +279,6 @@ accountTransactionsRouter.put(
     async (req, res, next) => {
         try {
             const accountRepo = new chevre.repository.Account(mongoose.connection);
-            const accountActionRepo = new chevre.repository.AccountAction(mongoose.connection);
             const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
 
             const accountTransaction = await transactionRepo.cancel({ transactionNumber: req.params.transactionNumber });
@@ -292,7 +290,6 @@ accountTransactionsRouter.put(
                 }
             })({
                 account: accountRepo,
-                accountAction: accountActionRepo,
                 accountTransaction: transactionRepo
             });
 
