@@ -138,20 +138,15 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
     var _c, _d, _e;
     try {
         const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
-        // const actionRepo = new chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
         let transaction;
         const agent = {
             typeOf: req.body.agent.typeOf,
-            // id: (typeof req.body.agent.id === 'string') ? req.body.agent.id : req.user.sub,
             name: req.body.agent.name
-            // ...(typeof req.body.agent.url === 'string') ? { url: req.body.agent.url } : undefined
         };
         const recipient = {
             typeOf: req.body.recipient.typeOf,
-            // id: req.body.recipient.id,
             name: req.body.recipient.name
-            // ...(typeof req.body.recipient.url === 'string') ? { url: req.body.recipient.url } : undefined
         };
         const transactionNumber = String(req.body.transactionNumber);
         switch (req.body.typeOf) {
@@ -166,7 +161,6 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
                     ? { identifier: req.body.identifier }
                     : undefined))({
                     account: accountRepo,
-                    // accountAction: actionRepo,
                     accountTransaction: transactionRepo
                 });
                 break;
@@ -182,7 +176,6 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
                     ? { identifier: req.body.identifier }
                     : undefined))({
                     account: accountRepo,
-                    // accountAction: actionRepo,
                     accountTransaction: transactionRepo
                 });
                 break;
@@ -198,7 +191,6 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
                     ? { identifier: req.body.identifier }
                     : undefined))({
                     account: accountRepo,
-                    // accountAction: actionRepo,
                     accountTransaction: transactionRepo
                 });
                 break;
@@ -219,7 +211,6 @@ accountTransactionsRouter.put('/:transactionNumber/confirm', (0, permitScopes_1.
     var _f;
     try {
         const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
-        // const accountActionRepo = new chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
         const accountTransaction = yield domain_1.chevre.service.accountTransaction.confirm({
             transactionNumber: req.params.transactionNumber
@@ -230,8 +221,6 @@ accountTransactionsRouter.put('/:transactionNumber/confirm', (0, permitScopes_1.
         }
         yield domain_1.chevre.service.account.transferMoney(moneyTransferActionAttributes)({
             account: accountRepo
-            // accountAction: accountActionRepo,
-            // accountTransaction: transactionRepo
         });
         res.status(http_status_1.NO_CONTENT)
             .end();
@@ -243,7 +232,6 @@ accountTransactionsRouter.put('/:transactionNumber/confirm', (0, permitScopes_1.
 accountTransactionsRouter.put('/:transactionNumber/cancel', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
-        // const accountActionRepo = new chevre.repository.AccountAction(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
         const accountTransaction = yield transactionRepo.cancel({ transactionNumber: req.params.transactionNumber });
         yield domain_1.chevre.service.account.cancelMoneyTransfer({
@@ -253,7 +241,6 @@ accountTransactionsRouter.put('/:transactionNumber/cancel', (0, permitScopes_1.p
             }
         })({
             account: accountRepo,
-            // accountAction: accountActionRepo,
             accountTransaction: transactionRepo
         });
         res.status(http_status_1.NO_CONTENT)
