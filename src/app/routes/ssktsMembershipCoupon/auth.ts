@@ -57,10 +57,9 @@ function validateMembership(params: {
 const authRouter = express.Router();
 authRouter.post(
     '/purchaseNumberAuth',
-    permitScopes([]),
+    permitScopes(['admin']),
     async (req, res, next) => {
         try {
-            // const actionRepo = new chevre.repository.Action(mongoose.connection);
             const authorizationRepo = new chevre.repository.Code(mongoose.connection);
             const offerRepo = new chevre.repository.Offer(mongoose.connection);
             const ownershipInfoRepo = new chevre.repository.OwnershipInfo(mongoose.connection);
@@ -77,7 +76,6 @@ authRouter.post(
                 permitIdentifier,
                 ownershipInfoCode
             })({
-                // action: actionRepo,
                 authorization: authorizationRepo,
                 ownershipInfo: ownershipInfoRepo
             });

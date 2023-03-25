@@ -47,7 +47,7 @@ interface IAuthParams {
 const seatRouter = express.Router();
 seatRouter.post(
     '/seatInfoSync',
-    permitScopes([]),
+    permitScopes(['admin']),
     async (req, res, next) => {
         try {
             const now = new Date();
@@ -76,7 +76,6 @@ seatRouter.post(
                 permitIdentifier,
                 ownershipInfoCode
             })({
-                // action: actionRepo,
                 authorization: authorizationRepo,
                 ownershipInfo: ownershipInfoRepo
             });

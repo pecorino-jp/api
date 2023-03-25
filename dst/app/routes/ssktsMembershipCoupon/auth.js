@@ -51,9 +51,8 @@ function validateMembership(params) {
 exports.validateMembership = validateMembership;
 const authRouter = express.Router();
 exports.authRouter = authRouter;
-authRouter.post('/purchaseNumberAuth', (0, permitScopes_1.permitScopes)([]), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+authRouter.post('/purchaseNumberAuth', (0, permitScopes_1.permitScopes)(['admin']), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // const actionRepo = new chevre.repository.Action(mongoose.connection);
         const authorizationRepo = new domain_1.chevre.repository.Code(mongoose.connection);
         const offerRepo = new domain_1.chevre.repository.Offer(mongoose.connection);
         const ownershipInfoRepo = new domain_1.chevre.repository.OwnershipInfo(mongoose.connection);
@@ -67,7 +66,6 @@ authRouter.post('/purchaseNumberAuth', (0, permitScopes_1.permitScopes)([]), (re
             permitIdentifier,
             ownershipInfoCode
         })({
-            // action: actionRepo,
             authorization: authorizationRepo,
             ownershipInfo: ownershipInfoRepo
         });

@@ -25,7 +25,7 @@ const OFFER_ADDITIONAL_PROPERTY_NAME_TICKET_CODE = 'ticketCode';
 const WITHDRAW_DESCRIPTION_SUFFIX = ' 引換';
 const seatRouter = express.Router();
 exports.seatRouter = seatRouter;
-seatRouter.post('/seatInfoSync', (0, permitScopes_1.permitScopes)([]), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+seatRouter.post('/seatInfoSync', (0, permitScopes_1.permitScopes)(['admin']), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const now = new Date();
         const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
@@ -48,7 +48,6 @@ seatRouter.post('/seatInfoSync', (0, permitScopes_1.permitScopes)([]), (req, res
             permitIdentifier,
             ownershipInfoCode
         })({
-            // action: actionRepo,
             authorization: authorizationRepo,
             ownershipInfo: ownershipInfoRepo
         });
