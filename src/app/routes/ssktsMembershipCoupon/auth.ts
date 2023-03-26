@@ -7,10 +7,9 @@ import * as mongoose from 'mongoose';
 
 import { permitScopes } from '../../middlewares/permitScopes';
 
-export const TOKEN_EXPIRES_IN = 1800;
-
 type IPurchaseNumberAuthIn = chevre.surfrock.service.auth.factory.IPurchaseNumberAuthIn;
 type IPurchaseNumberAuthResult = chevre.surfrock.service.auth.factory.IPurchaseNumberAuthResult;
+type IPermitOwnershipInfo = chevre.factory.ownershipInfo.IOwnershipInfo<chevre.factory.ownershipInfo.IPermitAsGood>;
 
 function validateMembership(params: {
     project: { id: string };
@@ -20,7 +19,9 @@ function validateMembership(params: {
     return async (repos: {
         authorization: chevre.repository.Code;
         ownershipInfo: chevre.repository.OwnershipInfo;
-    }) => {
+    }): Promise<{
+        membershipOwnershipInfo: IPermitOwnershipInfo;
+    }> => {
         const now = new Date();
         const permitIdentifier = params.permitIdentifier;
         const ownershipInfoCode = params.ownershipInfoCode; // 所有権コード
@@ -49,7 +50,7 @@ function validateMembership(params: {
             throw new chevre.factory.errors.Argument('pinCd', 'invalid');
         }
         // 存在確認
-        const membershipOwnershipInfo = await repos.ownershipInfo.findById({ id: ownershipInfoPayload.id });
+        const membershipOwnershipInfo = <IPermitOwnershipInfo>await repos.ownershipInfo.findById({ id: ownershipInfoPayload.id });
 
         return { membershipOwnershipInfo };
     };

@@ -10,7 +10,6 @@ function withdrawPoint(params: {
     accountNumber: string;
     withdrawDescriptions: string[];
     sellerName: string;
-    issuedThrough: { id: string };
 }) {
     return async (repos: {
         account: chevre.repository.Account;

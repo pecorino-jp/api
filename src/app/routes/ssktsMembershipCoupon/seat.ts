@@ -80,14 +80,25 @@ seatRouter.post(
                 ownershipInfo: ownershipInfoRepo
             });
 
-            const ownerId: string = Array.isArray(membershipOwnershipInfo.ownedBy)
-                ? membershipOwnershipInfo.ownedBy[0].id
-                : membershipOwnershipInfo.ownedBy.id;
-            const { identifier, issuedThrough } = await findPaymentCard({
-                project: { id: authParams.kgygishCd },
-                ownedBy: { id: ownerId },
-                ownedTime: now
-            })({ ownershipInfo: ownershipInfoRepo });
+            let identifier: string;
+
+            const ownershipInfoTypeOfGoodIssuedThrough = membershipOwnershipInfo.typeOfGood.issuedThrough?.typeOf;
+            if (ownershipInfoTypeOfGoodIssuedThrough === chevre.factory.product.ProductType.MembershipService) {
+                const ownerId: string = Array.isArray(membershipOwnershipInfo.ownedBy)
+                    ? membershipOwnershipInfo.ownedBy[0].id
+                    : membershipOwnershipInfo.ownedBy.id;
+                const findPaymentCardResult = await findPaymentCard({
+                    project: { id: authParams.kgygishCd },
+                    ownedBy: { id: ownerId },
+                    ownedTime: now
+                })({ ownershipInfo: ownershipInfoRepo });
+                identifier = findPaymentCardResult.identifier;
+            } else if (ownershipInfoTypeOfGoodIssuedThrough === chevre.factory.product.ProductType.PaymentCard) {
+                // PaymentCard所有権も許容する
+                identifier = String(membershipOwnershipInfo.typeOfGood.identifier);
+            } else {
+                throw new chevre.factory.errors.Argument('pinCd', `invalid typeOfGood: ${ownershipInfoTypeOfGoodIssuedThrough}`);
+            }
 
             if (authParams.trkshFlg === '0') {
                 // メンバーシップを検証する
@@ -106,8 +117,7 @@ seatRouter.post(
                         transactionNumber,
                         accountNumber: identifier,
                         withdrawDescriptions,
-                        sellerName: String(seller.name.ja),
-                        issuedThrough
+                        sellerName: String(seller.name.ja)
                     })({ account: accountRepo, accountTransaction: accountTransactionRepo });
                 }
             } else {
@@ -117,8 +127,7 @@ seatRouter.post(
                     project: { id: authParams.kgygishCd },
                     transactionNumber,
                     sellerName: String(seller.name.ja),
-                    recipientName: permitIdentifier,
-                    issuedThrough
+                    recipientName: permitIdentifier
                 })({ account: accountRepo, accountTransaction: accountTransactionRepo });
             }
 
@@ -281,10 +290,7 @@ function findPaymentCard(params: {
         }
 
         return {
-            identifier: String((<chevre.factory.ownershipInfo.IPermitAsGood>paymentCardOwnershipInfo.typeOfGood).identifier),
-            issuedThrough: {
-                id: String((<chevre.factory.ownershipInfo.IPermitAsGood>paymentCardOwnershipInfo.typeOfGood).issuedThrough?.id)
-            }
+            identifier: String((<chevre.factory.ownershipInfo.IPermitAsGood>paymentCardOwnershipInfo.typeOfGood).identifier)
         };
     };
 }

@@ -26,6 +26,7 @@ const WITHDRAW_DESCRIPTION_SUFFIX = ' 引換';
 const seatRouter = express.Router();
 exports.seatRouter = seatRouter;
 seatRouter.post('/seatInfoSync', (0, permitScopes_1.permitScopes)(['admin']), (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
     try {
         const now = new Date();
         const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
@@ -51,14 +52,26 @@ seatRouter.post('/seatInfoSync', (0, permitScopes_1.permitScopes)(['admin']), (r
             authorization: authorizationRepo,
             ownershipInfo: ownershipInfoRepo
         });
-        const ownerId = Array.isArray(membershipOwnershipInfo.ownedBy)
-            ? membershipOwnershipInfo.ownedBy[0].id
-            : membershipOwnershipInfo.ownedBy.id;
-        const { identifier, issuedThrough } = yield findPaymentCard({
-            project: { id: authParams.kgygishCd },
-            ownedBy: { id: ownerId },
-            ownedTime: now
-        })({ ownershipInfo: ownershipInfoRepo });
+        let identifier;
+        const ownershipInfoTypeOfGoodIssuedThrough = (_a = membershipOwnershipInfo.typeOfGood.issuedThrough) === null || _a === void 0 ? void 0 : _a.typeOf;
+        if (ownershipInfoTypeOfGoodIssuedThrough === domain_1.chevre.factory.product.ProductType.MembershipService) {
+            const ownerId = Array.isArray(membershipOwnershipInfo.ownedBy)
+                ? membershipOwnershipInfo.ownedBy[0].id
+                : membershipOwnershipInfo.ownedBy.id;
+            const findPaymentCardResult = yield findPaymentCard({
+                project: { id: authParams.kgygishCd },
+                ownedBy: { id: ownerId },
+                ownedTime: now
+            })({ ownershipInfo: ownershipInfoRepo });
+            identifier = findPaymentCardResult.identifier;
+        }
+        else if (ownershipInfoTypeOfGoodIssuedThrough === domain_1.chevre.factory.product.ProductType.PaymentCard) {
+            // PaymentCard所有権も許容する
+            identifier = String(membershipOwnershipInfo.typeOfGood.identifier);
+        }
+        else {
+            throw new domain_1.chevre.factory.errors.Argument('pinCd', `invalid typeOfGood: ${ownershipInfoTypeOfGoodIssuedThrough}`);
+        }
         if (authParams.trkshFlg === '0') {
             // メンバーシップを検証する
             const transactionNumber = authParams.kgygishSstmZskyykNo;
@@ -74,8 +87,7 @@ seatRouter.post('/seatInfoSync', (0, permitScopes_1.permitScopes)(['admin']), (r
                     transactionNumber,
                     accountNumber: identifier,
                     withdrawDescriptions,
-                    sellerName: String(seller.name.ja),
-                    issuedThrough
+                    sellerName: String(seller.name.ja)
                 })({ account: accountRepo, accountTransaction: accountTransactionRepo });
             }
         }
@@ -85,8 +97,7 @@ seatRouter.post('/seatInfoSync', (0, permitScopes_1.permitScopes)(['admin']), (r
                 project: { id: authParams.kgygishCd },
                 transactionNumber,
                 sellerName: String(seller.name.ja),
-                recipientName: permitIdentifier,
-                issuedThrough
+                recipientName: permitIdentifier
             })({ account: accountRepo, accountTransaction: accountTransactionRepo });
         }
         res.json({
@@ -186,7 +197,6 @@ function validateAuthParams(params) {
 }
 function findPaymentCard(params) {
     return (repos) => __awaiter(this, void 0, void 0, function* () {
-        var _a;
         // 所有カード検索
         const paymentCardOwnershipInfos = yield repos.ownershipInfo.search({
             // 最も古い所有ペイメントカードをデフォルトペイメントカードとして扱う使用なので、ソート条件は以下の通り
@@ -206,10 +216,7 @@ function findPaymentCard(params) {
             throw new domain_1.chevre.factory.errors.NotFound('OwnershipInfo', `${domain_1.chevre.factory.product.ProductType.PaymentCard} not found`);
         }
         return {
-            identifier: String(paymentCardOwnershipInfo.typeOfGood.identifier),
-            issuedThrough: {
-                id: String((_a = paymentCardOwnershipInfo.typeOfGood.issuedThrough) === null || _a === void 0 ? void 0 : _a.id)
-            }
+            identifier: String(paymentCardOwnershipInfo.typeOfGood.identifier)
         };
     });
 }

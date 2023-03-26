@@ -22,7 +22,6 @@ function depositPoint(params: {
     transactionNumber: string;
     sellerName: string;
     recipientName: string;
-    issuedThrough: { id: string };
 }) {
     // tslint:disable-next-line:max-func-body-length
     return async (repos: {

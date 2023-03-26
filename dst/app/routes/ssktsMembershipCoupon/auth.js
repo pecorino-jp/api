@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateMembership = exports.authRouter = exports.TOKEN_EXPIRES_IN = void 0;
+exports.validateMembership = exports.authRouter = void 0;
 /**
  * 認証ルーター
  */
@@ -17,7 +17,6 @@ const domain_1 = require("@chevre/domain");
 const express = require("express");
 const mongoose = require("mongoose");
 const permitScopes_1 = require("../../middlewares/permitScopes");
-exports.TOKEN_EXPIRES_IN = 1800;
 function validateMembership(params) {
     return (repos) => __awaiter(this, void 0, void 0, function* () {
         const now = new Date();
