@@ -20,20 +20,22 @@ const permitScopes_1 = require("../../middlewares/permitScopes");
 exports.TOKEN_EXPIRES_IN = 1800;
 function validateMembership(params) {
     return (repos) => __awaiter(this, void 0, void 0, function* () {
+        const now = new Date();
         const permitIdentifier = params.permitIdentifier;
         const ownershipInfoCode = params.ownershipInfoCode; // 所有権コード
-        const token = yield domain_1.chevre.service.code.getToken({
-            project: { id: params.project.id },
-            code: ownershipInfoCode,
-            expiresIn: exports.TOKEN_EXPIRES_IN
-        })({
-            authorization: repos.authorization
+        const authorizations = yield repos.authorization.search({
+            limit: 1,
+            page: 1,
+            project: { id: { $eq: params.project.id } },
+            code: { $in: [ownershipInfoCode] },
+            validFrom: now,
+            validThrough: now
         });
-        const ownershipInfoPayload = yield domain_1.chevre.service.code.verifyToken({
-            project: { id: params.project.id },
-            agent: { id: params.project.id, typeOf: domain_1.chevre.factory.organizationType.Project },
-            token
-        })({});
+        const authorization = authorizations.shift();
+        if (authorization === undefined) {
+            throw new domain_1.chevre.factory.errors.NotFound('Authorization');
+        }
+        const ownershipInfoPayload = authorization.object;
         if (ownershipInfoPayload.typeOf !== 'OwnershipInfo') {
             throw new domain_1.chevre.factory.errors.Argument('pinCd', 'must be OwnershipInfo');
         }

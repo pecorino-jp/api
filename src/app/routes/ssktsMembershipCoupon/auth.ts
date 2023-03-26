@@ -18,26 +18,27 @@ function validateMembership(params: {
     ownershipInfoCode: string;
 }) {
     return async (repos: {
-        // action: chevre.repository.Action;
         authorization: chevre.repository.Code;
         ownershipInfo: chevre.repository.OwnershipInfo;
     }) => {
+        const now = new Date();
         const permitIdentifier = params.permitIdentifier;
         const ownershipInfoCode = params.ownershipInfoCode; // 所有権コード
 
-        const token = await chevre.service.code.getToken({
-            project: { id: params.project.id },
-            code: ownershipInfoCode,
-            expiresIn: TOKEN_EXPIRES_IN
-        })({
-            authorization: repos.authorization
+        const authorizations = await repos.authorization.search({
+            limit: 1,
+            page: 1,
+            project: { id: { $eq: params.project.id } },
+            code: { $in: [ownershipInfoCode] },
+            validFrom: now,
+            validThrough: now
         });
+        const authorization = authorizations.shift();
+        if (authorization === undefined) {
+            throw new chevre.factory.errors.NotFound('Authorization');
+        }
 
-        const ownershipInfoPayload = await chevre.service.code.verifyToken({
-            project: { id: params.project.id },
-            agent: { id: params.project.id, typeOf: chevre.factory.organizationType.Project },
-            token
-        })({});
+        const ownershipInfoPayload = authorization.object;
         if (ownershipInfoPayload.typeOf !== 'OwnershipInfo') {
             throw new chevre.factory.errors.Argument('pinCd', 'must be OwnershipInfo');
         }
