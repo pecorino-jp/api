@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Added
 
 - ssktsMembershipCouponIFを追加
+- ssktsSurfrockIFを追加
 
 ### Changed
 
