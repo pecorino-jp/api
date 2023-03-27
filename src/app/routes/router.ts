@@ -9,6 +9,8 @@ import { ahRouter } from './_ah';
 import { accountTransactionsRouter } from './accountTransactions';
 import { cronRouter } from './cron';
 import { permitsRouter } from './permits';
+import { ssktsMembershipCouponRouter } from './ssktsMembershipCoupon';
+import { ssktsSurfrockRouter } from './ssktsSurfrock';
 
 import { authentication } from '../middlewares/authentication';
 
@@ -35,5 +37,7 @@ router.use(authentication);
 
 router.use('/accountTransactions', accountTransactionsRouter);
 router.use('/permits', permitsRouter);
+router.use('/ssktsMembershipCoupon', ssktsMembershipCouponRouter);
+router.use('/ssktsSurfrock', ssktsSurfrockRouter);
 
 export { router };
