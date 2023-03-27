@@ -8,9 +8,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
-- ssktsMembershipCouponIFを追加
-- ssktsSurfrockIFを追加
-
 ### Changed
 
 ### Deprecated
@@ -20,6 +17,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Fixed
 
 ### Security
+
+## v6.1.0 - 2023-03-27
+
+### Added
+
+- ssktsMembershipCouponIFを追加
+- ssktsSurfrockIFを追加
 
 ## v6.0.0 - 2023-03-06
 
