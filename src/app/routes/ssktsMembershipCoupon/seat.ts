@@ -93,9 +93,6 @@ seatRouter.post(
                     ownedTime: now
                 })({ ownershipInfo: ownershipInfoRepo });
                 identifier = findPaymentCardResult.identifier;
-            } else if (ownershipInfoTypeOfGoodIssuedThrough === chevre.factory.product.ProductType.PaymentCard) {
-                // PaymentCard所有権も許容する
-                identifier = String(membershipOwnershipInfo.typeOfGood.identifier);
             } else {
                 throw new chevre.factory.errors.Argument('pinCd', `invalid typeOfGood: ${ownershipInfoTypeOfGoodIssuedThrough}`);
             }

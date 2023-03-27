@@ -65,10 +65,6 @@ seatRouter.post('/seatInfoSync', (0, permitScopes_1.permitScopes)(['admin']), (r
             })({ ownershipInfo: ownershipInfoRepo });
             identifier = findPaymentCardResult.identifier;
         }
-        else if (ownershipInfoTypeOfGoodIssuedThrough === domain_1.chevre.factory.product.ProductType.PaymentCard) {
-            // PaymentCard所有権も許容する
-            identifier = String(membershipOwnershipInfo.typeOfGood.identifier);
-        }
         else {
             throw new domain_1.chevre.factory.errors.Argument('pinCd', `invalid typeOfGood: ${ownershipInfoTypeOfGoodIssuedThrough}`);
         }
