@@ -10,11 +10,17 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- update mongoose@6.x.x
+- mongooseモデルのindexイベントハンドラーをconnectionごとに管理するように調整
+- MongoErrorハンドリングをMongoServerErrorにも拡張
+
 ### Deprecated
 
 ### Removed
 
 ### Fixed
+
+- MongoDBクエリのskipに負の値が指定される脆弱性に対応
 
 ### Security
 

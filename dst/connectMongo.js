@@ -36,13 +36,13 @@ const connectOptions = {
     // autoReconnect: true,
     keepAlive: true,
     connectTimeoutMS: 30000,
-    socketTimeoutMS: 45000,
+    socketTimeoutMS: 45000
     // reconnectTries: 30,
     // reconnectInterval: 1000,
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    // useCreateIndex: true,
+    // useFindAndModify: false,
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true
 };
 function connectMongo(params) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -54,6 +54,7 @@ function connectMongo(params) {
         }
         else {
             connection = mongoose.createConnection(MONGOLAB_URI, connectOptions);
+            // .asPromise();
         }
         // 定期的にコネクションチェック
         // tslint:disable-next-line:no-single-line-block-comment

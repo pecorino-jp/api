@@ -9,7 +9,7 @@
     }
   ],
   "dependencies": {
-    "@chevre/domain": "20.13.0",
+    "@chevre/domain": "21.0.0-alpha.9",
     "@motionpicture/express-middleware": "1.0.0",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
@@ -19,7 +19,7 @@
     "helmet": "^3.22.0",
     "http-status": "^1.4.2",
     "moment": "^2.24.0",
-    "mongoose": "5.13.14",
+    "mongoose": "6.10.4",
     "redis": "3.1.2"
   },
   "description": "Pecorino API Web Application",
@@ -32,7 +32,7 @@
     "@types/http-status": "^0.2.30",
     "@types/mocha": "^5.2.7",
     "@types/nock": "^9.3.1",
-    "@types/node": "10.17.60",
+    "@types/node": "14.18.42",
     "@types/power-assert": "^1.5.3",
     "@types/redis": "2.8.32",
     "@types/request-promise-native": "^1.0.17",
@@ -52,8 +52,8 @@
     "typescript": "4.6.4"
   },
   "engines": {
-    "node": ">=10.0.0",
-    "npm": ">=5.3.0"
+    "node": ">=14.0.0",
+    "npm": ">=6.0.0"
   },
   "keywords": [
     "pecorino"
