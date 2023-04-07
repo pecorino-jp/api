@@ -18,6 +18,19 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v6.2.0 - 2023-04-07
+
+### Changed
+
+- update helmet@6.x.x
+- update mongoose@6.x.x
+- mongooseモデルのindexイベントハンドラーをconnectionごとに管理するように調整
+- MongoErrorハンドリングをMongoServerErrorにも拡張
+
+### Fixed
+
+- MongoDBクエリのskipに負の値が指定される脆弱性に対応
+
 ## v6.1.0 - 2023-03-27
 
 ### Added

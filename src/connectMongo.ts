@@ -7,6 +7,7 @@ import * as mongoose from 'mongoose';
 const debug = createDebug('pecorino-api:connectMongo');
 const MONGOLAB_URI = <string>process.env.MONGOLAB_URI;
 const AUTO_INDEX = process.env.MONGO_AUTO_INDEX_DISABLED !== '1';
+
 const MONGO_PING_INTERVAL_MS = (typeof process.env.MONGO_PING_INTERVAL_MS === 'string')
     // tslint:disable-next-line:no-single-line-block-comment
     /* istanbul ignore next */
@@ -21,18 +22,18 @@ const MONGO_PING_TIMEOUT_MS = (typeof process.env.MONGO_PING_TIMEOUT_MS === 'str
     // tslint:disable-next-line:no-magic-numbers
     : 10000;
 
-const connectOptions: mongoose.ConnectionOptions = {
+const connectOptions: mongoose.ConnectOptions = {
     autoIndex: AUTO_INDEX,
     // autoReconnect: true,
     keepAlive: true,
     connectTimeoutMS: 30000,
-    socketTimeoutMS: 45000,
+    socketTimeoutMS: 45000
     // reconnectTries: 30,
     // reconnectInterval: 1000,
-    useCreateIndex: true,
-    useFindAndModify: false,
-    useNewUrlParser: true,
-    useUnifiedTopology: true
+    // useCreateIndex: true,
+    // useFindAndModify: false,
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true
 };
 
 export async function connectMongo(params: {
@@ -46,6 +47,7 @@ export async function connectMongo(params: {
         connection = mongoose.connection;
     } else {
         connection = mongoose.createConnection(MONGOLAB_URI, connectOptions);
+        // .asPromise();
     }
 
     // 定期的にコネクションチェック

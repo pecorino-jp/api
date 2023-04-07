@@ -4,7 +4,7 @@
 import * as createDebug from 'debug';
 import * as redis from 'redis';
 
-const debug = createDebug('chevre-api:redis');
+const debug = createDebug('pecorino-api:redis');
 const CONNECT_TIMEOUT_IN_MILLISECONDS = 3600000;
 const MAX_ATTEMPTS = 10;
 const PING_INTERVAL = 60000; // 60 seconds
@@ -41,7 +41,7 @@ function createClient() {
             debug('retrying...', options);
             if (options.error instanceof Error && (<any>options.error).code === 'ECONNREFUSED') {
                 // tslint:disable-next-line:no-console
-                console.error(options.error);
+                console.error('redisClient.retry_strategy:', options.error);
                 // redisClient = redisClient.duplicate();
 
                 // End reconnecting on a specific error and flush all commands with a individual error
@@ -81,7 +81,7 @@ function createClient() {
 
     c.on('error', (err: any) => {
         // tslint:disable-next-line:no-console
-        console.error(err);
+        console.error('redisClient emitted an error', err);
     });
 
     // c.on('end', () => {
