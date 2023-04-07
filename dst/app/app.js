@@ -3,27 +3,25 @@
  * Expressアプリケーション
  */
 const bodyParser = require("body-parser");
-const cors = require("cors");
 const express = require("express");
-const helmet = require("helmet");
+const helmet_1 = require("helmet");
 const connectMongo_1 = require("../connectMongo");
 const errorHandler_1 = require("./middlewares/errorHandler");
 const notFoundHandler_1 = require("./middlewares/notFoundHandler");
 const router_1 = require("./routes/router");
 const app = express();
-app.use(cors()); // enable All CORS Requests
-app.use(helmet());
-app.use(helmet.contentSecurityPolicy({
-    directives: {
-        defaultSrc: ['\'self\'']
-        // styleSrc: ['\'unsafe-inline\'']
-    }
-}));
-app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
-const SIXTY_DAYS_IN_SECONDS = 5184000;
-app.use(helmet.hsts({
-    maxAge: SIXTY_DAYS_IN_SECONDS,
-    includeSubdomains: false
+app.use((0, helmet_1.default)({
+    contentSecurityPolicy: {
+        useDefaults: false,
+        directives: {
+            defaultSrc: ['\'self\'']
+        }
+    },
+    hsts: {
+        maxAge: 5184000,
+        includeSubDomains: false
+    },
+    referrerPolicy: { policy: 'no-referrer' }
 }));
 // api version
 // tslint:disable-next-line:no-require-imports no-var-requires

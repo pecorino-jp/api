@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- update helmet@6.x.x
 - update mongoose@6.x.x
 - mongooseモデルのindexイベントハンドラーをconnectionごとに管理するように調整
 - MongoErrorハンドリングをMongoServerErrorにも拡張

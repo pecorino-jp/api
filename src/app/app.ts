@@ -2,9 +2,8 @@
  * Expressアプリケーション
  */
 import * as bodyParser from 'body-parser';
-import * as cors from 'cors';
 import * as express from 'express';
-import * as helmet from 'helmet';
+import helmet from 'helmet';
 
 import { connectMongo } from '../connectMongo';
 
@@ -14,19 +13,18 @@ import { router } from './routes/router';
 
 const app = express();
 
-app.use(cors()); // enable All CORS Requests
-app.use(helmet());
-app.use(helmet.contentSecurityPolicy({
-    directives: {
-        defaultSrc: ['\'self\'']
-        // styleSrc: ['\'unsafe-inline\'']
-    }
-}));
-app.use(helmet.referrerPolicy({ policy: 'no-referrer' }));
-const SIXTY_DAYS_IN_SECONDS = 5184000;
-app.use(helmet.hsts({
-    maxAge: SIXTY_DAYS_IN_SECONDS,
-    includeSubdomains: false
+app.use(helmet({
+    contentSecurityPolicy: {
+        useDefaults: false,
+        directives: {
+            defaultSrc: ['\'self\'']
+        }
+    },
+    hsts: {
+        maxAge: 5184000, // SIXTY_DAYS_IN_SECONDS
+        includeSubDomains: false
+    },
+    referrerPolicy: { policy: 'no-referrer' }
 }));
 
 // api version
