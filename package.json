@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@chevre/domain": "21.0.0",
-    "@motionpicture/express-middleware": "1.0.0",
+    "@motionpicture/express-middleware": "1.1.0",
     "body-parser": "1.20.2",
     "debug": "^3.2.6",
     "express": "^4.17.1",
