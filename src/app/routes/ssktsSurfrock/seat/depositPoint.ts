@@ -2,7 +2,7 @@ import { chevre } from '@chevre/domain';
 import * as moment from 'moment';
 import * as util from 'util';
 
-import * as redis from '../../../../redis';
+import { redisClient } from '../../../../redis';
 
 const PECORINO_ENDPOINT = String(process.env.PECORINO_ENDPOINT);
 const PECORINO_AUTHORIZE_SERVER_DOMAIN = String(process.env.PECORINO_AUTHORIZE_SERVER_DOMAIN);
@@ -80,7 +80,7 @@ async function depositPoint(params: {
                 await accountTransactionService.confirmSync({ transactionNumber: confirmedAccountTransactionNumber });
             } else {
                 // depositTransactionNumber発行
-                const transactionNumberRepo = new chevre.repository.TransactionNumber(redis.getClient());
+                const transactionNumberRepo = new chevre.repository.TransactionNumber(redisClient);
                 const publishDepositTransactionNumberResult = await transactionNumberRepo.publishByTimestamp({ startDate: new Date() });
                 const depositTransactionNumber = publishDepositTransactionNumberResult.transactionNumber;
 

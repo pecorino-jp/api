@@ -13,7 +13,7 @@ exports.depositPoint = exports.createRefundIdentifier = void 0;
 const domain_1 = require("@chevre/domain");
 const moment = require("moment");
 const util = require("util");
-const redis = require("../../../../redis");
+const redis_1 = require("../../../../redis");
 function createRefundIdentifier(params) {
     return util.format('%s:%s:%s', params.project.id, 'refund', params.paymentMethodId);
 }
@@ -81,7 +81,7 @@ function depositPoint(params) {
                 }
                 else {
                     // depositTransactionNumber発行
-                    const transactionNumberRepo = new domain_1.chevre.repository.TransactionNumber(redis.getClient());
+                    const transactionNumberRepo = new domain_1.chevre.repository.TransactionNumber(redis_1.redisClient);
                     const publishDepositTransactionNumberResult = yield transactionNumberRepo.publishByTimestamp({ startDate: new Date() });
                     const depositTransactionNumber = publishDepositTransactionNumberResult.transactionNumber;
                     yield domain_1.chevre.service.accountTransaction.deposit.start({

@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- update redis@4.x.x
+- update typescript@5.x.x
+
 ### Deprecated
 
 ### Removed

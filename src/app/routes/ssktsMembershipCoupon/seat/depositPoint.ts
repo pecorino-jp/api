@@ -2,7 +2,7 @@ import { chevre } from '@chevre/domain';
 import * as moment from 'moment';
 import * as util from 'util';
 
-import * as redis from '../../../../redis';
+import { redisClient } from '../../../../redis';
 
 export function createRefundIdentifier(params: {
     project: { id: string };
@@ -92,7 +92,7 @@ function depositPoint(params: {
                     });
                 } else {
                     // depositTransactionNumber発行
-                    const transactionNumberRepo = new chevre.repository.TransactionNumber(redis.getClient());
+                    const transactionNumberRepo = new chevre.repository.TransactionNumber(redisClient);
                     const publishDepositTransactionNumberResult = await transactionNumberRepo.publishByTimestamp({ startDate: new Date() });
                     const depositTransactionNumber = publishDepositTransactionNumberResult.transactionNumber;
 

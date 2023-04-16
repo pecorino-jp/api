@@ -15,31 +15,28 @@ exports.authentication = void 0;
  */
 const domain_1 = require("@chevre/domain");
 const express_middleware_1 = require("@motionpicture/express-middleware");
-const createDebug = require("debug");
-const debug = createDebug('pecorino-api:middlewares:authentication');
-// 許可発行者リスト
-const ISSUERS = process.env.TOKEN_ISSUERS.split(',');
+const settings_1 = require("../settings");
 const authentication = (0, express_middleware_1.cognitoAuth)({
-    issuers: ISSUERS,
+    issuers: settings_1.TOKEN_ISSUERS,
     authorizedHandler: (user, token, req, __, next) => __awaiter(void 0, void 0, void 0, function* () {
-        try {
-            req.user = user;
-            req.accessToken = token;
-            next();
-        }
-        catch (error) {
-            // AmazonCognitoAPIのレート制限をハンドリング
-            if (error.name === 'TooManyRequestsException') {
-                next(new domain_1.chevre.factory.errors.RateLimitExceeded(`getUser ${error.message}`));
-            }
-            else {
-                next(new domain_1.chevre.factory.errors.Unauthorized(`${error.name}:${error.message}`));
-            }
-        }
+        req.user = user;
+        req.accessToken = token;
+        next();
     }),
     unauthorizedHandler: (err, __1, __2, next) => {
-        debug('unauthorized err handled', err);
-        next(new domain_1.chevre.factory.errors.Unauthorized(err.message));
-    }
+        // AbortErrorをハンドリング(2023-02-13~)
+        if (err.name === 'AbortError') {
+            next(new domain_1.chevre.factory.errors.ServiceUnavailable(`issuer unavailable. ${err.name}:${err.message}`));
+            // AmazonCognitoAPIのレート制限をハンドリング
+        }
+        else if (err.name === 'TooManyRequestsException') {
+            next(new domain_1.chevre.factory.errors.RateLimitExceeded(`getUser ${err.message}`));
+        }
+        else {
+            next(new domain_1.chevre.factory.errors.Unauthorized(`${err.name}:${err.message}`));
+        }
+    },
+    // タイムアウト設定(2023-04-17~)
+    requestOptions: { timeout: settings_1.TOKEN_ISSUER_REQUEST_TIMEOUT }
 });
 exports.authentication = authentication;
