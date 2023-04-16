@@ -13,7 +13,7 @@ exports.depositPoint = exports.createRefundIdentifier = void 0;
 const domain_1 = require("@chevre/domain");
 const moment = require("moment");
 const util = require("util");
-const redis = require("../../../../redis");
+const redis_1 = require("../../../../redis");
 const PECORINO_ENDPOINT = String(process.env.PECORINO_ENDPOINT);
 const PECORINO_AUTHORIZE_SERVER_DOMAIN = String(process.env.PECORINO_AUTHORIZE_SERVER_DOMAIN);
 const PECORINO_CLIENT_ID = String(process.env.PECORINO_CLIENT_ID);
@@ -74,7 +74,7 @@ function depositPoint(params) {
                 }
                 else {
                     // depositTransactionNumber発行
-                    const transactionNumberRepo = new domain_1.chevre.repository.TransactionNumber(redis.getClient());
+                    const transactionNumberRepo = new domain_1.chevre.repository.TransactionNumber(redis_1.redisClient);
                     const publishDepositTransactionNumberResult = yield transactionNumberRepo.publishByTimestamp({ startDate: new Date() });
                     const depositTransactionNumber = publishDepositTransactionNumberResult.transactionNumber;
                     yield accountTransactionService.start({

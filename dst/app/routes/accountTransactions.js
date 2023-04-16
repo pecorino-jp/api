@@ -44,12 +44,12 @@ accountTransactionsRouter.get('', (0, permitScopes_1.permitScopes)(['admin']), .
         .isISO8601()
         .toDate()
 ], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c, _d, _e, _f, _g;
     try {
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
-        const searchConditions = Object.assign(Object.assign({}, req.query), { project: { id: { $eq: String((_b = (_a = req.query.project) === null || _a === void 0 ? void 0 : _a.id) === null || _b === void 0 ? void 0 : _b.$eq) } }, 
+        const searchConditions = Object.assign(Object.assign({}, req.query), { project: { id: { $eq: String((_c = (_b = (_a = req.query) === null || _a === void 0 ? void 0 : _a.project) === null || _b === void 0 ? void 0 : _b.id) === null || _c === void 0 ? void 0 : _c.$eq) } }, 
             // tslint:disable-next-line:no-magic-numbers
-            limit: (typeof req.query.limit === 'number') ? Math.min(req.query.limit, 100) : 100, page: (typeof req.query.page === 'number') ? Math.max(req.query.page, 1) : 1, sort: (req.query.sort !== undefined && req.query.sort !== null)
+            limit: (typeof ((_d = req.query) === null || _d === void 0 ? void 0 : _d.limit) === 'number') ? Math.min(req.query.limit, 100) : 100, page: (typeof ((_e = req.query) === null || _e === void 0 ? void 0 : _e.page) === 'number') ? Math.max(req.query.page, 1) : 1, sort: (((_f = req.query) === null || _f === void 0 ? void 0 : _f.sort) !== undefined && ((_g = req.query) === null || _g === void 0 ? void 0 : _g.sort) !== null)
                 ? req.query.sort
                 : { startDate: domain_1.chevre.factory.sortType.Ascending } });
         const accountTransactions = yield transactionRepo.search(searchConditions);
@@ -135,7 +135,7 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
 ], validator_1.validator, 
 // tslint:disable-next-line:cyclomatic-complexity max-func-body-length
 (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _c, _d, _e;
+    var _h, _j, _k;
     try {
         const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
@@ -156,7 +156,7 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
                     recipient, object: {
                         amount: { value: req.body.object.amount.value },
                         toLocation: { accountNumber: req.body.object.toLocation.accountNumber },
-                        description: (typeof ((_c = req.body.object) === null || _c === void 0 ? void 0 : _c.description) === 'string') ? req.body.object.description : ''
+                        description: (typeof ((_h = req.body.object) === null || _h === void 0 ? void 0 : _h.description) === 'string') ? req.body.object.description : ''
                     }, expires: req.body.expires }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                     ? { identifier: req.body.identifier }
                     : undefined))({
@@ -171,7 +171,7 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
                         amount: { value: req.body.object.amount.value },
                         fromLocation: { accountNumber: req.body.object.fromLocation.accountNumber },
                         toLocation: { accountNumber: req.body.object.toLocation.accountNumber },
-                        description: (typeof ((_d = req.body.object) === null || _d === void 0 ? void 0 : _d.description) === 'string') ? req.body.object.description : ''
+                        description: (typeof ((_j = req.body.object) === null || _j === void 0 ? void 0 : _j.description) === 'string') ? req.body.object.description : ''
                     }, expires: req.body.expires }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                     ? { identifier: req.body.identifier }
                     : undefined))({
@@ -185,7 +185,7 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
                     recipient, object: {
                         amount: { value: req.body.object.amount.value },
                         fromLocation: { accountNumber: req.body.object.fromLocation.accountNumber },
-                        description: (typeof ((_e = req.body.object) === null || _e === void 0 ? void 0 : _e.description) === 'string') ? req.body.object.description : '',
+                        description: (typeof ((_k = req.body.object) === null || _k === void 0 ? void 0 : _k.description) === 'string') ? req.body.object.description : '',
                         force: req.body.object.force === true
                     }, expires: req.body.expires }, (typeof req.body.identifier === 'string' && req.body.identifier.length > 0)
                     ? { identifier: req.body.identifier }
@@ -208,14 +208,14 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
     }
 }));
 accountTransactionsRouter.put('/:transactionNumber/confirm', (0, permitScopes_1.permitScopes)(['admin']), validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    var _f;
+    var _l;
     try {
         const accountRepo = new domain_1.chevre.repository.Account(mongoose.connection);
         const transactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
         const accountTransaction = yield domain_1.chevre.service.accountTransaction.confirm({
             transactionNumber: req.params.transactionNumber
         })({ accountTransaction: transactionRepo });
-        const moneyTransferActionAttributes = (_f = accountTransaction.potentialActions) === null || _f === void 0 ? void 0 : _f.moneyTransfer;
+        const moneyTransferActionAttributes = (_l = accountTransaction.potentialActions) === null || _l === void 0 ? void 0 : _l.moneyTransfer;
         if (typeof (moneyTransferActionAttributes === null || moneyTransferActionAttributes === void 0 ? void 0 : moneyTransferActionAttributes.typeOf) !== 'string') {
             throw new domain_1.chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
         }

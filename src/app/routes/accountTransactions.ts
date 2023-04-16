@@ -44,11 +44,11 @@ accountTransactionsRouter.get(
 
             const searchConditions: chevre.factory.account.transaction.ISearchConditions = {
                 ...req.query,
-                project: { id: { $eq: String(req.query.project?.id?.$eq) } },
+                project: { id: { $eq: String(req.query?.project?.id?.$eq) } },
                 // tslint:disable-next-line:no-magic-numbers
-                limit: (typeof req.query.limit === 'number') ? Math.min(req.query.limit, 100) : 100,
-                page: (typeof req.query.page === 'number') ? Math.max(req.query.page, 1) : 1,
-                sort: (req.query.sort !== undefined && req.query.sort !== null)
+                limit: (typeof req.query?.limit === 'number') ? Math.min(req.query.limit, 100) : 100,
+                page: (typeof req.query?.page === 'number') ? Math.max(req.query.page, 1) : 1,
+                sort: (req.query?.sort !== undefined && req.query?.sort !== null)
                     ? req.query.sort
                     : { startDate: chevre.factory.sortType.Ascending }
             };

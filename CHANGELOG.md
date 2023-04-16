@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v6.2.1 - 2023-04-16
+
+### Changed
+
+- update redis@4.x.x
+- update typescript@5.x.x
+
 ## v6.2.0 - 2023-04-07
 
 ### Changed
