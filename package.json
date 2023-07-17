@@ -18,7 +18,7 @@
     "helmet": "6.0.1",
     "http-status": "^1.4.2",
     "moment": "^2.24.0",
-    "mongoose": "6.10.4",
+    "mongoose": "6.11.3",
     "redis": "4.6.5"
   },
   "description": "Pecorino API Web Application",
