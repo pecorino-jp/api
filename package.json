@@ -9,7 +9,7 @@
     }
   ],
   "dependencies": {
-    "@chevre/domain": "21.1.0",
+    "@chevre/domain": "21.8.0-alpha.67",
     "@motionpicture/express-middleware": "1.1.0",
     "body-parser": "1.20.2",
     "debug": "^3.2.6",
@@ -18,7 +18,7 @@
     "helmet": "6.0.1",
     "http-status": "^1.4.2",
     "moment": "^2.24.0",
-    "mongoose": "6.10.4",
+    "mongoose": "7.0.5",
     "redis": "4.6.5"
   },
   "description": "Pecorino API Web Application",

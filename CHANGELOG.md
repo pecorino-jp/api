@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- update @chevre/domain
+- update mongoose@7.x.x
+
 ### Deprecated
 
 ### Removed
