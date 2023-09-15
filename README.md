@@ -1,4 +1,4 @@
-# Pecorino API Web Application
+# Pecorino API
 
 [![CircleCI](https://circleci.com/gh/pecorino-jp/api.svg?style=svg)](https://circleci.com/gh/pecorino-jp/api)
 
@@ -8,15 +8,6 @@
 * [License](#license)
 
 ## Usage
-
-### Environment variables
-
-| Name                         | Required | Value          | Purpose                                |
-| ---------------------------- | -------- | -------------- | -------------------------------------- |
-| `DEBUG`                      | false    | pecorino-api:* | Debug                                  |
-| `MONGOLAB_URI`               | true     |                | MongoDB connection settings            |
-| `TOKEN_ISSUERS`              | true     |                | Cognito token issuers(comma separated) |
-| `RESOURCE_SERVER_IDENTIFIER` | true     |                | Resource server identifier             |
 
 ## License
 

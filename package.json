@@ -9,7 +9,7 @@
     }
   ],
   "dependencies": {
-    "@chevre/domain": "21.8.0-alpha.67",
+    "@chevre/domain": "21.8.0",
     "@motionpicture/express-middleware": "1.1.0",
     "body-parser": "1.20.2",
     "debug": "^3.2.6",
@@ -21,7 +21,7 @@
     "mongoose": "7.0.5",
     "redis": "4.6.5"
   },
-  "description": "Pecorino API Web Application",
+  "description": "Pecorino API",
   "devDependencies": {
     "@types/body-parser": "1.19.2",
     "@types/debug": "0.0.30",
