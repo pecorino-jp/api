@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v6.3.0 - 2023-09-15
+
+### Changed
+
+- update @chevre/domain
+- update mongoose@7.x.x
+
 ## v6.2.1 - 2023-04-16
 
 ### Changed

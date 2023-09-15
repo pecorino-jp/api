@@ -118,11 +118,13 @@ function findSeller(params) {
             page: 1,
             project: { id: { $eq: params.project.id } },
             branchCode: { $eq: theaterCode }
-        }, {
-            hasMerchantReturnPolicy: 0,
-            makesOffer: 0,
-            paymentAccepted: 0
-        });
+        }, [], ['hasMerchantReturnPolicy', 'makesOffer', 'paymentAccepted']
+        // {
+        //     hasMerchantReturnPolicy: 0,
+        //     makesOffer: 0,
+        //     paymentAccepted: 0
+        // }
+        );
         const seller = sellers.shift();
         if (seller === undefined) {
             throw new domain_1.chevre.factory.errors.NotFound('Seller');
