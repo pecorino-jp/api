@@ -2,6 +2,7 @@
 /**
  * スコープ許可ミドルウェアテスト
  */
+import { chevre } from '@chevre/domain';
 import * as assert from 'assert';
 import * as sinon from 'sinon';
 
@@ -26,7 +27,7 @@ describe('permitScopes()', () => {
         delete process.env.RESOURCE_SERVER_IDENTIFIER;
         const scopes = ['scope'];
         const params = {
-            req: { user: { scopes: [] } },
+            req: { user: { scopes: [] }, chevre },
             res: {},
             next: () => undefined
         };
@@ -44,7 +45,7 @@ describe('permitScopes()', () => {
     it('スコープが十分であればエラーなしでnextが呼ばれるはず', async () => {
         const scopes = ['scope'];
         const params = {
-            req: { user: { scopes: scopes.map((scope) => `${process.env.RESOURCE_SERVER_IDENTIFIER}/${scope}`) } },
+            req: { user: { scopes: scopes.map((scope) => `${process.env.RESOURCE_SERVER_IDENTIFIER}/${scope}`) }, chevre },
             res: {},
             next: () => undefined
         };
@@ -62,7 +63,7 @@ describe('permitScopes()', () => {
     it('スコープ不足であればエラーパラメーターと共にnextが呼ばれるはず', async () => {
         const scopes = ['scope'];
         const params = {
-            req: { user: { scopes: [] } },
+            req: { user: { scopes: [] }, chevre },
             res: {},
             next: () => undefined
         };
@@ -80,7 +81,7 @@ describe('permitScopes()', () => {
     it('isScopesPermittedがエラーを投げればエラーパラメーターと共にnextが呼ばれるはず', async () => {
         const scopes = ['scope'];
         const params = {
-            req: { user: { scopes: '' } },
+            req: { user: { scopes: '' }, chevre },
             res: {},
             next: () => undefined
         };

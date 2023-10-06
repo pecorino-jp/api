@@ -1,16 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.errorHandler = void 0;
-/**
- * error handler
- * エラーハンドラーミドルウェア
- */
-const domain_1 = require("@chevre/domain");
 const createDebug = require("debug");
 const http_status_1 = require("http-status");
 const api_1 = require("../error/api");
 const debug = createDebug('pecorino-api:middlewares:errorHandler');
-function errorHandler(err, __, res, next) {
+function errorHandler(err, req, res, next) {
     debug(err);
     if (res.headersSent) {
         next(err);
@@ -23,14 +18,14 @@ function errorHandler(err, __, res, next) {
     else {
         // エラー配列が入ってくることもある
         if (Array.isArray(err)) {
-            apiError = new api_1.APIError(pecorinoError2httpStatusCode(err[0]), err);
+            apiError = new api_1.APIError(pecorinoError2httpStatusCode(err[0], req.chevre.factory), err);
         }
-        else if (err instanceof domain_1.chevre.factory.errors.Chevre) {
-            apiError = new api_1.APIError(pecorinoError2httpStatusCode(err), [err]);
+        else if (err instanceof req.chevre.factory.errors.Chevre) {
+            apiError = new api_1.APIError(pecorinoError2httpStatusCode(err, req.chevre.factory), [err]);
         }
         else {
             // 500
-            apiError = new api_1.APIError(http_status_1.INTERNAL_SERVER_ERROR, [new domain_1.chevre.factory.errors.Chevre('InternalServerError', err.message)]);
+            apiError = new api_1.APIError(http_status_1.INTERNAL_SERVER_ERROR, [new req.chevre.factory.errors.Chevre('InternalServerError', err.message)]);
         }
     }
     res.status(apiError.code)
@@ -42,35 +37,35 @@ exports.errorHandler = errorHandler;
 /**
  * PECORINOエラーをHTTPステータスコードへ変換する
  */
-function pecorinoError2httpStatusCode(err) {
+function pecorinoError2httpStatusCode(err, factory) {
     let statusCode = http_status_1.BAD_REQUEST;
     switch (true) {
         // 401
-        case (err instanceof domain_1.chevre.factory.errors.Unauthorized):
+        case (err instanceof factory.errors.Unauthorized):
             statusCode = http_status_1.UNAUTHORIZED;
             break;
         // 403
-        case (err instanceof domain_1.chevre.factory.errors.Forbidden):
+        case (err instanceof factory.errors.Forbidden):
             statusCode = http_status_1.FORBIDDEN;
             break;
         // 404
-        case (err instanceof domain_1.chevre.factory.errors.NotFound):
+        case (err instanceof factory.errors.NotFound):
             statusCode = http_status_1.NOT_FOUND;
             break;
         // 409
-        case (err instanceof domain_1.chevre.factory.errors.AlreadyInUse):
+        case (err instanceof factory.errors.AlreadyInUse):
             statusCode = http_status_1.CONFLICT;
             break;
         // 429
-        case (err instanceof domain_1.chevre.factory.errors.RateLimitExceeded):
+        case (err instanceof factory.errors.RateLimitExceeded):
             statusCode = http_status_1.TOO_MANY_REQUESTS;
             break;
         // 502
-        case (err instanceof domain_1.chevre.factory.errors.NotImplemented):
+        case (err instanceof factory.errors.NotImplemented):
             statusCode = http_status_1.NOT_IMPLEMENTED;
             break;
         // 503
-        case (err instanceof domain_1.chevre.factory.errors.ServiceUnavailable):
+        case (err instanceof factory.errors.ServiceUnavailable):
             statusCode = http_status_1.SERVICE_UNAVAILABLE;
             break;
         // 400

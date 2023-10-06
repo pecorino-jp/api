@@ -11,6 +11,8 @@ import * as sinon from 'sinon';
 import { APIError } from '../error/api';
 import { errorHandler } from './errorHandler';
 
+import { } from '../../@types/index';
+
 // let scope: nock.Scope;
 let sandbox: sinon.SinonSandbox;
 
@@ -30,7 +32,7 @@ describe('エラーハンドラーミドルウェア', () => {
     it('ヘッダー送信済であればエラーと共にnextが呼ばれるはず', async () => {
         const params = {
             err: new Error('test'),
-            req: {},
+            req: { chevre },
             res: { headersSent: true },
             next: () => undefined
         };
@@ -48,7 +50,7 @@ describe('エラーハンドラーミドルウェア', () => {
     it('APIErrorと共に呼ばれればそのままjson出力されるはず', async () => {
         const params = {
             err: new APIError(INTERNAL_SERVER_ERROR, []),
-            req: {},
+            req: { chevre },
             res: {
                 headersSent: false,
                 status: () => undefined,
@@ -88,7 +90,7 @@ describe('エラーハンドラーミドルウェア', () => {
         it(`${err.name}と共に呼ばれればAPIErrorが生成されてjson出力されるはず`, async () => {
             const params = {
                 err: err,
-                req: {},
+                req: { chevre },
                 res: {
                     headersSent: false,
                     status: () => undefined,
@@ -135,7 +137,7 @@ describe('エラーハンドラーミドルウェア', () => {
         it(`PECORINOError配列と共に呼ばれればAPIErrorが生成されてjson出力されるはず ${err.reason}`, async () => {
             const params = {
                 err: [err],
-                req: {},
+                req: { chevre },
                 res: {
                     headersSent: false,
                     status: () => undefined,

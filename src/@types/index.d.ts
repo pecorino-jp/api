@@ -12,6 +12,7 @@ declare global {
         export interface Request {
             user: IUser;
             accessToken: string;
+            chevre: typeof chevre;
         }
     }
 }

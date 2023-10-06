@@ -32,13 +32,24 @@ permitsRouter.post(
             .not()
             .isEmpty()
             .isString()
-            .isIn([chevre.factory.product.ProductType.MembershipService, chevre.factory.product.ProductType.PaymentCard])
+            // .isIn([chevre.factory.product.ProductType.MembershipService, chevre.factory.product.ProductType.PaymentCard])
+            .custom((value, { req }) => {
+                if (![
+                    req.chevre.factory.product.ProductType.MembershipService,
+                    req.chevre.factory.product.ProductType.PaymentCard
+
+                ].includes(value)) {
+                    throw new Error('invalid issuedThrough.typeOf');
+                }
+
+                return true;
+            })
     ],
     validator,
     async (req, res, next) => {
         try {
             debug('permits findByIdentifier processing...body:', req.body);
-            const permitRepo = new chevre.repository.Permit(mongoose.connection);
+            const permitRepo = new req.chevre.repository.Permit(mongoose.connection);
             const permit = await permitRepo.findByIdentifier(
                 {
                     project: { id: { $eq: <string>req.body.project.id } },
@@ -82,12 +93,23 @@ permitsRouter.post(
             .not()
             .isEmpty()
             .isString()
-            .isIn([chevre.factory.product.ProductType.MembershipService, chevre.factory.product.ProductType.PaymentCard])
+            // .isIn([chevre.factory.product.ProductType.MembershipService, chevre.factory.product.ProductType.PaymentCard])
+            .custom((value, { req }) => {
+                if (![
+                    req.chevre.factory.product.ProductType.MembershipService,
+                    req.chevre.factory.product.ProductType.PaymentCard
+
+                ].includes(value)) {
+                    throw new Error('invalid issuedThrough.typeOf');
+                }
+
+                return true;
+            })
     ],
     validator,
     async (req, res, next) => {
         try {
-            const permitRepo = new chevre.repository.Permit(mongoose.connection);
+            const permitRepo = new req.chevre.repository.Permit(mongoose.connection);
             const permit = await permitRepo.findByIdentifierAndAccessCode(
                 {
                     project: { id: { $eq: <string>req.body.project.id } },

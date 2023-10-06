@@ -40,7 +40,7 @@ accountTransactionsRouter.get(
     validator,
     async (req, res, next) => {
         try {
-            const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
+            const transactionRepo = new req.chevre.repository.AccountTransaction(mongoose.connection);
 
             const searchConditions: chevre.factory.account.transaction.ISearchConditions = {
                 ...req.query,
@@ -50,7 +50,7 @@ accountTransactionsRouter.get(
                 page: (typeof req.query?.page === 'number') ? Math.max(req.query.page, 1) : 1,
                 sort: (req.query?.sort !== undefined && req.query?.sort !== null)
                     ? req.query.sort
-                    : { startDate: chevre.factory.sortType.Ascending }
+                    : { startDate: req.chevre.factory.sortType.Ascending }
             };
             const accountTransactions = await transactionRepo.search(searchConditions);
 
@@ -87,11 +87,23 @@ accountTransactionsRouter.post(
             .not()
             .isEmpty()
             .withMessage(() => 'required')
-            .isIn([
-                chevre.factory.account.transactionType.Deposit,
-                chevre.factory.account.transactionType.Transfer,
-                chevre.factory.account.transactionType.Withdraw
-            ]),
+            // .isIn([
+            //     chevre.factory.account.transactionType.Deposit,
+            //     chevre.factory.account.transactionType.Transfer,
+            //     chevre.factory.account.transactionType.Withdraw
+            // ])
+            .custom((value, { req }) => {
+                if (![
+                    req.chevre.factory.account.transactionType.Deposit,
+                    req.chevre.factory.account.transactionType.Transfer,
+                    req.chevre.factory.account.transactionType.Withdraw
+
+                ].includes(value)) {
+                    throw new Error('invalid typeOf');
+                }
+
+                return true;
+            }),
         body('expires')
             .not()
             .isEmpty()
@@ -117,8 +129,8 @@ accountTransactionsRouter.post(
             .if((__: any, meta: Meta) => {
                 const transactiontype = meta.req.body.typeOf;
 
-                return transactiontype === chevre.factory.account.transactionType.Transfer
-                    || transactiontype === chevre.factory.account.transactionType.Withdraw;
+                return transactiontype === meta.req.chevre.factory.account.transactionType.Transfer
+                    || transactiontype === meta.req.chevre.factory.account.transactionType.Withdraw;
             })
             .not()
             .isEmpty()
@@ -128,8 +140,8 @@ accountTransactionsRouter.post(
             .if((__: any, meta: Meta) => {
                 const transactiontype = meta.req.body.typeOf;
 
-                return transactiontype === chevre.factory.account.transactionType.Deposit
-                    || transactiontype === chevre.factory.account.transactionType.Transfer;
+                return transactiontype === meta.req.chevre.factory.account.transactionType.Deposit
+                    || transactiontype === meta.req.chevre.factory.account.transactionType.Transfer;
             })
             .not()
             .isEmpty()
@@ -144,8 +156,8 @@ accountTransactionsRouter.post(
     // tslint:disable-next-line:cyclomatic-complexity max-func-body-length
     async (req, res, next) => {
         try {
-            const accountRepo = new chevre.repository.Account(mongoose.connection);
-            const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
+            const accountRepo = new req.chevre.repository.Account(mongoose.connection);
+            const transactionRepo = new req.chevre.repository.AccountTransaction(mongoose.connection);
 
             let transaction: chevre.factory.account.transaction.ITransaction<typeof req.body.typeOf>;
             const agent: chevre.factory.account.transaction.IAgent = {
@@ -159,10 +171,10 @@ accountTransactionsRouter.post(
             const transactionNumber = String(req.body.transactionNumber);
 
             switch (req.body.typeOf) {
-                case chevre.factory.account.transactionType.Deposit:
-                    transaction = await chevre.service.accountTransaction.deposit.start({
-                        project: { id: req.body.project.id, typeOf: chevre.factory.organizationType.Project },
-                        typeOf: chevre.factory.account.transactionType.Deposit,
+                case req.chevre.factory.account.transactionType.Deposit:
+                    transaction = await req.chevre.service.accountTransaction.deposit.start({
+                        project: { id: req.body.project.id, typeOf: req.chevre.factory.organizationType.Project },
+                        typeOf: req.chevre.factory.account.transactionType.Deposit,
                         transactionNumber,
                         agent,
                         recipient,
@@ -181,10 +193,10 @@ accountTransactionsRouter.post(
                     });
 
                     break;
-                case chevre.factory.account.transactionType.Transfer:
-                    transaction = await chevre.service.accountTransaction.transfer.start({
-                        project: { id: req.body.project.id, typeOf: chevre.factory.organizationType.Project },
-                        typeOf: chevre.factory.account.transactionType.Transfer,
+                case req.chevre.factory.account.transactionType.Transfer:
+                    transaction = await req.chevre.service.accountTransaction.transfer.start({
+                        project: { id: req.body.project.id, typeOf: req.chevre.factory.organizationType.Project },
+                        typeOf: req.chevre.factory.account.transactionType.Transfer,
                         transactionNumber,
                         agent,
                         recipient,
@@ -204,10 +216,10 @@ accountTransactionsRouter.post(
                     });
 
                     break;
-                case chevre.factory.account.transactionType.Withdraw:
-                    transaction = await chevre.service.accountTransaction.withdraw.start({
-                        project: { id: req.body.project.id, typeOf: chevre.factory.organizationType.Project },
-                        typeOf: chevre.factory.account.transactionType.Withdraw,
+                case req.chevre.factory.account.transactionType.Withdraw:
+                    transaction = await req.chevre.service.accountTransaction.withdraw.start({
+                        project: { id: req.body.project.id, typeOf: req.chevre.factory.organizationType.Project },
+                        typeOf: req.chevre.factory.account.transactionType.Withdraw,
                         transactionNumber,
                         agent,
                         recipient,
@@ -228,7 +240,7 @@ accountTransactionsRouter.post(
 
                     break;
                 default:
-                    throw new chevre.factory.errors.ArgumentNull('typeOf');
+                    throw new req.chevre.factory.errors.ArgumentNull('typeOf');
             }
 
             res.json({
@@ -248,19 +260,19 @@ accountTransactionsRouter.put(
     validator,
     async (req, res, next) => {
         try {
-            const accountRepo = new chevre.repository.Account(mongoose.connection);
-            const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
+            const accountRepo = new req.chevre.repository.Account(mongoose.connection);
+            const transactionRepo = new req.chevre.repository.AccountTransaction(mongoose.connection);
 
-            const accountTransaction = await chevre.service.accountTransaction.confirm({
+            const accountTransaction = await req.chevre.service.accountTransaction.confirm({
                 transactionNumber: req.params.transactionNumber
             })({ accountTransaction: transactionRepo });
 
             const moneyTransferActionAttributes = accountTransaction.potentialActions?.moneyTransfer;
             if (typeof moneyTransferActionAttributes?.typeOf !== 'string') {
-                throw new chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
+                throw new req.chevre.factory.errors.ServiceUnavailable('potentialActions undefined');
             }
 
-            await chevre.service.account.transferMoney(moneyTransferActionAttributes)({
+            await req.chevre.service.account.transferMoney(moneyTransferActionAttributes)({
                 account: accountRepo
             });
 
@@ -278,12 +290,12 @@ accountTransactionsRouter.put(
     validator,
     async (req, res, next) => {
         try {
-            const accountRepo = new chevre.repository.Account(mongoose.connection);
-            const transactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
+            const accountRepo = new req.chevre.repository.Account(mongoose.connection);
+            const transactionRepo = new req.chevre.repository.AccountTransaction(mongoose.connection);
 
             const accountTransaction = await transactionRepo.cancel({ transactionNumber: req.params.transactionNumber });
 
-            await chevre.service.account.cancelMoneyTransfer({
+            await req.chevre.service.account.cancelMoneyTransfer({
                 transaction: {
                     typeOf: accountTransaction.typeOf,
                     id: accountTransaction.id

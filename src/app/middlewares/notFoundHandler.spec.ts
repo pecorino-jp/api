@@ -26,7 +26,7 @@ describe('notFoundHandler()', () => {
 
     it('PECORINOエラーと共にnextが呼ばれるはず', async () => {
         const params = {
-            req: {},
+            req: { chevre },
             res: {},
             next: () => undefined
         };

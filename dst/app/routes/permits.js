@@ -10,10 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.permitsRouter = void 0;
-/**
- * 許可証ルーター
- */
-const domain_1 = require("@chevre/domain");
 const createDebug = require("debug");
 const express_1 = require("express");
 const express_validator_1 = require("express-validator");
@@ -38,11 +34,20 @@ permitsRouter.post('/findByIdentifier', (0, permitScopes_1.permitScopes)(['admin
         .not()
         .isEmpty()
         .isString()
-        .isIn([domain_1.chevre.factory.product.ProductType.MembershipService, domain_1.chevre.factory.product.ProductType.PaymentCard])
+        // .isIn([chevre.factory.product.ProductType.MembershipService, chevre.factory.product.ProductType.PaymentCard])
+        .custom((value, { req }) => {
+        if (![
+            req.chevre.factory.product.ProductType.MembershipService,
+            req.chevre.factory.product.ProductType.PaymentCard
+        ].includes(value)) {
+            throw new Error('invalid issuedThrough.typeOf');
+        }
+        return true;
+    })
 ], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         debug('permits findByIdentifier processing...body:', req.body);
-        const permitRepo = new domain_1.chevre.repository.Permit(mongoose.connection);
+        const permitRepo = new req.chevre.repository.Permit(mongoose.connection);
         const permit = yield permitRepo.findByIdentifier({
             project: { id: { $eq: req.body.project.id } },
             identifier: { $eq: req.body.identifier },
@@ -78,10 +83,19 @@ permitsRouter.post('/findByAccessCode', (0, permitScopes_1.permitScopes)(['admin
         .not()
         .isEmpty()
         .isString()
-        .isIn([domain_1.chevre.factory.product.ProductType.MembershipService, domain_1.chevre.factory.product.ProductType.PaymentCard])
+        // .isIn([chevre.factory.product.ProductType.MembershipService, chevre.factory.product.ProductType.PaymentCard])
+        .custom((value, { req }) => {
+        if (![
+            req.chevre.factory.product.ProductType.MembershipService,
+            req.chevre.factory.product.ProductType.PaymentCard
+        ].includes(value)) {
+            throw new Error('invalid issuedThrough.typeOf');
+        }
+        return true;
+    })
 ], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const permitRepo = new domain_1.chevre.repository.Permit(mongoose.connection);
+        const permitRepo = new req.chevre.repository.Permit(mongoose.connection);
         const permit = yield permitRepo.findByIdentifierAndAccessCode({
             project: { id: { $eq: req.body.project.id } },
             accessCode: { $eq: req.body.accessCode },

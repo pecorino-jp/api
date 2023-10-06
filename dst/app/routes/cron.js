@@ -13,7 +13,6 @@ exports.cronRouter = void 0;
 /**
  * cronルーター
  */
-const domain_1 = require("@chevre/domain");
 const express = require("express");
 const http_status_1 = require("http-status");
 const moment = require("moment");
@@ -24,10 +23,10 @@ const ACCOUNT_TRANSACTION_STORAGE_PERIOD_IN_MONTH = (typeof process.env.ACCOUNT_
     : 12;
 const cronRouter = express.Router();
 exports.cronRouter = cronRouter;
-cronRouter.get('/cleanUpDatabase', (_, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+cronRouter.get('/cleanUpDatabase', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const now = new Date();
-        const accountTransactionRepo = new domain_1.chevre.repository.AccountTransaction(mongoose.connection);
+        const accountTransactionRepo = new req.chevre.repository.AccountTransaction(mongoose.connection);
         try {
             yield accountTransactionRepo.clean({
                 // 終了日時を一定期間過ぎたもの

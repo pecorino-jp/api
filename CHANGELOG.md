@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+- add requireDomain middleware
+
 ### Changed
 
 - mongoose.Schemaインスタンス生成をリポジトリインスタンス生成時に変更
@@ -15,6 +17,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Deprecated
 
 ### Removed
+
+- delete /ssktsMembershipCoupon
+- delete /ssktsSurfrock
 
 ### Fixed
 
