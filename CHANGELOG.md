@@ -10,6 +10,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Changed
 
+- mongoose.Schemaインスタンス生成をリポジトリインスタンス生成時に変更
+
 ### Deprecated
 
 ### Removed
