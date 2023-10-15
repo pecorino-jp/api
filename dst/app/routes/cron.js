@@ -26,7 +26,7 @@ exports.cronRouter = cronRouter;
 cronRouter.get('/cleanUpDatabase', (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const now = new Date();
-        const accountTransactionRepo = new req.chevre.repository.AccountTransaction(mongoose.connection);
+        const accountTransactionRepo = yield req.chevre.repository.AccountTransaction.createInstance(mongoose.connection);
         try {
             yield accountTransactionRepo.clean({
                 // 終了日時を一定期間過ぎたもの

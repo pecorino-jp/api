@@ -6,7 +6,6 @@ exports.router = void 0;
  */
 const express = require("express");
 const health_1 = require("./health");
-const _ah_1 = require("./_ah");
 const accountTransactions_1 = require("./accountTransactions");
 const cron_1 = require("./cron");
 const permits_1 = require("./permits");
@@ -24,7 +23,14 @@ exports.router = router;
 router.get('', (__, res) => {
     res.send('hello!');
 });
-router.use('/_ah', _ah_1.ahRouter);
+router.get('/_ah/warmup', (__, res, next) => {
+    try {
+        res.send('warmup done!');
+    }
+    catch (error) {
+        next(error);
+    }
+});
 router.use('/health', health_1.healthRouter);
 // requireDomain(2023-10-06)
 router.use(requireDomain_1.requireDomain);

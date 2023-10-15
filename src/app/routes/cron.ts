@@ -18,7 +18,7 @@ cronRouter.get(
     async (req, res, next) => {
         try {
             const now = new Date();
-            const accountTransactionRepo = new req.chevre.repository.AccountTransaction(mongoose.connection);
+            const accountTransactionRepo = await req.chevre.repository.AccountTransaction.createInstance(mongoose.connection);
 
             try {
                 await accountTransactionRepo.clean({

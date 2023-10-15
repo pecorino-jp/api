@@ -2,7 +2,7 @@
  * error handler
  * エラーハンドラーミドルウェア
  */
-import { chevre } from '@chevre/domain';
+import type { chevre } from '@chevre/domain';
 import * as createDebug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import {

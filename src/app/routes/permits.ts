@@ -1,7 +1,7 @@
 /**
  * 許可証ルーター
  */
-import { chevre } from '@chevre/domain';
+import type { chevre } from '@chevre/domain';
 import * as createDebug from 'debug';
 import { Router } from 'express';
 import { body } from 'express-validator';
@@ -49,7 +49,7 @@ permitsRouter.post(
     async (req, res, next) => {
         try {
             debug('permits findByIdentifier processing...body:', req.body);
-            const permitRepo = new req.chevre.repository.Permit(mongoose.connection);
+            const permitRepo = await req.chevre.repository.Permit.createInstance(mongoose.connection);
             const permit = await permitRepo.findByIdentifier(
                 {
                     project: { id: { $eq: <string>req.body.project.id } },
@@ -109,7 +109,7 @@ permitsRouter.post(
     validator,
     async (req, res, next) => {
         try {
-            const permitRepo = new req.chevre.repository.Permit(mongoose.connection);
+            const permitRepo = await req.chevre.repository.Permit.createInstance(mongoose.connection);
             const permit = await permitRepo.findByIdentifierAndAccessCode(
                 {
                     project: { id: { $eq: <string>req.body.project.id } },

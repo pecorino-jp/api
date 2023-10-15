@@ -4,7 +4,6 @@
 import * as express from 'express';
 
 import { healthRouter } from './health';
-import { ahRouter } from './_ah';
 
 import { accountTransactionsRouter } from './accountTransactions';
 import { cronRouter } from './cron';
@@ -29,7 +28,16 @@ router.get(
         res.send('hello!');
     }
 );
-router.use('/_ah', ahRouter);
+router.get(
+    '/_ah/warmup',
+    (__, res, next) => {
+        try {
+            res.send('warmup done!');
+        } catch (error) {
+            next(error);
+        }
+    }
+);
 router.use('/health', healthRouter);
 
 // requireDomain(2023-10-06)

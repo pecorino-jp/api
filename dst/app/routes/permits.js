@@ -47,7 +47,7 @@ permitsRouter.post('/findByIdentifier', (0, permitScopes_1.permitScopes)(['admin
 ], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         debug('permits findByIdentifier processing...body:', req.body);
-        const permitRepo = new req.chevre.repository.Permit(mongoose.connection);
+        const permitRepo = yield req.chevre.repository.Permit.createInstance(mongoose.connection);
         const permit = yield permitRepo.findByIdentifier({
             project: { id: { $eq: req.body.project.id } },
             identifier: { $eq: req.body.identifier },
@@ -95,7 +95,7 @@ permitsRouter.post('/findByAccessCode', (0, permitScopes_1.permitScopes)(['admin
     })
 ], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const permitRepo = new req.chevre.repository.Permit(mongoose.connection);
+        const permitRepo = yield req.chevre.repository.Permit.createInstance(mongoose.connection);
         const permit = yield permitRepo.findByIdentifierAndAccessCode({
             project: { id: { $eq: req.body.project.id } },
             accessCode: { $eq: req.body.accessCode },
