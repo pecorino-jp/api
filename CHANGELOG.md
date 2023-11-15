@@ -8,6 +8,20 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Added
 
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+### Security
+
+## v7.0.0 - 2023-11-15
+
+### Added
+
 - add requireDomain middleware
 
 ### Changed
@@ -16,16 +30,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 - update @chevre/domain
 - update @motionpicture/express-middleware
 
-### Deprecated
-
 ### Removed
 
 - delete /ssktsMembershipCoupon
 - delete /ssktsSurfrock
-
-### Fixed
-
-### Security
 
 ## v6.3.1 - 2023-09-22
 
