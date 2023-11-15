@@ -13,6 +13,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 ### Changed
 
 - mongoose.Schemaインスタンス生成をリポジトリインスタンス生成時に変更
+- update @chevre/domain
+- update @motionpicture/express-middleware
 
 ### Deprecated
 
