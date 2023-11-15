@@ -2,7 +2,7 @@
  * error handler
  * エラーハンドラーミドルウェア
  */
-import { chevre } from '@chevre/domain';
+import type { chevre } from '@chevre/domain';
 import * as createDebug from 'debug';
 import { NextFunction, Request, Response } from 'express';
 import {
@@ -20,7 +20,7 @@ import { APIError } from '../error/api';
 
 const debug = createDebug('pecorino-api:middlewares:errorHandler');
 
-export function errorHandler(err: any, __: Request, res: Response, next: NextFunction) {
+export function errorHandler(err: any, req: Request, res: Response, next: NextFunction) {
     debug(err);
 
     if (res.headersSent) {
@@ -35,12 +35,12 @@ export function errorHandler(err: any, __: Request, res: Response, next: NextFun
     } else {
         // エラー配列が入ってくることもある
         if (Array.isArray(err)) {
-            apiError = new APIError(pecorinoError2httpStatusCode(err[0]), err);
-        } else if (err instanceof chevre.factory.errors.Chevre) {
-            apiError = new APIError(pecorinoError2httpStatusCode(err), [err]);
+            apiError = new APIError(pecorinoError2httpStatusCode(err[0], req.chevre.factory), err);
+        } else if (err instanceof req.chevre.factory.errors.Chevre) {
+            apiError = new APIError(pecorinoError2httpStatusCode(err, req.chevre.factory), [err]);
         } else {
             // 500
-            apiError = new APIError(INTERNAL_SERVER_ERROR, [new chevre.factory.errors.Chevre(<any>'InternalServerError', err.message)]);
+            apiError = new APIError(INTERNAL_SERVER_ERROR, [new req.chevre.factory.errors.Chevre(<any>'InternalServerError', err.message)]);
         }
     }
 
@@ -53,42 +53,42 @@ export function errorHandler(err: any, __: Request, res: Response, next: NextFun
 /**
  * PECORINOエラーをHTTPステータスコードへ変換する
  */
-function pecorinoError2httpStatusCode(err: chevre.factory.errors.Chevre) {
+function pecorinoError2httpStatusCode(err: chevre.factory.errors.Chevre, factory: typeof chevre.factory) {
     let statusCode = BAD_REQUEST;
 
     switch (true) {
         // 401
-        case (err instanceof chevre.factory.errors.Unauthorized):
+        case (err instanceof factory.errors.Unauthorized):
             statusCode = UNAUTHORIZED;
             break;
 
         // 403
-        case (err instanceof chevre.factory.errors.Forbidden):
+        case (err instanceof factory.errors.Forbidden):
             statusCode = FORBIDDEN;
             break;
 
         // 404
-        case (err instanceof chevre.factory.errors.NotFound):
+        case (err instanceof factory.errors.NotFound):
             statusCode = NOT_FOUND;
             break;
 
         // 409
-        case (err instanceof chevre.factory.errors.AlreadyInUse):
+        case (err instanceof factory.errors.AlreadyInUse):
             statusCode = CONFLICT;
             break;
 
         // 429
-        case (err instanceof chevre.factory.errors.RateLimitExceeded):
+        case (err instanceof factory.errors.RateLimitExceeded):
             statusCode = TOO_MANY_REQUESTS;
             break;
 
         // 502
-        case (err instanceof chevre.factory.errors.NotImplemented):
+        case (err instanceof factory.errors.NotImplemented):
             statusCode = NOT_IMPLEMENTED;
             break;
 
         // 503
-        case (err instanceof chevre.factory.errors.ServiceUnavailable):
+        case (err instanceof factory.errors.ServiceUnavailable):
             statusCode = SERVICE_UNAVAILABLE;
             break;
 

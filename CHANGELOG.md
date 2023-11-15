@@ -18,6 +18,23 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v7.0.0 - 2023-11-15
+
+### Added
+
+- add requireDomain middleware
+
+### Changed
+
+- mongoose.Schemaインスタンス生成をリポジトリインスタンス生成時に変更
+- update @chevre/domain
+- update @motionpicture/express-middleware
+
+### Removed
+
+- delete /ssktsMembershipCoupon
+- delete /ssktsSurfrock
+
 ## v6.3.1 - 2023-09-22
 
 ### Changed

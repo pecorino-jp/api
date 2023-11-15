@@ -9,8 +9,8 @@
     }
   ],
   "dependencies": {
-    "@chevre/domain": "21.9.0",
-    "@motionpicture/express-middleware": "1.1.0",
+    "@chevre/domain": "21.16.0",
+    "@motionpicture/express-middleware": "2.0.0",
     "body-parser": "1.20.2",
     "debug": "^3.2.6",
     "express": "4.18.2",
@@ -73,7 +73,8 @@
     "tslint": "tslint --project tsconfig.json -c tslint.json --exclude \"**/*.spec.ts\" \"src/**/*.ts\"",
     "preversion": "npm run clean && npm run build && npm test && npm run doc",
     "version": "git add -A",
-    "postversion": "git push origin --tags"
+    "postversion": "git push origin --tags",
+    "gcp-build": ""
   },
-  "version": "6.3.1"
+  "version": "7.0.0"
 }

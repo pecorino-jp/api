@@ -1,7 +1,6 @@
 /**
  * cronルーター
  */
-import { chevre } from '@chevre/domain';
 import * as express from 'express';
 import { NO_CONTENT } from 'http-status';
 import * as moment from 'moment';
@@ -16,10 +15,10 @@ const cronRouter = express.Router();
 
 cronRouter.get(
     '/cleanUpDatabase',
-    async (_, res, next) => {
+    async (req, res, next) => {
         try {
             const now = new Date();
-            const accountTransactionRepo = new chevre.repository.AccountTransaction(mongoose.connection);
+            const accountTransactionRepo = await req.chevre.repository.AccountTransaction.createInstance(mongoose.connection);
 
             try {
                 await accountTransactionRepo.clean({

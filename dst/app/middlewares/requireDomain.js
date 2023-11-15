@@ -9,18 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ahRouter = void 0;
-/**
- * ahルーター
- */
-const express = require("express");
-const ahRouter = express.Router();
-exports.ahRouter = ahRouter;
-ahRouter.get('/warmup', (_, res, next) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        res.send('warmup done!');
-    }
-    catch (error) {
-        next(error);
-    }
-}));
+exports.requireDomain = void 0;
+let domain;
+function requireDomain(req, __, next) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            if (domain === undefined) {
+                const domainModule = yield Promise.resolve().then(() => require('@chevre/domain'));
+                domain = domainModule.chevre;
+            }
+            req.chevre = domain;
+            next();
+        }
+        catch (error) {
+            next(error);
+        }
+    });
+}
+exports.requireDomain = requireDomain;

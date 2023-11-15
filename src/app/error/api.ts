@@ -1,4 +1,4 @@
-import { chevre } from '@chevre/domain';
+import type { chevre } from '@chevre/domain';
 
 /**
  * アプリケーションエラー

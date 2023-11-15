@@ -6,13 +6,13 @@ exports.router = void 0;
  */
 const express = require("express");
 const health_1 = require("./health");
-const _ah_1 = require("./_ah");
 const accountTransactions_1 = require("./accountTransactions");
 const cron_1 = require("./cron");
 const permits_1 = require("./permits");
-const ssktsMembershipCoupon_1 = require("./ssktsMembershipCoupon");
-const ssktsSurfrock_1 = require("./ssktsSurfrock");
+// import { ssktsMembershipCouponRouter } from './ssktsMembershipCoupon';
+// import { ssktsSurfrockRouter } from './ssktsSurfrock';
 const authentication_1 = require("../middlewares/authentication");
+const requireDomain_1 = require("../middlewares/requireDomain");
 const router = express.Router();
 exports.router = router;
 // middleware that is specific to this router
@@ -23,12 +23,19 @@ exports.router = router;
 router.get('', (__, res) => {
     res.send('hello!');
 });
-router.use('/_ah', _ah_1.ahRouter);
-router.use('/cron', cron_1.cronRouter);
+router.get('/_ah/warmup', (__, res, next) => {
+    try {
+        res.send('warmup done!');
+    }
+    catch (error) {
+        next(error);
+    }
+});
 router.use('/health', health_1.healthRouter);
+// requireDomain(2023-10-06)
+router.use(requireDomain_1.requireDomain);
+router.use('/cron', cron_1.cronRouter);
 // 認証
 router.use(authentication_1.authentication);
 router.use('/accountTransactions', accountTransactions_1.accountTransactionsRouter);
 router.use('/permits', permits_1.permitsRouter);
-router.use('/ssktsMembershipCoupon', ssktsMembershipCoupon_1.ssktsMembershipCouponRouter);
-router.use('/ssktsSurfrock', ssktsSurfrock_1.ssktsSurfrockRouter);

@@ -2,7 +2,6 @@
  * バリデーターミドルウェア
  * リクエストのパラメータ(query strings or body parameters)に対するバリデーション
  */
-import { chevre } from '@chevre/domain';
 import { NextFunction, Request, Response } from 'express';
 import { validationResult } from 'express-validator';
 import { BAD_REQUEST } from 'http-status';
@@ -14,7 +13,7 @@ export async function validator(req: Request, __: Response, next: NextFunction) 
     if (!validatorResult.isEmpty()) {
         const errors = validatorResult.array()
             .map((mappedRrror) => {
-                return new chevre.factory.errors.Argument(mappedRrror.param, mappedRrror.msg);
+                return new req.chevre.factory.errors.Argument(mappedRrror.param, mappedRrror.msg);
             });
 
         next(new APIError(BAD_REQUEST, errors));

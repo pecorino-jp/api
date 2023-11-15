@@ -4,7 +4,6 @@ exports.permitScopes = void 0;
 /**
  * スコープ許可ミドルウェア
  */
-const domain_1 = require("@chevre/domain");
 const createDebug = require("debug");
 const debug = createDebug('pecorino-api:middlewares:permitScopes');
 function permitScopes(permittedScopes) {
@@ -24,7 +23,7 @@ function permitScopes(permittedScopes) {
         try {
             debug('checking scope requirements...', permittedScopesWithResourceServerIdentifier);
             if (!isScopesPermitted(req.user.scopes, permittedScopesWithResourceServerIdentifier)) {
-                next(new domain_1.chevre.factory.errors.Forbidden('scope requirements not satisfied'));
+                next(new req.chevre.factory.errors.Forbidden('scope requirements not satisfied'));
             }
             else {
                 next();
