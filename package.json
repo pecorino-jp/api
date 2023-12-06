@@ -12,7 +12,7 @@
     "@chevre/domain": "21.16.0",
     "@motionpicture/express-middleware": "2.0.0",
     "body-parser": "1.20.2",
-    "debug": "^3.2.6",
+    "debug": "^3.2.7",
     "express": "4.18.2",
     "express-validator": "6.15.0",
     "helmet": "6.0.1",
