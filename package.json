@@ -75,5 +75,5 @@
     "postversion": "git push origin --tags",
     "gcp-build": ""
   },
-  "version": "7.0.0"
+  "version": "7.0.1"
 }
