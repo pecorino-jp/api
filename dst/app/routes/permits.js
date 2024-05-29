@@ -19,8 +19,6 @@ const validator_1 = require("../middlewares/validator");
 const debug = createDebug('pecorino-api:router');
 const permitsRouter = (0, express_1.Router)();
 exports.permitsRouter = permitsRouter;
-// tslint:disable-next-line:no-suspicious-comment
-// TODO findByAccessCodeで発行されたトークンでの照会が適切かもしれない
 permitsRouter.post('/findByIdentifier', (0, permitScopes_1.permitScopes)(['admin']), ...[
     (0, express_validator_1.body)('project.id')
         .not()
@@ -34,7 +32,6 @@ permitsRouter.post('/findByIdentifier', (0, permitScopes_1.permitScopes)(['admin
         .not()
         .isEmpty()
         .isString()
-        // .isIn([chevre.factory.product.ProductType.MembershipService, chevre.factory.product.ProductType.PaymentCard])
         .custom((value, { req }) => {
         if (![
             req.chevre.factory.product.ProductType.MembershipService,
@@ -63,9 +60,6 @@ permitsRouter.post('/findByIdentifier', (0, permitScopes_1.permitScopes)(['admin
         next(error);
     }
 }));
-/**
- * accessCodeで照会
- */
 permitsRouter.post('/findByAccessCode', (0, permitScopes_1.permitScopes)(['admin']), ...[
     (0, express_validator_1.body)('project.id')
         .not()
@@ -83,7 +77,6 @@ permitsRouter.post('/findByAccessCode', (0, permitScopes_1.permitScopes)(['admin
         .not()
         .isEmpty()
         .isString()
-        // .isIn([chevre.factory.product.ProductType.MembershipService, chevre.factory.product.ProductType.PaymentCard])
         .custom((value, { req }) => {
         if (![
             req.chevre.factory.product.ProductType.MembershipService,

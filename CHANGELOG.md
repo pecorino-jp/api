@@ -18,6 +18,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
 ### Security
 
+## v7.0.1 - 2024-05-29
+
+### Changed
+
+- update @chevre/domain
+- update @motionpicture/express-middleware
+
 ## v7.0.0 - 2023-11-15
 
 ### Added

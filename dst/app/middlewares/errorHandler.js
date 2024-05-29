@@ -16,7 +16,6 @@ function errorHandler(err, req, res, next) {
         apiError = err;
     }
     else {
-        // エラー配列が入ってくることもある
         if (Array.isArray(err)) {
             apiError = new api_1.APIError(pecorinoError2httpStatusCode(err[0], req.chevre.factory), err);
         }
@@ -24,7 +23,6 @@ function errorHandler(err, req, res, next) {
             apiError = new api_1.APIError(pecorinoError2httpStatusCode(err, req.chevre.factory), [err]);
         }
         else {
-            // 500
             apiError = new api_1.APIError(http_status_1.INTERNAL_SERVER_ERROR, [new req.chevre.factory.errors.Chevre('InternalServerError', err.message)]);
         }
     }
@@ -34,41 +32,30 @@ function errorHandler(err, req, res, next) {
     });
 }
 exports.errorHandler = errorHandler;
-/**
- * PECORINOエラーをHTTPステータスコードへ変換する
- */
 function pecorinoError2httpStatusCode(err, factory) {
     let statusCode = http_status_1.BAD_REQUEST;
     switch (true) {
-        // 401
         case (err instanceof factory.errors.Unauthorized):
             statusCode = http_status_1.UNAUTHORIZED;
             break;
-        // 403
         case (err instanceof factory.errors.Forbidden):
             statusCode = http_status_1.FORBIDDEN;
             break;
-        // 404
         case (err instanceof factory.errors.NotFound):
             statusCode = http_status_1.NOT_FOUND;
             break;
-        // 409
         case (err instanceof factory.errors.AlreadyInUse):
             statusCode = http_status_1.CONFLICT;
             break;
-        // 429
         case (err instanceof factory.errors.RateLimitExceeded):
             statusCode = http_status_1.TOO_MANY_REQUESTS;
             break;
-        // 502
         case (err instanceof factory.errors.NotImplemented):
             statusCode = http_status_1.NOT_IMPLEMENTED;
             break;
-        // 503
         case (err instanceof factory.errors.ServiceUnavailable):
             statusCode = http_status_1.SERVICE_UNAVAILABLE;
             break;
-        // 400
         default:
             statusCode = http_status_1.BAD_REQUEST;
     }

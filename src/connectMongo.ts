@@ -55,6 +55,8 @@ export async function connectMongo(params: {
     /* istanbul ignore next */
     if (params.disableCheck === undefined || params.disableCheck === false) {
         setInterval(
+            // tslint:disable-next-line:no-single-line-block-comment
+            /* istanbul ignore next */
             async () => {
                 // すでに接続済かどうか
                 if (connection.readyState === 1) {

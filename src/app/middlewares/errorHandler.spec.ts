@@ -5,7 +5,6 @@
 import { chevre } from '@chevre/domain';
 import * as assert from 'assert';
 import { INTERNAL_SERVER_ERROR } from 'http-status';
-import * as nock from 'nock';
 import * as sinon from 'sinon';
 
 import { APIError } from '../error/api';
@@ -13,19 +12,14 @@ import { errorHandler } from './errorHandler';
 
 import { } from '../../@types/index';
 
-// let scope: nock.Scope;
 let sandbox: sinon.SinonSandbox;
 
 describe('エラーハンドラーミドルウェア', () => {
     beforeEach(() => {
-        nock.cleanAll();
-        nock.disableNetConnect();
         sandbox = sinon.sandbox.create();
     });
 
     afterEach(() => {
-        nock.cleanAll();
-        nock.enableNetConnect();
         sandbox.restore();
     });
 

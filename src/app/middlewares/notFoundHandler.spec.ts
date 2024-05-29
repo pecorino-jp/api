@@ -4,7 +4,6 @@
  */
 import { chevre } from '@chevre/domain';
 import * as assert from 'assert';
-import * as nock from 'nock';
 import * as sinon from 'sinon';
 
 import { notFoundHandler } from './notFoundHandler';
@@ -13,14 +12,10 @@ let sandbox: sinon.SinonSandbox;
 
 describe('notFoundHandler()', () => {
     beforeEach(() => {
-        nock.cleanAll();
-        nock.disableNetConnect();
         sandbox = sinon.sandbox.create();
     });
 
     afterEach(() => {
-        nock.cleanAll();
-        nock.enableNetConnect();
         sandbox.restore();
     });
 

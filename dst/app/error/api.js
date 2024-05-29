@@ -1,9 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.APIError = void 0;
-/**
- * アプリケーションエラー
- */
 class APIError extends Error {
     constructor(code, errors) {
         const message = errors.map((error) => error.message)
@@ -12,7 +9,6 @@ class APIError extends Error {
         this.name = 'APIError';
         this.code = code;
         this.errors = errors;
-        // Set the prototype explicitly.
         Object.setPrototypeOf(this, APIError.prototype);
     }
     toObject() {

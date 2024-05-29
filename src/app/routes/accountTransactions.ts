@@ -12,7 +12,22 @@ const accountTransactionsRouter = Router();
 import { permitScopes } from '../middlewares/permitScopes';
 import { validator } from '../middlewares/validator';
 
-accountTransactionsRouter.get(
+accountTransactionsRouter.get<
+    any,
+    {},
+    any,
+    any,
+    {
+        limit?: number;
+        page?: number;
+        project: { id: { $eq: string } };
+        startDate?: {
+            $gte?: Date;
+            $lte?: Date;
+        };
+        sort?: { startDate?: chevre.factory.sortType };
+    }
+>(
     '',
     permitScopes(['admin']),
     ...[
@@ -61,7 +76,7 @@ accountTransactionsRouter.get(
     }
 );
 
-accountTransactionsRouter.post(
+accountTransactionsRouter.post<{}>(
     '/start',
     permitScopes(['admin']),
     // 互換性維持
