@@ -10,9 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.authentication = void 0;
-/**
- * oauthミドルウェア
- */
 const express_middleware_1 = require("@motionpicture/express-middleware");
 const settings_1 = require("../settings");
 function authentication(req, res, next) {
@@ -26,10 +23,8 @@ function authentication(req, res, next) {
                     nextOnAuthorize();
                 }),
                 unauthorizedHandler: (err, reqOnUnauthoize, __2, nextOnUnauthoize) => {
-                    // AbortErrorをハンドリング(2023-02-13~)
                     if (err.name === 'AbortError') {
                         nextOnUnauthoize(new reqOnUnauthoize.chevre.factory.errors.ServiceUnavailable(`issuer unavailable. ${err.name}:${err.message}`));
-                        // AmazonCognitoAPIのレート制限をハンドリング
                     }
                     else if (err.name === 'TooManyRequestsException') {
                         nextOnUnauthoize(new reqOnUnauthoize.chevre.factory.errors.RateLimitExceeded(`getUser ${err.message}`));
@@ -38,7 +33,6 @@ function authentication(req, res, next) {
                         nextOnUnauthoize(new reqOnUnauthoize.chevre.factory.errors.Unauthorized(`${err.name}:${err.message}`));
                     }
                 },
-                // タイムアウト設定(2023-04-17~)
                 requestOptions: { timeout: settings_1.TOKEN_ISSUER_REQUEST_TIMEOUT }
             })(req, res, next);
         }

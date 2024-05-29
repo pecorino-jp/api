@@ -16,7 +16,7 @@ const permitsRouter = Router();
 
 // tslint:disable-next-line:no-suspicious-comment
 // TODO findByAccessCodeで発行されたトークンでの照会が適切かもしれない
-permitsRouter.post(
+permitsRouter.post<{}>(
     '/findByIdentifier',
     permitScopes(['admin']),
     ...[
@@ -73,7 +73,7 @@ permitsRouter.post(
 /**
  * accessCodeで照会
  */
-permitsRouter.post(
+permitsRouter.post<{}>(
     '/findByAccessCode',
     permitScopes(['admin']),
     ...[

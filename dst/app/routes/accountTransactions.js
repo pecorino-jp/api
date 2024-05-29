@@ -43,9 +43,7 @@ accountTransactionsRouter.get('', (0, permitScopes_1.permitScopes)(['admin']), .
     var _a, _b, _c, _d, _e, _f, _g;
     try {
         const transactionRepo = yield req.chevre.repository.AccountTransaction.createInstance(mongoose.connection);
-        const searchConditions = Object.assign(Object.assign({}, req.query), { project: { id: { $eq: String((_c = (_b = (_a = req.query) === null || _a === void 0 ? void 0 : _a.project) === null || _b === void 0 ? void 0 : _b.id) === null || _c === void 0 ? void 0 : _c.$eq) } }, 
-            // tslint:disable-next-line:no-magic-numbers
-            limit: (typeof ((_d = req.query) === null || _d === void 0 ? void 0 : _d.limit) === 'number') ? Math.min(req.query.limit, 100) : 100, page: (typeof ((_e = req.query) === null || _e === void 0 ? void 0 : _e.page) === 'number') ? Math.max(req.query.page, 1) : 1, sort: (((_f = req.query) === null || _f === void 0 ? void 0 : _f.sort) !== undefined && ((_g = req.query) === null || _g === void 0 ? void 0 : _g.sort) !== null)
+        const searchConditions = Object.assign(Object.assign({}, req.query), { project: { id: { $eq: String((_c = (_b = (_a = req.query) === null || _a === void 0 ? void 0 : _a.project) === null || _b === void 0 ? void 0 : _b.id) === null || _c === void 0 ? void 0 : _c.$eq) } }, limit: (typeof ((_d = req.query) === null || _d === void 0 ? void 0 : _d.limit) === 'number') ? Math.min(req.query.limit, 100) : 100, page: (typeof ((_e = req.query) === null || _e === void 0 ? void 0 : _e.page) === 'number') ? Math.max(req.query.page, 1) : 1, sort: (((_f = req.query) === null || _f === void 0 ? void 0 : _f.sort) !== undefined && ((_g = req.query) === null || _g === void 0 ? void 0 : _g.sort) !== null)
                 ? req.query.sort
                 : { startDate: req.chevre.factory.sortType.Ascending } });
         const accountTransactions = yield transactionRepo.search(searchConditions);
@@ -55,9 +53,7 @@ accountTransactionsRouter.get('', (0, permitScopes_1.permitScopes)(['admin']), .
         next(error);
     }
 }));
-accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admin']), 
-// 互換性維持
-(req, _, next) => {
+accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admin']), (req, _, next) => {
     var _a;
     if (typeof ((_a = req.body.object) === null || _a === void 0 ? void 0 : _a.amount) === 'number') {
         req.body.object.amount = { value: req.body.object.amount };
@@ -78,11 +74,6 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
         .not()
         .isEmpty()
         .withMessage(() => 'required')
-        // .isIn([
-        //     chevre.factory.account.transactionType.Deposit,
-        //     chevre.factory.account.transactionType.Transfer,
-        //     chevre.factory.account.transactionType.Withdraw
-        // ])
         .custom((value, { req }) => {
         if (![
             req.chevre.factory.account.transactionType.Deposit,
@@ -138,9 +129,7 @@ accountTransactionsRouter.post('/start', (0, permitScopes_1.permitScopes)(['admi
         .optional()
         .isBoolean()
         .toBoolean()
-], validator_1.validator, 
-// tslint:disable-next-line:cyclomatic-complexity max-func-body-length
-(req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+], validator_1.validator, (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _h, _j, _k;
     try {
         const accountRepo = yield req.chevre.repository.Account.createInstance(mongoose.connection);
