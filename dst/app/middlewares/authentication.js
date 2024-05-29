@@ -16,7 +16,6 @@ function authentication(req, res, next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             yield (0, express_middleware_1.cognitoAuth)({
-                issuers: settings_1.TOKEN_ISSUERS,
                 authorizedHandler: (user, token, reqOnAuthorize, __, nextOnAuthorize) => __awaiter(this, void 0, void 0, function* () {
                     reqOnAuthorize.user = user;
                     reqOnAuthorize.accessToken = token;
@@ -33,7 +32,12 @@ function authentication(req, res, next) {
                         nextOnUnauthoize(new reqOnUnauthoize.chevre.factory.errors.Unauthorized(`${err.name}:${err.message}`));
                     }
                 },
-                requestOptions: { timeout: settings_1.TOKEN_ISSUER_REQUEST_TIMEOUT }
+                requestOptions: { timeout: settings_1.TOKEN_ISSUER_REQUEST_TIMEOUT },
+                verifyOptions: {
+                    tokenUse: 'access',
+                    decodeWithoutVerifying: false,
+                    issuers: settings_1.TOKEN_ISSUERS
+                }
             })(req, res, next);
         }
         catch (error) {

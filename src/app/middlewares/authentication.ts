@@ -9,7 +9,6 @@ import { TOKEN_ISSUERS, TOKEN_ISSUER_REQUEST_TIMEOUT } from '../settings';
 export async function authentication(req: Request, res: Response, next: NextFunction) {
     try {
         await cognitoAuth({
-            issuers: TOKEN_ISSUERS,
             authorizedHandler: async (user, token, reqOnAuthorize, __, nextOnAuthorize) => {
                 reqOnAuthorize.user = user;
                 reqOnAuthorize.accessToken = token;
@@ -28,7 +27,12 @@ export async function authentication(req: Request, res: Response, next: NextFunc
                 }
             },
             // タイムアウト設定(2023-04-17~)
-            requestOptions: { timeout: TOKEN_ISSUER_REQUEST_TIMEOUT }
+            requestOptions: { timeout: TOKEN_ISSUER_REQUEST_TIMEOUT },
+            verifyOptions: {
+                tokenUse: 'access',
+                decodeWithoutVerifying: false,
+                issuers: TOKEN_ISSUERS
+            }
         })(req, res, next);
     } catch (error) {
         next(new req.chevre.factory.errors.Unauthorized(error.message));
