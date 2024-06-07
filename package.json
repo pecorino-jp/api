@@ -10,7 +10,7 @@
   ],
   "dependencies": {
     "@aws-sdk/client-cognito-identity-provider": "3.583.0",
-    "@chevre/domain": "21.33.0-alpha.1",
+    "@chevre/domain": "21.33.0",
     "@motionpicture/express-middleware": "3.1.0",
     "body-parser": "1.20.2",
     "debug": "^3.2.6",
